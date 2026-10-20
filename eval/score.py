@@ -155,7 +155,11 @@ def main() -> None:
 	for name in names:
 		for split in args.split or ["train", "test"]:
 			m = run(name, preds[name], cases, costs, split)
-			rec = {"when": when, "label": args.label, "predictor": name, "split": split, **m}
+			p = preds[name]
+			rec = {"when": when, "label": args.label, "predictor": name, "split": split,
+			       "title": getattr(p, "title", "today's matrix") if p else "today's matrix",
+			       "about": getattr(p, "about", "") if p else "every review session Autotest runs today",
+			       **m}
 			print(json.dumps({k: (round(v, 4) if isinstance(v, float) else v) for k, v in rec.items()
 					  if k not in ("ci", "llm")}))
 			if not args.no_log:

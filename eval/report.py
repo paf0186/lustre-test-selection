@@ -71,6 +71,15 @@ def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> 
 		s.append(f'<text transform="translate(14 {Y(0.5):.1f}) rotate(-90)" class="axis" text-anchor="middle">'
 			 f'share of today\'s bugs caught</text>')
 	pts = []
+	pos = {}
+	for r in rows:
+		x, y = r.get("cost_share"), r.get(key)
+		if x is not None and y is not None:
+			pos[(r["predictor"], r["split"])] = (X(x), Y(y))
+	for (name, split), (px, py) in pos.items():
+		if split == "train" and (name, "test") in pos:
+			tx, ty = pos[(name, "test")]
+			s.append(f'<line x1="{px:.1f}" y1="{py:.1f}" x2="{tx:.1f}" y2="{ty:.1f}" class="link"/>')
 	for r in rows:
 		x, y = r.get("cost_share"), r.get(key)
 		if x is None or y is None:
@@ -85,24 +94,32 @@ def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> 
 			if "recall_vs_full" in ci:
 				a, b = ci["recall_vs_full"]
 				s.append(f'<line x1="{X(x):.1f}" y1="{Y(a):.1f}" x2="{X(x):.1f}" y2="{Y(b):.1f}" class="ci {fam}"/>')
+		title = r.get("title") or r["predictor"]
 		s.append(f'<circle cx="{X(x):.1f}" cy="{Y(y):.1f}" r="{3.5 if small else 5}" '
-			 f'class="pt {fam}{" hollow" if hollow else ""}"><title>{esc(r["predictor"])} ({r["split"]}): '
-			 f'{pct(y)} at {pct(x)}</title></circle>')
+			 f'class="pt {fam}{" hollow" if hollow else ""}"><title>{esc(title)} '
+			 f'({"training patches" if hollow else "unseen patches"}): {pct(y)} of today\'s bugs at '
+			 f'{pct(x)} of its cost</title></circle>')
 		if not hollow:
-			pts.append((x, y, r["predictor"]))
+			pts.append((x, y, title))
 	fr = frontier(pts)
 	if len(fr) > 1:
 		s.append('<polyline class="frontier" points="' + " ".join(f"{X(a):.1f},{Y(b):.1f}" for a, b, _ in fr) + '"/>')
 	if not small:
-		last_y = None
-		for x, y, n in sorted(fr, key=lambda p: -p[1]):
-			ly = Y(y) + 4
-			if last_y is not None and ly - last_y < 14:
-				ly = last_y + 14
-			last_y = ly
-			left = X(x) > pad_l + 0.8 * pw
-			s.append(f'<text x="{X(x) + (-9 if left else 9):.1f}" y="{ly:.1f}" class="plabel" '
-				 f'text-anchor="{"end" if left else "start"}">{esc("today" if n == "full" else n)}</text>')
+		placed: list[tuple[float, float, float, float]] = []
+		for x, y, n in sorted(pts, key=lambda p: -p[1]):
+			wtxt = 6.6 * len(n)
+			cx, cy = X(x), Y(y)
+			for dx, dy, anchor in ((9, 4, "start"), (-9, 4, "end"), (9, -10, "start"), (9, 17, "start"),
+					       (-9, -10, "end"), (-9, 17, "end"), (9, 30, "start"), (-9, 30, "end")):
+				x0 = cx + dx if anchor == "start" else cx + dx - wtxt
+				box = (x0, cy + dy - 10, x0 + wtxt, cy + dy + 3)
+				if box[0] < pad_l or box[2] > w - 2:
+					continue
+				if not any(box[0] < q[2] and q[0] < box[2] and box[1] < q[3] and q[1] < box[3] for q in placed):
+					break
+			placed.append(box)
+			s.append(f'<text x="{cx + dx:.1f}" y="{cy + dy:.1f}" class="plabel" text-anchor="{anchor}">'
+				 f'{esc(n)}</text>')
 	s.append("</svg>")
 	return "\n".join(s)
 
@@ -116,7 +133,7 @@ def table(rows: list[dict]) -> str:
 		per = (llm.get("dollars", 0) / r["sampled"]) if llm.get("dollars") and r.get("sampled") else None
 		ci = r.get("ci", {}).get("recall_vs_full")
 		vs = pct(r.get("recall_vs_full")) + (f" <span class='ci'>({pct(ci[0])} to {pct(ci[1])})</span>" if ci else "")
-		out.append(f"<tr class='{r['split']}'><td>{esc(r['predictor'])}</td><td>{r['split']}</td>"
+		out.append(f"<tr class='{r['split']}'><td>{esc(r.get('title') or r['predictor'])}</td><td>{r['split']}</td>"
 			   f"<td class='n'>{vs}</td><td class='n'>{pct(r.get('bug_recall_vs_full'))}</td>"
 			   f"<td class='n'>{pct(r.get('hard_change_vs_full'))}</td><td class='n'>{pct(r.get('all_caught'))}</td>"
 			   f"<td class='n'>{pct(r.get('cost_share'))}</td>"
@@ -137,13 +154,13 @@ def headline(test: list[dict], manifest: dict) -> str:
 		ok = [r for r in cands if r["recall_vs_full"] >= ty and r["cost_share"] <= tx]
 		if ok:
 			b = max(ok, key=lambda r: r["recall_vs_full"])
-			lines.append(f"<li><b>{int(ty * 100)}% at {int(tx * 100)}%:</b> met by {esc(b['predictor'])}, "
+			lines.append(f"<li><b>{int(ty * 100)}% at {int(tx * 100)}%:</b> met by {esc(b.get('title') or b['predictor'])}, "
 				     f"{pct(b['recall_vs_full'])} at {pct(b['cost_share'])}.</li>")
 		else:
 			under = [r for r in cands if r["cost_share"] <= tx]
 			b = max(under, key=lambda r: r["recall_vs_full"]) if under else None
 			lines.append(f"<li><b>{int(ty * 100)}% at {int(tx * 100)}%:</b> not met yet."
-				     + (f" Best within the cost: {esc(b['predictor'])}, {pct(b['recall_vs_full'])} of "
+				     + (f" Best within the cost: {esc(b.get('title') or b['predictor'])}, {pct(b['recall_vs_full'])} of "
 					f"today's bugs at {pct(b['cost_share'])}." if b else "") + "</li>")
 	hours = f"{full['actual_hours_per_build']:.0f}" if full else "?"
 	return (f"<p class='lede'>Backtest on <b>{n_test}</b> faulty patchsets the predictors never saw "
@@ -186,18 +203,24 @@ section { background: var(--panel); border: 1px solid var(--grid); border-radius
 .chart { width: 100%; height: auto; max-width: 100%; display: block; }
 .chart .grid { stroke: var(--grid); stroke-width: 1; }
 .chart .tick, .chart .axis, .chart .tlabel, .chart .plabel { fill: var(--muted); font: 11px var(--mono); }
-.chart .axis { font-size: 12px; } .chart .plabel { fill: var(--fg); }
+.chart .axis { font-size: 12px; }
+.chart .plabel { fill: var(--fg); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
 .chart .target { fill: var(--target); stroke: none; } .chart .target.t1, .chart .target.t2 { fill: var(--target2); }
 .chart .pt { stroke-width: 2; } .chart .pt.hollow { fill: var(--panel) !important; }
 .chart .today { fill: var(--today); stroke: var(--today); } .chart .trivial { fill: var(--trivial); stroke: var(--trivial); }
 .chart .edited { fill: var(--edited); stroke: var(--edited); } .chart .table { fill: var(--table); stroke: var(--table); }
 .chart .other { fill: var(--other); stroke: var(--other); }
 .chart .ci { stroke-width: 1.5; opacity: 0.55; fill: none; }
+.chart .link { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 1 3; opacity: 0.7; }
 .chart .frontier { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 4 3; }
 .smalls { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
 .smalls figure { margin: 0; min-width: 0; } .smalls figcaption { font: 600 0.85rem var(--display); margin-bottom: 4px; }
 .legend { display: flex; flex-wrap: wrap; gap: 14px; font: 12px var(--mono); color: var(--muted); margin-top: 8px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+.legend i.dot { background: var(--fg); } .legend i.ring { border: 2px solid var(--fg); width: 6px; height: 6px; }
+dl.key { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 14px 0 0; font-size: 13px; }
+dl.key dt { font-weight: 600; } dl.key dd { margin: 0; color: var(--muted); min-width: 0; }
+@media (max-width: 560px) { dl.key { grid-template-columns: 1fr; } dl.key dd { margin-bottom: 6px; } }
 .scroll { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: 13px; }
 th, td { padding: 6px 10px; border-bottom: 1px solid var(--grid); text-align: left; white-space: nowrap; }
@@ -232,9 +255,18 @@ def main() -> None:
 	test = [r for (p, s), r in last.items() if s == "test"]
 	train = [r for (p, s), r in last.items() if s == "train"]
 	both = test + train
-	legend = ("<div class='legend'>" + "".join(f"<span><i style='background:var(--{c})'></i>{n}</span>" for n, c in
-		  (("today's matrix", "today"), ("trivial", "trivial"), ("edited scripts", "edited"),
-		   ("learned table", "table"))) + "<span>filled: test, hollow: train</span></div>")
+	legend = ("<div class='legend'><span><i class='dot'></i>patches the selection never saw (test)</span>"
+		  "<span><i class='ring'></i>the same selection on the patches it was learned from (train), "
+		  "joined to its test point</span><span>whiskers: 95% interval</span>"
+		  "<span>dashed: best cost for each catch rate</span></div>")
+	seen = set()
+	key_rows = []
+	for r in test:
+		if r["predictor"] in seen:
+			continue
+		seen.add(r["predictor"])
+		key_rows.append(f"<dt>{esc(r.get('title') or r['predictor'])}</dt><dd>{esc(r.get('about') or '')}</dd>")
+	legend += f"<dl class='key'>{''.join(key_rows)}</dl>"
 	smalls = "".join(f"<figure><figcaption>{t}</figcaption>{chart(both, k, t, 320, 240, True)}</figure>"
 			 for k, t in (("easy_vs_full", "Easy bugs (in tests the patch edits)"),
 				      ("hard_change_vs_full", "Hard bugs"), ("series_vs_full", "Bugs also on the series"),

@@ -34,6 +34,8 @@ def lines_for(picks: dict[str, set[str]], classes: dict) -> list[str]:
 
 class Trivial:
 	name = "trivial"
+	title = "trivial only"
+	about = "Test-Parameters: trivial and nothing else: review-ldiskfs (sanity, lnet-selftest)"
 
 	def fit(self, cases):
 		return self
@@ -45,6 +47,8 @@ class Trivial:
 class Edited:
 	"""Trivial, plus every script the patch edits, in DNE ldiskfs."""
 	name = "edited"
+	title = "+ edited test scripts"
+	about = "trivial, plus every test script the patch changes, run once in DNE ldiskfs"
 
 	def fit(self, cases):
 		return self
@@ -62,6 +66,9 @@ class Table:
 	def __init__(self, share: float = 0.2, min_cases: int = 3):
 		self.share, self.min_cases = share, min_cases
 		self.name = f"table-{share:g}"
+		self.title = f"+ learned from files, {share:.0%}"
+		self.about = (f"trivial and edited scripts, plus each script and configuration that caught a bug "
+			      f"on at least {share:.0%} of the training patches changing the same directory")
 
 	def fit(self, cases):
 		self.seen = Counter()

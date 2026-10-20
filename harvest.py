@@ -169,7 +169,9 @@ def fetch(args, db) -> None:
 		stop = min(day + dt.timedelta(days=CHUNK_DAYS - 1), end)
 		d = cl.call("/export/patch-faults", {"start": day.isoformat(), "end": stop.isoformat(),
 						      "sessions": 1, "weak": 1 if args.weak else None})
-		print(f"  {day}..{stop}: {store(db, d)}", file=sys.stderr)
+		if args.replace:
+			db.execute("DELETE FROM failure WHERE day BETWEEN ? AND ?", (day.isoformat(), stop.isoformat()))
+		print(f"  {day}..{stop}: {store(db, d)} skipped {d['counts'].get('skipped')}", file=sys.stderr)
 		day = stop + dt.timedelta(days=1)
 
 
@@ -348,6 +350,8 @@ def main() -> None:
 	f.add_argument("--end")
 	f.add_argument("--weak", action="store_true", help="also failures seen once, here only")
 	f.add_argument("--fill", action="store_true", help="have Rainshadow read missing patch contents from Gerrit")
+	f.add_argument("--replace", action="store_true",
+		       help="drop the range's faults first: Rainshadow's judgement may have changed")
 	ld = sub.add_parser("load", help="load a saved `rainshadow patch-faults` answer")
 	ld.add_argument("file")
 	se = sub.add_parser("sessions", help="every session of the dataset's changes, with test sets")
