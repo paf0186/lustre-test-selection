@@ -69,7 +69,7 @@ class Client:
 		req.add_header("X-Requested-With", "rainshadow")
 		if self.auth:
 			req.add_header("Authorization", self.auth)
-		for attempt in range(5):
+		for attempt in range(8):
 			try:
 				with urllib.request.urlopen(req, timeout=180) as r:
 					return json.load(r)
@@ -79,7 +79,7 @@ class Client:
 				err = e
 			except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
 				err = e
-			time.sleep(2 ** attempt)
+			time.sleep(min(2 ** attempt, 60))
 		raise err
 
 
@@ -136,12 +136,18 @@ def discover(args, db) -> None:
 	todo = [t for t in tests if not is_done(db, f"test:{t['suite']}/{t['subtest']}@{start}..{end}")]
 
 	def one(t):
-		return t, test_failures(cl, t["suite"], t["subtest"], start, end)
+		try:
+			return t, test_failures(cl, t["suite"], t["subtest"], start, end)
+		except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+			print(f"  skipped {t['suite']} {t['subtest']}: {e}", file=sys.stderr)
+			return t, None
 
 	n = 0
 	with cf.ThreadPoolExecutor(args.workers) as ex:
 		for i, fut in enumerate(cf.as_completed([ex.submit(one, t) for t in todo]), 1):
 			t, rows = fut.result()
+			if rows is None:
+				continue
 			rows = [r for r in rows if r.get("change") and r.get("patchset") and r.get("source") == "maloo"]
 			db.executemany(
 				"INSERT OR IGNORE INTO failure(id, change, patchset, suite, subtest, status, error, day, "
@@ -220,6 +226,8 @@ def triage(args, db) -> None:
 			return cp, cl.get(f"/triage/changes/{c}", patchset=p), None
 		except urllib.error.HTTPError as e:
 			return cp, None, f"HTTP {e.code}"
+		except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+			return cp, None, f"retry: {e}"
 
 	n = 0
 	with cf.ThreadPoolExecutor(args.workers) as ex:
@@ -227,6 +235,8 @@ def triage(args, db) -> None:
 			(c, p), d, err = fut.result()
 			if d is not None:
 				n += apply_triage(db, c, p, d)
+			if err and err.startswith("retry"):
+				continue                  # left undone: the next run tries it again
 			mark_done(db, f"ps:{c}/{p}", err or "ok")
 			db.commit()
 			if i % 50 == 0:
@@ -248,7 +258,7 @@ def stats(args, db) -> None:
 def main() -> None:
 	ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
 	ap.add_argument("--db", type=Path, default=DEFAULT_DB)
-	ap.add_argument("--workers", type=int, default=4)
+	ap.add_argument("--workers", type=int, default=3)
 	sub = ap.add_subparsers(dest="cmd", required=True)
 	d = sub.add_parser("discover", help="stage 1: failures on patchsets, test by test")
 	d.add_argument("--days", type=int, default=30)
