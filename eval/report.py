@@ -101,7 +101,7 @@ def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> 
 	for (name, split), (px, py) in pos.items():
 		if split == "train" and (name, "test") in pos:
 			tx, ty = pos[(name, "test")]
-			s.append(f'<line x1="{px:.1f}" y1="{py:.1f}" x2="{tx:.1f}" y2="{ty:.1f}" class="link"/>')
+			s.append(f'<line x1="{px:.1f}" y1="{py:.1f}" x2="{tx:.1f}" y2="{ty:.1f}" class="link train"/>')
 	for r in rows:
 		x, y = r.get("cost_share"), r.get(key)
 		if x is None or y is None:
@@ -118,7 +118,7 @@ def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> 
 				s.append(f'<line x1="{X(x):.1f}" y1="{Y(a):.1f}" x2="{X(x):.1f}" y2="{Y(b):.1f}" class="ci {fam}"/>')
 		title = r.get("title") or r["predictor"]
 		s.append(f'<circle cx="{X(x):.1f}" cy="{Y(y):.1f}" r="{3.5 if small else 5}" '
-			 f'class="pt {fam}{" hollow" if hollow else ""}"><title>{esc(title)} '
+			 f'class="pt {fam}{" hollow train" if hollow else ""}"><title>{esc(title)} '
 			 f'({"training set" if hollow else "test set"}): {pct(y)} of today\'s bugs at '
 			 f'{pct(x)} of its cost</title></circle>')
 		if not hollow:
@@ -304,6 +304,11 @@ section { background: var(--panel); border: 1px solid var(--grid); border-radius
 .smalls figure { margin: 0; min-width: 0; } .smalls figcaption { font: 600 0.85rem var(--display); margin-bottom: 4px; }
 .legend { display: flex; flex-wrap: wrap; gap: 14px; font: 12px var(--mono); color: var(--muted); margin-top: 8px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+.legend i.line.solid { background: var(--fg); } .legend i.line.dotted { background: none;
+  border-top: 2px dotted var(--fg); height: 0; }
+.toggle { display: inline-flex; gap: 6px; align-items: center; font: 13px var(--body); margin-top: 10px;
+  cursor: pointer; }
+main:not(.show-train) .train { display: none; }
 .legend i.dot { background: var(--fg); } .legend i.line { width: 16px; height: 2px; border-radius: 0; background: var(--today); vertical-align: 3px; } .legend i.ring { border: 2px solid var(--fg); width: 6px; height: 6px; }
 dl.key { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 14px 0 0; font-size: 13px; }
 dl.key dt { font-weight: 600; } dl.key dd { margin: 0; color: var(--muted); min-width: 0; }
@@ -346,13 +351,16 @@ def main() -> None:
 		[r for r in test if r["predictor"] in ("oracle", "principles-on-blind")]
 	val = last.get(("value", "all"))
 	both = test + train
-	legend = ("<div class='legend'><span><i class='dot'></i>test set</span>"
-		  "<span><i class='ring'></i>training set (joined to the same selection's test set point)</span>"
+	legend = ("<label class='toggle'><input type='checkbox' id='show-train'> Show the training set</label>"
+		  "<div class='legend'><span><i class='dot'></i><i class='line solid'></i>test set: filled points, "
+		  "solid lines (the results)</span>"
+		  "<span class='train'><i class='ring'></i><i class='line dotted'></i>training set: hollow points, "
+		  "dotted lines (the data the rules were fitted to; the gap to the test set is overfitting and drift)"
+		  "</span></div><div class='legend'>"
 		  "<span><i class='line'></i>patch-blind baseline: the same tests for every patch, best value first</span>"
 		  "<span><i class='line' style='background:var(--edited)'></i>oracle: each patch's own cheapest "
 		  "catches, the ceiling</span>"
 		  "<span><i class='line' style='background:var(--other)'></i>principles on a blind base</span>"
-		  "<span>curves: solid test set, dotted training set</span>"
 		  "<span>whiskers: 95% interval</span>"
 		  "</div>")
 	seen = set()
@@ -372,7 +380,7 @@ def main() -> None:
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600&display=swap">
 <style>{CSS}</style>
-<main>
+<main id="page">
 <header style="display:grid;gap:8px">
 <div class="eyebrow">Lustre CI: trivial plus predicted Test-Parameters</div>
 <h1>How much testing does a patch need?</h1>
@@ -391,6 +399,18 @@ def main() -> None:
 <code>eval/cases.py</code>, <code>eval/costs.py</code>, <code>eval/score.py</code> (which redraws this page).
 Results log: <code>eval/results/log.jsonl</code>.</p></section>
 </main>
+<script>
+(function () {{
+  var box = document.getElementById("show-train"), page = document.getElementById("page");
+  function apply() {{ page.classList.toggle("show-train", box.checked); }}
+  try {{ box.checked = localStorage.getItem("show-train") === "1"; }} catch (e) {{}}
+  box.addEventListener("change", function () {{
+    apply();
+    try {{ localStorage.setItem("show-train", box.checked ? "1" : "0"); }} catch (e) {{}}
+  }});
+  apply();
+}})();
+</script>
 """
 	OUT.parent.mkdir(parents=True, exist_ok=True)
 	OUT.write_text(page)
