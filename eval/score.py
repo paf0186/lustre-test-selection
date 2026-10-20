@@ -199,11 +199,13 @@ def value(cases, costs, when, label) -> dict:
 	for k, runs in costs["runs_per_build"].items():
 		hours = costs["secs_per_build"].get(k, 0) / 3600
 		share_b, share_h = caught[k] / changes, hours / total_h
+		window_h = hours * costs["review_builds"]
 		rows.append({"key": k, "runs_per_build": runs, "hours_per_build": round(hours, 2),
+			     "per_1000h": round(1000 * bugs[k] / window_h, 2) if window_h else None,
 			     "share_hours": round(share_h, 4), "bugs": int(bugs[k]),
 			     "share_bugs": round(share_b, 4), "share_only": round(only[k] / changes, 4),
 			     "value": round(share_b / share_h, 2) if share_h else None})
-	rows.sort(key=lambda r: -(r["value"] or 0))
+	rows.sort(key=lambda r: -(r["per_1000h"] or 0))
 	return {"when": when, "label": label, "predictor": "value", "split": "all", "changes": changes,
 		"rows": rows}
 

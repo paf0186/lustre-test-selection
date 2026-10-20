@@ -437,78 +437,77 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <tr class='train'><td>+ principles and directory history, 30%</td><td>training set</td><td class='n'>76% <span class='ci'>(72% to 80%)</span></td><td class='n'>70%</td><td class='n'>61%</td><td class='n'>50%</td><td class='n'>23%</td><td class='n'>30</td><td class='n'></td></tr>
 <tr class='train'><td>+ principles and directory history, 10%</td><td>training set</td><td class='n'>90% <span class='ci'>(87% to 93%)</span></td><td class='n'>89%</td><td class='n'>84%</td><td class='n'>63%</td><td class='n'>40%</td><td class='n'>53</td><td class='n'></td></tr>
 </tbody></table></div></section>
-<section><h2>Value of each test set today</h2><p class='lede'>Each test script in each configuration on its own, over all 381 faulty changes (each change counting once). Value is its share of the bugs caught divided by its share of the session hours: 1 is average, 0 is time that caught nothing. "Only it caught" is bugs no other script or configuration showed, which dropping it would lose.</p><div class='scroll'><table><thead><tr><th>Script</th><th>Configuration</th><th>Session h / build</th><th>Share of today's hours</th><th>Share of the bugs it caught</th><th>Only it caught</th><th>Value</th></tr></thead><tbody>
-<tr class=''><td>sanity-ec</td><td>review-dne-zfs-subtest-change (edited subtests, always runs)</td><td class='n'>0.3</td><td class='n'>0.2%</td><td class='n'>5.4%</td><td class='n'>1.4%</td><td class='n'><b>23.79</b></td></tr>
-<tr class=''><td>sanity-ec</td><td>review-dne-subtest-change (edited subtests, always runs)</td><td class='n'>0.3</td><td class='n'>0.2%</td><td class='n'>3.7%</td><td class='n'>0.3%</td><td class='n'><b>14.8</b></td></tr>
-<tr class=''><td>sanity</td><td>ldiskfs-dne-arm</td><td class='n'>1.0</td><td class='n'>0.8%</td><td class='n'>5.0%</td><td class='n'>0.7%</td><td class='n'><b>6.55</b></td></tr>
-<tr class=''><td>sanity-sec</td><td>ldiskfs-arm</td><td class='n'>0.8</td><td class='n'>0.5%</td><td class='n'>3.3%</td><td class='n'>0.2%</td><td class='n'><b>5.97</b></td></tr>
-<tr class=''><td>sanity-flr</td><td>zfs-dne</td><td class='n'>0.5</td><td class='n'>0.3%</td><td class='n'>1.9%</td><td class='n'>0.0%</td><td class='n'><b>5.89</b></td></tr>
-<tr class=''><td>sanity-dom</td><td>ldiskfs-dne</td><td class='n'>0.4</td><td class='n'>0.3%</td><td class='n'>1.6%</td><td class='n'>0.6%</td><td class='n'><b>5.03</b></td></tr>
-<tr class=''><td>sanity-lnet</td><td>ldiskfs-dne</td><td class='n'>0.9</td><td class='n'>0.7%</td><td class='n'>3.1%</td><td class='n'>0.0%</td><td class='n'><b>4.5</b></td></tr>
-<tr class=''><td>sanity-lnet</td><td>ldiskfs-arm</td><td class='n'>0.3</td><td class='n'>0.2%</td><td class='n'>0.9%</td><td class='n'>0.0%</td><td class='n'><b>4.4</b></td></tr>
-<tr class=''><td>sanity-dom</td><td>zfs-dne</td><td class='n'>0.3</td><td class='n'>0.2%</td><td class='n'>1.0%</td><td class='n'>0.0%</td><td class='n'><b>4.31</b></td></tr>
-<tr class=''><td>sanity-flr</td><td>ldiskfs-dne</td><td class='n'>0.6</td><td class='n'>0.4%</td><td class='n'>1.7%</td><td class='n'>0.1%</td><td class='n'><b>4.01</b></td></tr>
-<tr class=''><td>sanity</td><td>ldiskfs-dne-selinux-ssk</td><td class='n'>3.5</td><td class='n'>2.6%</td><td class='n'>10.0%</td><td class='n'>0.7%</td><td class='n'><b>3.9</b></td></tr>
-<tr class=''><td>sanityn</td><td>ldiskfs-dne</td><td class='n'>2.8</td><td class='n'>2.1%</td><td class='n'>7.9%</td><td class='n'>4.6%</td><td class='n'><b>3.84</b></td></tr>
-<tr class=''><td>sanity-lnet</td><td>ldiskfs-dne-ipv6</td><td class='n'>0.4</td><td class='n'>0.3%</td><td class='n'>1.0%</td><td class='n'>0.4%</td><td class='n'><b>3.64</b></td></tr>
-<tr class=''><td>sanity-sec</td><td>ldiskfs-ubuntu</td><td class='n'>1.5</td><td class='n'>1.1%</td><td class='n'>3.3%</td><td class='n'>0.0%</td><td class='n'><b>3.09</b></td></tr>
-<tr class=''><td>sanity-quota</td><td>zfs</td><td class='n'>1.3</td><td class='n'>1.0%</td><td class='n'>2.7%</td><td class='n'>0.0%</td><td class='n'><b>2.82</b></td></tr>
-<tr class=''><td>sanity-sec</td><td>ldiskfs-dne-selinux-ssk</td><td class='n'>1.6</td><td class='n'>1.1%</td><td class='n'>3.2%</td><td class='n'>0.7%</td><td class='n'><b>2.75</b></td></tr>
-<tr class=''><td>sanity-lnet</td><td>ldiskfs-ubuntu</td><td class='n'>0.5</td><td class='n'>0.4%</td><td class='n'>1.0%</td><td class='n'>0.0%</td><td class='n'><b>2.66</b></td></tr>
-<tr class=''><td>sanity</td><td>ldiskfs-arm</td><td class='n'>2.3</td><td class='n'>1.7%</td><td class='n'>4.5%</td><td class='n'>0.3%</td><td class='n'><b>2.65</b></td></tr>
-<tr class=''><td>sanity-sec</td><td>ldiskfs-dne</td><td class='n'>2.4</td><td class='n'>1.7%</td><td class='n'>4.3%</td><td class='n'>0.7%</td><td class='n'><b>2.49</b></td></tr>
-<tr class=''><td>sanity</td><td>ldiskfs-dne</td><td class='n'>10.4</td><td class='n'>7.6%</td><td class='n'>19.0%</td><td class='n'>6.1%</td><td class='n'><b>2.48</b></td></tr>
-<tr class=''><td>sanityn</td><td>zfs-dne</td><td class='n'>1.8</td><td class='n'>1.3%</td><td class='n'>3.2%</td><td class='n'>0.2%</td><td class='n'><b>2.41</b></td></tr>
-<tr class=''><td>sanity</td><td>ldiskfs-ubuntu</td><td class='n'>4.0</td><td class='n'>3.0%</td><td class='n'>6.7%</td><td class='n'>0.6%</td><td class='n'><b>2.27</b></td></tr>
-<tr class=''><td>lustre-rsync-test</td><td>zfs-dne</td><td class='n'>0.3</td><td class='n'>0.2%</td><td class='n'>0.4%</td><td class='n'>0.0%</td><td class='n'><b>2.16</b></td></tr>
-<tr class=''><td>sanity-lnet</td><td>zfs-dne</td><td class='n'>0.7</td><td class='n'>0.5%</td><td class='n'>1.1%</td><td class='n'>0.0%</td><td class='n'><b>2.14</b></td></tr>
-<tr class=''><td>sanity-sec</td><td>zfs-dne</td><td class='n'>2.3</td><td class='n'>1.7%</td><td class='n'>3.3%</td><td class='n'>0.4%</td><td class='n'><b>1.92</b></td></tr>
-<tr class=''><td>sanity</td><td>zfs-dne</td><td class='n'>6.2</td><td class='n'>4.6%</td><td class='n'>8.7%</td><td class='n'>0.8%</td><td class='n'><b>1.89</b></td></tr>
-<tr class=''><td>replay-ost-single</td><td>zfs-dne</td><td class='n'>0.3</td><td class='n'>0.2%</td><td class='n'>0.4%</td><td class='n'>0.3%</td><td class='n'><b>1.79</b></td></tr>
-<tr class=''><td>sanity-lnet</td><td>review-ldiskfs (trivial, always runs)</td><td class='n'>1.1</td><td class='n'>0.8%</td><td class='n'>1.3%</td><td class='n'>0.3%</td><td class='n'><b>1.69</b></td></tr>
-<tr class=''><td>sanity</td><td>review-ldiskfs (trivial, always runs)</td><td class='n'>8.6</td><td class='n'>6.3%</td><td class='n'>10.3%</td><td class='n'>0.6%</td><td class='n'><b>1.65</b></td></tr>
-<tr class=''><td>sanity-hsm</td><td>ldiskfs-dne</td><td class='n'>1.3</td><td class='n'>0.9%</td><td class='n'>1.5%</td><td class='n'>0.6%</td><td class='n'><b>1.64</b></td></tr>
-<tr class=''><td>sanity</td><td>ldiskfs-dne-ipv6</td><td class='n'>3.5</td><td class='n'>2.6%</td><td class='n'>4.2%</td><td class='n'>0.2%</td><td class='n'><b>1.6</b></td></tr>
-<tr class=''><td>sanity-hsm</td><td>zfs-dne</td><td class='n'>1.0</td><td class='n'>0.8%</td><td class='n'>1.2%</td><td class='n'>0.2%</td><td class='n'><b>1.57</b></td></tr>
-<tr class=''><td>sanity-quota</td><td>ldiskfs-dne</td><td class='n'>4.0</td><td class='n'>2.9%</td><td class='n'>4.6%</td><td class='n'>0.8%</td><td class='n'><b>1.55</b></td></tr>
-<tr class=''><td>sanity-quota</td><td>zfs-dne</td><td class='n'>3.6</td><td class='n'>2.7%</td><td class='n'>3.8%</td><td class='n'>0.0%</td><td class='n'><b>1.42</b></td></tr>
-<tr class=''><td>lustre-rsync-test</td><td>ldiskfs-dne</td><td class='n'>0.4</td><td class='n'>0.3%</td><td class='n'>0.4%</td><td class='n'>0.0%</td><td class='n'><b>1.41</b></td></tr>
-<tr class=''><td>pjdfstest</td><td>zfs-dne</td><td class='n'>0.5</td><td class='n'>0.4%</td><td class='n'>0.5%</td><td class='n'>0.3%</td><td class='n'><b>1.34</b></td></tr>
-<tr class=''><td>sanity-scrub</td><td>zfs-dne</td><td class='n'>0.7</td><td class='n'>0.5%</td><td class='n'>0.7%</td><td class='n'>0.3%</td><td class='n'><b>1.34</b></td></tr>
-<tr class=''><td>mmp</td><td>ldiskfs-dne</td><td class='n'>0.3</td><td class='n'>0.2%</td><td class='n'>0.3%</td><td class='n'>0.0%</td><td class='n'><b>1.3</b></td></tr>
-<tr class=''><td>recovery-small</td><td>ldiskfs-dne-selinux-ssk</td><td class='n'>1.4</td><td class='n'>1.1%</td><td class='n'>1.3%</td><td class='n'>0.2%</td><td class='n'><b>1.2</b></td></tr>
-<tr class=''><td>replay-single</td><td>zfs</td><td class='n'>0.9</td><td class='n'>0.7%</td><td class='n'>0.8%</td><td class='n'>0.1%</td><td class='n'><b>1.14</b></td></tr>
-<tr class=''><td>sanity-scrub</td><td>ldiskfs-dne</td><td class='n'>1.6</td><td class='n'>1.1%</td><td class='n'>1.3%</td><td class='n'>0.9%</td><td class='n'><b>1.13</b></td></tr>
-<tr class=''><td>sanity-pfl</td><td>zfs-dne</td><td class='n'>0.8</td><td class='n'>0.6%</td><td class='n'>0.7%</td><td class='n'>0.1%</td><td class='n'><b>1.09</b></td></tr>
-<tr class=''><td>replay-dual</td><td>ldiskfs-dne</td><td class='n'>2.5</td><td class='n'>1.9%</td><td class='n'>1.8%</td><td class='n'>1.2%</td><td class='n'><b>0.98</b></td></tr>
-<tr class=''><td>sanity-lfsck</td><td>zfs-dne</td><td class='n'>1.1</td><td class='n'>0.8%</td><td class='n'>0.8%</td><td class='n'>0.2%</td><td class='n'><b>0.97</b></td></tr>
-<tr class=''><td>sanity-pfl</td><td>ldiskfs-dne</td><td class='n'>0.9</td><td class='n'>0.7%</td><td class='n'>0.6%</td><td class='n'>0.1%</td><td class='n'><b>0.93</b></td></tr>
-<tr class=''><td>recovery-small</td><td>zfs-dne</td><td class='n'>2.0</td><td class='n'>1.5%</td><td class='n'>1.2%</td><td class='n'>0.1%</td><td class='n'><b>0.84</b></td></tr>
-<tr class=''><td>sanity-lfsck</td><td>ldiskfs-dne</td><td class='n'>1.3</td><td class='n'>0.9%</td><td class='n'>0.8%</td><td class='n'>0.2%</td><td class='n'><b>0.82</b></td></tr>
-<tr class=''><td>pjdfstest</td><td>ldiskfs-dne</td><td class='n'>0.5</td><td class='n'>0.4%</td><td class='n'>0.3%</td><td class='n'>0.1%</td><td class='n'><b>0.81</b></td></tr>
-<tr class=''><td>replay-ost-single</td><td>ldiskfs-dne</td><td class='n'>0.3</td><td class='n'>0.3%</td><td class='n'>0.2%</td><td class='n'>0.0%</td><td class='n'><b>0.76</b></td></tr>
-<tr class=''><td>recovery-small</td><td>ldiskfs-dne</td><td class='n'>2.7</td><td class='n'>2.0%</td><td class='n'>1.5%</td><td class='n'>0.3%</td><td class='n'><b>0.75</b></td></tr>
-<tr class=''><td>conf-sanity</td><td>zfs-dne</td><td class='n'>8.9</td><td class='n'>6.6%</td><td class='n'>4.8%</td><td class='n'>2.2%</td><td class='n'><b>0.73</b></td></tr>
-<tr class=''><td>ost-pools</td><td>ldiskfs-dne</td><td class='n'>1.0</td><td class='n'>0.8%</td><td class='n'>0.5%</td><td class='n'>0.3%</td><td class='n'><b>0.68</b></td></tr>
-<tr class=''><td>insanity</td><td>zfs</td><td class='n'>0.3</td><td class='n'>0.2%</td><td class='n'>0.1%</td><td class='n'>0.0%</td><td class='n'><b>0.67</b></td></tr>
-<tr class=''><td>sanity-pcc</td><td>zfs-dne</td><td class='n'>1.1</td><td class='n'>0.8%</td><td class='n'>0.5%</td><td class='n'>0.3%</td><td class='n'><b>0.66</b></td></tr>
-<tr class=''><td>large-scale</td><td>zfs-dne</td><td class='n'>0.4</td><td class='n'>0.3%</td><td class='n'>0.2%</td><td class='n'>0.0%</td><td class='n'><b>0.52</b></td></tr>
-<tr class=''><td>replay-dual</td><td>zfs-dne</td><td class='n'>1.0</td><td class='n'>0.8%</td><td class='n'>0.4%</td><td class='n'>0.0%</td><td class='n'><b>0.51</b></td></tr>
-<tr class=''><td>replay-single</td><td>zfs-dne</td><td class='n'>3.3</td><td class='n'>2.5%</td><td class='n'>1.2%</td><td class='n'>0.2%</td><td class='n'><b>0.49</b></td></tr>
-<tr class=''><td>conf-sanity</td><td>ldiskfs-dne</td><td class='n'>13.2</td><td class='n'>9.7%</td><td class='n'>4.4%</td><td class='n'>1.4%</td><td class='n'><b>0.46</b></td></tr>
-<tr class=''><td>ost-pools</td><td>zfs-dne</td><td class='n'>0.8</td><td class='n'>0.6%</td><td class='n'>0.2%</td><td class='n'>0.0%</td><td class='n'><b>0.44</b></td></tr>
-<tr class=''><td>large-scale</td><td>ldiskfs-dne</td><td class='n'>0.6</td><td class='n'>0.4%</td><td class='n'>0.2%</td><td class='n'>0.0%</td><td class='n'><b>0.41</b></td></tr>
-<tr class=''><td>replay-single</td><td>ldiskfs-dne</td><td class='n'>4.5</td><td class='n'>3.3%</td><td class='n'>1.4%</td><td class='n'>0.5%</td><td class='n'><b>0.41</b></td></tr>
-<tr class=''><td>replay-vbr</td><td>ldiskfs-dne</td><td class='n'>1.1</td><td class='n'>0.8%</td><td class='n'>0.3%</td><td class='n'>0.1%</td><td class='n'><b>0.35</b></td></tr>
-<tr class=''><td>racer</td><td>ldiskfs-dne</td><td class='n'>1.0</td><td class='n'>0.7%</td><td class='n'>0.2%</td><td class='n'>0.1%</td><td class='n'><b>0.33</b></td></tr>
-<tr class=''><td>parallel-scale</td><td>ldiskfs-dne</td><td class='n'>0.5</td><td class='n'>0.4%</td><td class='n'>0.1%</td><td class='n'>0.1%</td><td class='n'><b>0.29</b></td></tr>
-<tr class=''><td>performance-sanity</td><td>ldiskfs-dne</td><td class='n'>1.3</td><td class='n'>0.9%</td><td class='n'>0.2%</td><td class='n'>0.1%</td><td class='n'><b>0.27</b></td></tr>
-<tr class='poor'><td>insanity</td><td>zfs-dne</td><td class='n'>1.2</td><td class='n'>0.9%</td><td class='n'>0.2%</td><td class='n'>0.0%</td><td class='n'><b>0.2</b></td></tr>
-<tr class='poor'><td>sanity-pcc</td><td>ldiskfs-dne</td><td class='n'>1.5</td><td class='n'>1.1%</td><td class='n'>0.2%</td><td class='n'>0.0%</td><td class='n'><b>0.18</b></td></tr>
-<tr class='poor'><td>insanity</td><td>ldiskfs-dne</td><td class='n'>1.6</td><td class='n'>1.2%</td><td class='n'>0.2%</td><td class='n'>0.0%</td><td class='n'><b>0.16</b></td></tr>
-<tr class='poor'><td>parallel-scale-nfsv4</td><td>ldiskfs-dne</td><td class='n'>0.3</td><td class='n'>0.2%</td><td class='n'>0.0%</td><td class='n'>0.0%</td><td class='n'><b>0.09</b></td></tr>
-</tbody></table></div>
-<p class='muted'>Run too rarely in today's matrix to judge (under 0.25 session hours per build), yet caught bugs: parallel-scale-nfsv4 in review-dne-subtest-change (1), parallel-scale-nfsv4 in review-dne-zfs-subtest-change (1), sanity in wbcfs-dne (1), sanity-lsnapshot in review-dne-zfs-subtest-change (2), replay-dual in review-dne-subtest-change (2), replay-dual in review-dne-zfs-subtest-change (2), sanity-lnet in review-dne-zfs-subtest-change (30), sanity-ns in ldiskfs-dne (3), sanity-lnet in review-dne-subtest-change (30), sanity-compr in review-dne-subtest-change (6), sanity-scrub in review-dne-zfs-subtest-change (1), sanity-pfl in review-dne-subtest-change (5), sanityn in review-dne-zfs-subtest-change (34), sanity-ec in ldiskfs-dne (100), sanity-quota in review-dne-zfs-subtest-change (3), sanity-flr in review-dne-zfs-subtest-change (8), sanity-hsm in review-dne-subtest-change (1), sanity-hsm in review-dne-zfs-subtest-change (1), sanity-lfsck in review-dne-zfs-subtest-change (7), sanity-krb5 in ldiskfs-dne (10), sanity-lfsck in review-dne-subtest-change (7), sanity in review-dne-zfs-subtest-change (83), corrupt-fault in review-dne-subtest-change (1), conf-sanity in review-dne-zfs-subtest-change (31), replay-single in review-dne-subtest-change (18), sanity-quota in review-dne-subtest-change (3), sanity in review-dne-subtest-change (79), conf-sanity in review-dne-subtest-change (36), sanity-pfl in review-dne-zfs-subtest-change (2), sanity-ldlm-pool in review-dne-subtest-change (1), sanity-flr in review-dne-subtest-change (7), sanity-ec in zfs-dne (49), sanity-sec in ldiskfs-dne-arm (1), sanityn in review-dne-subtest-change (30), lnet-selftest in review-dne-subtest-change (2), lnet-selftest in review-dne-zfs-subtest-change (2), sanity-dom in review-dne-subtest-change (1), sanity-dom in review-dne-zfs-subtest-change (1), sanity-scrub in review-dne-subtest-change (1), replay-single in review-dne-zfs-subtest-change (20), sanity-sec in review-dne-zfs-subtest-change (55), recovery-small in review-dne-subtest-change (28), recovery-small in review-dne-zfs-subtest-change (26), sanity-compr in review-dne-zfs-subtest-change (1), sanity-lnet in ldiskfs-dne-arm (16), sanity-sec in review-dne-subtest-change (45), sanity-compr in ldiskfs-dne (1), sanity in zfs (1), sanity-selinux in ldiskfs-dne-selinux-ssk (30), sanity-flr in zfs (34), sanity-zero in review-dne-subtest-change (2), sanity-zero in review-dne-zfs-subtest-change (2), lnet-selftest in ldiskfs-dne-arm (1), obdfilter-survey in ldiskfs-dne (3), mmp in zfs-dne (2), lnet-selftest in ldiskfs-dne (6), lnet-selftest in ldiskfs-arm (2), lnet-selftest in zfs-dne (3), lnet-selftest in ldiskfs-ubuntu (1), replay-ost-single in zfs (4), lnet-selftest in review-ldiskfs (3), runtests in ldiskfs-dne (2), runtests in zfs-dne (1), sanity-benchmark in ldiskfs-dne (3), parallel-scale-nfsv3 in ldiskfs-dne (1), parallel-scale-nfsv3 in review-dne-subtest-change (1), parallel-scale-nfsv3 in review-dne-zfs-subtest-change (1).</p></section>
+<section><h2>Bugs per session hour, by test set</h2><p class='lede'>Bugs each test set caught over the 8,202 review builds of the window, per 1,000 session hours it ran. Sets under 0.25 session hours per build are left out: too rare to judge.</p><div class='scroll'><table><thead><tr><th>Test set</th><th>Configuration</th><th>Session h / build</th><th>Bugs caught</th><th>Bugs per 1,000 h</th></tr></thead><tbody>
+<tr><td>sanity-ec</td><td>review-dne-zfs-subtest-change (edited subtests)</td><td class='n'>0.3</td><td class='n'>71</td><td class='n'><b>27.95</b></td></tr>
+<tr><td>sanity-ec</td><td>review-dne-subtest-change (edited subtests)</td><td class='n'>0.3</td><td class='n'>52</td><td class='n'><b>18.68</b></td></tr>
+<tr><td>sanity-flr</td><td>zfs-dne</td><td class='n'>0.5</td><td class='n'>41</td><td class='n'><b>11.12</b></td></tr>
+<tr><td>sanity-sec</td><td>ldiskfs-arm</td><td class='n'>0.8</td><td class='n'>56</td><td class='n'><b>9.14</b></td></tr>
+<tr><td>sanity-dom</td><td>ldiskfs-dne</td><td class='n'>0.4</td><td class='n'>30</td><td class='n'><b>8.57</b></td></tr>
+<tr><td>sanity-dom</td><td>zfs-dne</td><td class='n'>0.3</td><td class='n'>22</td><td class='n'><b>8.49</b></td></tr>
+<tr><td>sanity-flr</td><td>ldiskfs-dne</td><td class='n'>0.6</td><td class='n'>39</td><td class='n'><b>8.37</b></td></tr>
+<tr><td>sanity</td><td>ldiskfs-dne-selinux-ssk</td><td class='n'>3.5</td><td class='n'>184</td><td class='n'><b>6.42</b></td></tr>
+<tr><td>sanity-sec</td><td>ldiskfs-ubuntu</td><td class='n'>1.5</td><td class='n'>67</td><td class='n'><b>5.60</b></td></tr>
+<tr><td>sanity-sec</td><td>ldiskfs-dne-selinux-ssk</td><td class='n'>1.6</td><td class='n'>71</td><td class='n'><b>5.52</b></td></tr>
+<tr><td>replay-single</td><td>zfs</td><td class='n'>0.9</td><td class='n'>41</td><td class='n'><b>5.29</b></td></tr>
+<tr><td>sanity-quota</td><td>zfs</td><td class='n'>1.3</td><td class='n'>57</td><td class='n'><b>5.29</b></td></tr>
+<tr><td>sanity</td><td>ldiskfs-arm</td><td class='n'>2.3</td><td class='n'>96</td><td class='n'><b>5.11</b></td></tr>
+<tr><td>sanity-lnet</td><td>ldiskfs-arm</td><td class='n'>0.3</td><td class='n'>11</td><td class='n'><b>5.02</b></td></tr>
+<tr><td>sanity-sec</td><td>ldiskfs-dne</td><td class='n'>2.4</td><td class='n'>95</td><td class='n'><b>4.89</b></td></tr>
+<tr><td>sanity-sec</td><td>zfs-dne</td><td class='n'>2.3</td><td class='n'>93</td><td class='n'><b>4.87</b></td></tr>
+<tr><td>sanity</td><td>ldiskfs-ubuntu</td><td class='n'>4.0</td><td class='n'>153</td><td class='n'><b>4.61</b></td></tr>
+<tr><td>sanityn</td><td>ldiskfs-dne</td><td class='n'>2.8</td><td class='n'>104</td><td class='n'><b>4.51</b></td></tr>
+<tr><td>sanity</td><td>zfs-dne</td><td class='n'>6.2</td><td class='n'>223</td><td class='n'><b>4.37</b></td></tr>
+<tr><td>sanity-lnet</td><td>ldiskfs-dne</td><td class='n'>0.9</td><td class='n'>32</td><td class='n'><b>4.21</b></td></tr>
+<tr><td>sanity</td><td>ldiskfs-dne-ipv6</td><td class='n'>3.5</td><td class='n'>119</td><td class='n'><b>4.10</b></td></tr>
+<tr><td>sanity-hsm</td><td>zfs-dne</td><td class='n'>1.0</td><td class='n'>34</td><td class='n'><b>4.09</b></td></tr>
+<tr><td>sanity</td><td>ldiskfs-dne-arm</td><td class='n'>1.0</td><td class='n'>34</td><td class='n'><b>3.98</b></td></tr>
+<tr><td>sanity-lfsck</td><td>ldiskfs-dne</td><td class='n'>1.3</td><td class='n'>39</td><td class='n'><b>3.74</b></td></tr>
+<tr><td>sanityn</td><td>zfs-dne</td><td class='n'>1.8</td><td class='n'>55</td><td class='n'><b>3.72</b></td></tr>
+<tr><td>recovery-small</td><td>ldiskfs-dne-selinux-ssk</td><td class='n'>1.4</td><td class='n'>43</td><td class='n'><b>3.62</b></td></tr>
+<tr><td>sanity</td><td>ldiskfs-dne</td><td class='n'>10.4</td><td class='n'>304</td><td class='n'><b>3.57</b></td></tr>
+<tr><td>sanity-lfsck</td><td>zfs-dne</td><td class='n'>1.1</td><td class='n'>29</td><td class='n'><b>3.24</b></td></tr>
+<tr><td>sanity-lnet</td><td>ldiskfs-ubuntu</td><td class='n'>0.5</td><td class='n'>13</td><td class='n'><b>3.23</b></td></tr>
+<tr><td>replay-ost-single</td><td>zfs-dne</td><td class='n'>0.3</td><td class='n'>9</td><td class='n'><b>3.20</b></td></tr>
+<tr><td>sanity</td><td>review-ldiskfs (trivial)</td><td class='n'>8.6</td><td class='n'>214</td><td class='n'><b>3.05</b></td></tr>
+<tr><td>recovery-small</td><td>zfs-dne</td><td class='n'>2.0</td><td class='n'>50</td><td class='n'><b>3.03</b></td></tr>
+<tr><td>sanity-quota</td><td>zfs-dne</td><td class='n'>3.6</td><td class='n'>88</td><td class='n'><b>2.95</b></td></tr>
+<tr><td>sanity-lnet</td><td>zfs-dne</td><td class='n'>0.7</td><td class='n'>16</td><td class='n'><b>2.93</b></td></tr>
+<tr><td>sanity-quota</td><td>ldiskfs-dne</td><td class='n'>4.0</td><td class='n'>94</td><td class='n'><b>2.86</b></td></tr>
+<tr><td>ost-pools</td><td>zfs-dne</td><td class='n'>0.8</td><td class='n'>18</td><td class='n'><b>2.84</b></td></tr>
+<tr><td>sanity-hsm</td><td>ldiskfs-dne</td><td class='n'>1.3</td><td class='n'>27</td><td class='n'><b>2.62</b></td></tr>
+<tr><td>sanity-pfl</td><td>zfs-dne</td><td class='n'>0.8</td><td class='n'>18</td><td class='n'><b>2.57</b></td></tr>
+<tr><td>replay-single</td><td>zfs-dne</td><td class='n'>3.3</td><td class='n'>67</td><td class='n'><b>2.45</b></td></tr>
+<tr><td>recovery-small</td><td>ldiskfs-dne</td><td class='n'>2.7</td><td class='n'>53</td><td class='n'><b>2.43</b></td></tr>
+<tr><td>sanity-pfl</td><td>ldiskfs-dne</td><td class='n'>0.9</td><td class='n'>18</td><td class='n'><b>2.40</b></td></tr>
+<tr><td>lustre-rsync-test</td><td>zfs-dne</td><td class='n'>0.3</td><td class='n'>5</td><td class='n'><b>2.28</b></td></tr>
+<tr><td>sanity-lnet</td><td>ldiskfs-dne-ipv6</td><td class='n'>0.4</td><td class='n'>7</td><td class='n'><b>2.22</b></td></tr>
+<tr><td>replay-ost-single</td><td>ldiskfs-dne</td><td class='n'>0.3</td><td class='n'>6</td><td class='n'><b>2.10</b></td></tr>
+<tr><td>ost-pools</td><td>ldiskfs-dne</td><td class='n'>1.0</td><td class='n'>17</td><td class='n'><b>1.99</b></td></tr>
+<tr><td>sanity-scrub</td><td>zfs-dne</td><td class='n'>0.7</td><td class='n'>11</td><td class='n'><b>1.92</b></td></tr>
+<tr><td>sanity-lnet</td><td>review-ldiskfs (trivial)</td><td class='n'>1.1</td><td class='n'>16</td><td class='n'><b>1.84</b></td></tr>
+<tr><td>replay-single</td><td>ldiskfs-dne</td><td class='n'>4.5</td><td class='n'>67</td><td class='n'><b>1.83</b></td></tr>
+<tr><td>pjdfstest</td><td>zfs-dne</td><td class='n'>0.5</td><td class='n'>7</td><td class='n'><b>1.78</b></td></tr>
+<tr><td>sanity-scrub</td><td>ldiskfs-dne</td><td class='n'>1.6</td><td class='n'>22</td><td class='n'><b>1.73</b></td></tr>
+<tr><td>mmp</td><td>ldiskfs-dne</td><td class='n'>0.3</td><td class='n'>4</td><td class='n'><b>1.70</b></td></tr>
+<tr><td>sanity-pcc</td><td>zfs-dne</td><td class='n'>1.1</td><td class='n'>14</td><td class='n'><b>1.62</b></td></tr>
+<tr><td>pjdfstest</td><td>ldiskfs-dne</td><td class='n'>0.5</td><td class='n'>5</td><td class='n'><b>1.28</b></td></tr>
+<tr><td>lustre-rsync-test</td><td>ldiskfs-dne</td><td class='n'>0.4</td><td class='n'>4</td><td class='n'><b>1.26</b></td></tr>
+<tr><td>insanity</td><td>zfs</td><td class='n'>0.3</td><td class='n'>3</td><td class='n'><b>1.24</b></td></tr>
+<tr><td>replay-vbr</td><td>ldiskfs-dne</td><td class='n'>1.1</td><td class='n'>10</td><td class='n'><b>1.15</b></td></tr>
+<tr><td>replay-dual</td><td>ldiskfs-dne</td><td class='n'>2.5</td><td class='n'>19</td><td class='n'><b>0.91</b></td></tr>
+<tr><td>large-scale</td><td>zfs-dne</td><td class='n'>0.4</td><td class='n'>3</td><td class='n'><b>0.83</b></td></tr>
+<tr><td>replay-dual</td><td>zfs-dne</td><td class='n'>1.0</td><td class='n'>7</td><td class='n'><b>0.83</b></td></tr>
+<tr><td>conf-sanity</td><td>ldiskfs-dne</td><td class='n'>13.2</td><td class='n'>79</td><td class='n'><b>0.73</b></td></tr>
+<tr><td>conf-sanity</td><td>zfs-dne</td><td class='n'>8.9</td><td class='n'>49</td><td class='n'><b>0.67</b></td></tr>
+<tr><td>large-scale</td><td>ldiskfs-dne</td><td class='n'>0.6</td><td class='n'>3</td><td class='n'><b>0.66</b></td></tr>
+<tr><td>sanity-pcc</td><td>ldiskfs-dne</td><td class='n'>1.5</td><td class='n'>7</td><td class='n'><b>0.58</b></td></tr>
+<tr><td>insanity</td><td>zfs-dne</td><td class='n'>1.2</td><td class='n'>5</td><td class='n'><b>0.49</b></td></tr>
+<tr><td>parallel-scale</td><td>ldiskfs-dne</td><td class='n'>0.5</td><td class='n'>2</td><td class='n'><b>0.49</b></td></tr>
+<tr><td>insanity</td><td>ldiskfs-dne</td><td class='n'>1.6</td><td class='n'>6</td><td class='n'><b>0.46</b></td></tr>
+<tr><td>parallel-scale-nfsv4</td><td>ldiskfs-dne</td><td class='n'>0.3</td><td class='n'>1</td><td class='n'><b>0.45</b></td></tr>
+<tr><td>performance-sanity</td><td>ldiskfs-dne</td><td class='n'>1.3</td><td class='n'>4</td><td class='n'><b>0.39</b></td></tr>
+<tr><td>racer</td><td>ldiskfs-dne</td><td class='n'>1.0</td><td class='n'>3</td><td class='n'><b>0.38</b></td></tr>
+</tbody></table></div></section>
 <section><h2>The patch-blind baseline</h2><p class='lede'>What every patch would run if the tests were chosen without reading it: scripts and configurations ranked on the training set by bugs caught per second of session time, scored here on the test set. A patch-aware selection is worth having only to the left of this line.</p><div class='scroll'><table><thead><tr><th>Step</th><th>Adds</th><th>Configuration</th><th>Test cost</th><th>Today's bugs caught</th><th>Hard bugs</th></tr></thead><tbody>
 <tr><td class='n'>0</td><td>trivial</td><td>ldiskfs (review-ldiskfs)</td><td class='n'>9%</td><td class='n'>35%</td><td class='n'>11%</td></tr>
 <tr><td class='n'>1</td><td>sanity-ec</td><td>ldiskfs-dne</td><td class='n'>10%</td><td class='n'>40%</td><td class='n'>17%</td></tr>

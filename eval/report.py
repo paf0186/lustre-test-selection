@@ -183,36 +183,33 @@ def blind_table(r: dict | None) -> str:
 MIN_HOURS = 0.25     # per build: less runs too rarely in the review matrix to judge
 
 
-def value_table(v: dict | None) -> str:
-	"""Every script in every configuration on its own, best value first."""
+def costs_builds() -> int:
+	try:
+		return json.loads((HERE / "costs.json").read_text()).get("review_builds", 0)
+	except OSError:
+		return 0
+
+
+def value_table(v: dict | None, builds: int) -> str:
+	"""Every test set, by bugs caught per session hour: one number."""
 	if not v:
 		return "<p class='muted'>Not scored yet.</p>"
 	rows = [r for r in v["rows"] if r["hours_per_build"] >= MIN_HOURS]
-	rare = [r for r in v["rows"] if r["hours_per_build"] < MIN_HOURS and r["bugs"]]
-	head = ("Script", "Configuration", "Session h / build", "Share of today's hours",
-		"Share of the bugs it caught", "Only it caught", "Value")
-	out = [f"<p class='lede'>Each test script in each configuration on its own, over all {v['changes']} "
-	       "faulty changes (each change counting once). Value is its share of the bugs caught divided by its "
-	       "share of the session hours: 1 is average, 0 is time that caught nothing. \"Only it caught\" is "
-	       "bugs no other script or configuration showed, which dropping it would lose.</p>"
-	       "<div class='scroll'><table><thead><tr>" + "".join(f"<th>{h}</th>" for h in head)
-	       + "</tr></thead><tbody>"]
+	out = [f"<p class='lede'>Bugs each test set caught over the {builds:,} review builds of the window, "
+	       "per 1,000 session hours it ran. Sets under "
+	       f"{MIN_HOURS:g} session hours per build are left out: too rare to judge.</p>"
+	       "<div class='scroll'><table><thead><tr><th>Test set</th><th>Configuration</th>"
+	       "<th>Session h / build</th><th>Bugs caught</th><th>Bugs per 1,000 h</th></tr></thead><tbody>"]
 	for r in rows:
 		script, cls = r["key"].split("|")
 		if cls == "review-ldiskfs":
-			cls = "review-ldiskfs (trivial, always runs)"
+			cls = "review-ldiskfs (trivial)"
 		elif cls.endswith("subtest-change"):
-			cls = f"{cls} (edited subtests, always runs)"
-		poor = (r["value"] or 0) < 0.25
-		out.append(f"<tr class='{'poor' if poor else ''}'><td>{esc(script)}</td><td>{esc(cls)}</td>"
-			   f"<td class='n'>{r['hours_per_build']:.1f}</td><td class='n'>{pct(r['share_hours'], 1)}</td>"
-			   f"<td class='n'>{pct(r['share_bugs'], 1)}</td><td class='n'>{pct(r['share_only'], 1)}</td>"
-			   f"<td class='n'><b>{r['value'] if r['value'] is not None else 'n/a'}</b></td></tr>")
+			cls = f"{cls} (edited subtests)"
+		out.append(f"<tr><td>{esc(script)}</td><td>{esc(cls)}</td>"
+			   f"<td class='n'>{r['hours_per_build']:.1f}</td><td class='n'>{r['bugs']}</td>"
+			   f"<td class='n'><b>{r['per_1000h']:.2f}</b></td></tr>")
 	out.append("</tbody></table></div>")
-	if rare:
-		out.append("<p class='muted'>Run too rarely in today's matrix to judge (under "
-			   f"{MIN_HOURS:g} session hours per build), yet caught bugs: "
-			   + ", ".join(f"{esc(r['key'].replace('|', ' in '))} ({r['bugs']})" for r in rare) + ".</p>")
 	return "\n".join(out)
 
 
@@ -367,7 +364,7 @@ def main() -> None:
 {legend}</section>
 <section><h2>By kind of bug</h2><div class="smalls">{smalls}</div></section>
 <section><h2>Every predictor</h2>{table([r for r in test + train if r["predictor"] != "ranked"])}</section>
-<section><h2>Value of each test set today</h2>{value_table(val)}</section>
+<section><h2>Bugs per session hour, by test set</h2>{value_table(val, costs_builds())}</section>
 <section><h2>The patch-blind baseline</h2>{blind_table(blind)}</section>
 <section><h2>The climb</h2>{climb(log)}</section>
 <section><h2>How this is measured</h2><ul class="notes">{''.join(f'<li>{esc(n)}</li>' for n in NOTES)}</ul>

@@ -80,6 +80,7 @@ def build(db: sqlite3.Connection) -> dict:
 				 for g in sorted(runs) if g and g.startswith("review") and sessions_of[g] >= 20},
 		"group_class": {g: c.most_common(1)[0][0] for g, c in sorted(group_class.items())},
 		"session_s": {g: round(mean(ds)) for g, ds in sorted(sess_s.items()) if g and len(ds) >= 20},
+		"review_builds": db.execute("SELECT count(*) FROM build WHERE job = 'lustre-reviews'").fetchone()[0],
 		"runs_per_build": {f"{s}|{c}": round(n / max(1, len(set(build_of.values()))), 3)
 				   for (s, c), n in sorted(per_build.items())},
 		"secs_per_build": {f"{s}|{c}": round(n / max(1, len(set(build_of.values()))))
