@@ -1,0 +1,225 @@
+# What a change to each part of Lustre should be tested with, from how Lustre is
+# built and what each test script exercises: not from which tests failed before.
+#
+# A rule matches files by path prefix (or by a substring with `contains`) and adds
+# its scripts, in each of its configuration classes (eval/classes.py; default
+# ldiskfs-dne, a plain custom session).  `group` asks for a whole review group
+# instead, for configurations no keys can ask for (SELinux with shared keys).
+# Every selection carries its rule's `why`, so a prediction explains itself.
+#
+# Rules name mechanisms, never a change or a test that once failed (design 4.2).
+
+# -- what the patch itself says ------------------------------------------------
+
+[[rule]]
+name = "docs-only"
+paths = ["Documentation/", "lustre/doc/", "contrib/", "LICENSE", "README", "ChangeLog", "lustre/ChangeLog"]
+scripts = []
+why = "documentation and contrib changes do not change what runs"
+
+# -- client -------------------------------------------------------------------
+
+[[rule]]
+name = "client-vfs"
+paths = ["lustre/llite/"]
+scripts = ["sanity", "sanityn"]
+why = "the client VFS layer: sanity covers one client's POSIX behaviour, sanityn two mounts racing on the same files"
+
+[[rule]]
+name = "client-pcc"
+paths = ["lustre/llite/pcc", "lustre/utils/lpcc", "lustre/utils/liblustreapi_pcc"]
+scripts = ["sanity-pcc"]
+why = "persistent client cache"
+
+[[rule]]
+name = "client-crypto"
+paths = ["lustre/llite/crypto", "lustre/include/lustre_crypto"]
+scripts = ["sanity-sec"]
+why = "client encryption is tested in sanity-sec"
+
+[[rule]]
+name = "compression"
+contains = ["compr"]
+scripts = ["sanity-compr"]
+why = "client-side data compression"
+
+[[rule]]
+name = "client-rpc"
+paths = ["lustre/osc/", "lustre/mdc/", "lustre/lmv/", "lustre/mgc/"]
+scripts = ["sanity", "sanityn", "recovery-small"]
+why = "client RPC and caching layers: sanity for the data and metadata paths, sanityn for locking between clients, recovery-small for resend and eviction"
+
+# -- layouts ------------------------------------------------------------------
+
+[[rule]]
+name = "layouts"
+paths = ["lustre/lov/", "lustre/lod/"]
+scripts = ["sanity", "sanity-pfl", "sanity-flr"]
+why = "file layouts: composite (PFL) and mirrored (FLR) layouts each have their own suite"
+
+[[rule]]
+name = "erasure-coding"
+paths = ["lustre/ec/"]
+contains = ["_ec.", "/ec_"]
+scripts = ["sanity-ec"]
+why = "erasure coded layouts"
+
+[[rule]]
+name = "pools"
+contains = ["pool"]
+scripts = ["ost-pools"]
+why = "OST pools"
+
+# -- metadata server ----------------------------------------------------------
+
+[[rule]]
+name = "mds"
+paths = ["lustre/mdt/", "lustre/mdd/"]
+scripts = ["sanity", "sanityn", "replay-single"]
+classes = ["ldiskfs-dne", "zfs-dne"]
+why = "metadata server: sanity and sanityn for operations, replay-single for replaying them after a server restart; both backends, since the MDS writes through osd"
+
+[[rule]]
+name = "dom"
+contains = ["_dom", "dom_", "mdt_io"]
+scripts = ["sanity-dom"]
+why = "data on MDT"
+
+[[rule]]
+name = "hsm"
+contains = ["hsm", "coordinator"]
+scripts = ["sanity-hsm"]
+why = "hierarchical storage management: the coordinator and copytool"
+
+[[rule]]
+name = "changelog"
+contains = ["changelog"]
+scripts = ["sanity", "lustre-rsync-test"]
+why = "changelogs are exercised by sanity's changelog tests and lustre_rsync"
+
+[[rule]]
+name = "lfsck"
+paths = ["lustre/lfsck/"]
+scripts = ["sanity-lfsck", "sanity-scrub"]
+why = "LFSCK and the OI scrub it drives"
+
+[[rule]]
+name = "quota"
+paths = ["lustre/quota/"]
+contains = ["quota", "lfs_project"]
+scripts = ["sanity-quota"]
+why = "quota master and slaves, project quota"
+
+# -- object storage -----------------------------------------------------------
+
+[[rule]]
+name = "oss"
+paths = ["lustre/ofd/", "lustre/osp/"]
+scripts = ["sanity", "replay-ost-single", "recovery-small"]
+classes = ["ldiskfs-dne", "zfs-dne"]
+why = "object storage server and the MDT's proxy to it: object creation, destroy and their recovery, on both backends"
+
+# -- backends -----------------------------------------------------------------
+
+[[rule]]
+name = "ldiskfs"
+paths = ["lustre/osd-ldiskfs/", "ldiskfs/", "lustre/kernel_patches/"]
+scripts = ["sanity", "sanity-scrub", "conf-sanity"]
+classes = ["ldiskfs-dne", "ldiskfs"]
+why = "the ldiskfs backend: everything goes through it; OI scrub and mount/format paths are its own"
+
+[[rule]]
+name = "zfs"
+paths = ["lustre/osd-zfs/"]
+scripts = ["sanity", "conf-sanity"]
+classes = ["zfs-dne", "zfs"]
+why = "the ZFS backend: only ZFS sessions run it"
+
+# -- shared core: wide blast radius -------------------------------------------
+
+[[rule]]
+name = "locking"
+paths = ["lustre/ldlm/"]
+scripts = ["sanity", "sanityn", "recovery-small", "replay-dual"]
+why = "the distributed lock manager: conflicts between clients (sanityn), lock replay and eviction (recovery-small, replay-dual)"
+
+[[rule]]
+name = "rpc-recovery"
+paths = ["lustre/ptlrpc/", "lustre/target/"]
+scripts = ["sanity", "recovery-small", "replay-single", "replay-dual"]
+why = "RPC transport, import state and target recovery: the replay and recovery suites are the only ones that fail servers over"
+
+[[rule]]
+name = "security"
+paths = ["lustre/ptlrpc/gss/", "lustre/ptlrpc/sec", "lustre/ptlrpc/nodemap", "lustre/utils/gss/",
+         "lustre/utils/l_getidentity"]
+contains = ["nodemap", "sptlrpc"]
+scripts = ["sanity-sec"]
+group = "review-dne-selinux-ssk-part-2"
+why = "RPC security, nodemaps and identity upcalls: sanity-sec, and the SELinux and shared-key sessions that only exist as their own group"
+
+[[rule]]
+name = "kerberos"
+paths = ["lustre/ptlrpc/gss/", "lustre/utils/gss/"]
+contains = ["krb5", "kerberos"]
+scripts = ["sanity-krb5"]
+why = "Kerberos flavors of GSS"
+
+[[rule]]
+name = "config-mount"
+paths = ["lustre/mgs/", "lustre/obdclass/obd_mount", "lustre/obdclass/obd_config", "lustre/utils/mount_",
+         "lustre/utils/mkfs_lustre", "lustre/utils/lustre_cfg", "lustre/utils/lctl", "lustre/conf/"]
+scripts = ["conf-sanity"]
+why = "configuration logs, mount, format and parameters"
+
+[[rule]]
+name = "obdclass"
+paths = ["lustre/obdclass/", "lustre/fid/", "lustre/fld/", "lustre/include/"]
+scripts = ["sanity", "recovery-small", "conf-sanity"]
+why = "shared object, FID and llog infrastructure used by every target and client"
+
+[[rule]]
+name = "lnet"
+paths = ["lnet/"]
+scripts = ["sanity-lnet", "lnet-selftest", "sanity"]
+why = "the network layer: sanity-lnet for configuration, lnet-selftest for traffic, sanity as a client of it"
+
+[[rule]]
+name = "libcfs"
+paths = ["libcfs/"]
+scripts = ["sanity", "sanity-lnet"]
+why = "portability and debug infrastructure under everything"
+
+# -- user space ---------------------------------------------------------------
+
+[[rule]]
+name = "lfs-api"
+paths = ["lustre/utils/lfs", "lustre/utils/liblustreapi", "lustre/include/lustre/lustreapi"]
+scripts = ["sanity", "sanity-pfl", "sanity-flr"]
+why = "lfs and llapi: setstripe, find, getstripe and mirror commands are tested in sanity, sanity-pfl and sanity-flr"
+
+[[rule]]
+name = "lsnapshot"
+contains = ["lsnapshot", "snapshot"]
+scripts = ["sanity-lsnapshot"]
+classes = ["zfs-dne"]
+why = "snapshots need ZFS"
+
+# -- builds across platforms --------------------------------------------------
+
+[[rule]]
+name = "kernel-compat"
+paths = ["lustre/autoconf/", "libcfs/autoconf/", "lnet/autoconf/", "config/", "autogen.sh", "lustre.spec",
+         "debian/", "lustre/scripts/"]
+contains = ["compat"]
+scripts = ["sanity"]
+classes = ["ldiskfs-dne", "ldiskfs-dne-arm", "ldiskfs-ubuntu"]
+why = "build and kernel compatibility: other client kernels and architectures are where it breaks"
+
+# -- the test framework itself --------------------------------------------------
+
+[[rule]]
+name = "test-framework"
+paths = ["lustre/tests/test-framework.sh", "lustre/tests/cfg/", "lustre/tests/functions.sh"]
+scripts = ["sanity", "conf-sanity", "recovery-small", "replay-single"]
+why = "helpers every suite calls: a broad smoke of client, mount and failover paths"

@@ -21,14 +21,21 @@ def edited_scripts(inp: dict) -> list[str]:
 	return sorted(out - NOT_SCRIPTS)
 
 
-def lines_for(picks: dict[str, set[str]], classes: dict) -> list[str]:
-	"""One Test-Parameters line per class, scripts sharing it."""
+def lines_for(picks: dict[str, set[str]], classes: dict, groups: set[str] = frozenset()) -> list[str]:
+	"""One Test-Parameters line per class, scripts sharing it; a script that needs
+	keys of its own (Kerberos) gets its own line; a whole group where asked."""
+	from classes import SCRIPT_KEYS
 	out = []
 	for cls in sorted(picks):
 		keys = classes[cls][0]
 		if keys is None or not picks[cls]:
 			continue
-		out.append(" ".join(x for x in (keys, "testlist=" + ",".join(sorted(picks[cls]))) if x))
+		plain = sorted(s for s in picks[cls] if s not in SCRIPT_KEYS)
+		if plain:
+			out.append(" ".join(x for x in (keys, "testlist=" + ",".join(plain)) if x))
+		for s in sorted(picks[cls] & SCRIPT_KEYS.keys()):
+			out.append(" ".join(x for x in (keys, SCRIPT_KEYS[s], "testlist=" + s) if x))
+	out += [f"testgroup={g}" for g in sorted(groups)]
 	return out
 
 
@@ -86,6 +93,9 @@ class Table:
 
 	def predict(self, inp):
 		from classes import CLASSES
+		return {"text": "\n".join(["trivial"] + lines_for(self.picks(inp), CLASSES)), "meta": {}}
+
+	def picks(self, inp) -> dict[str, set[str]]:
 		picks: dict[str, set[str]] = defaultdict(set)
 		for s in edited_scripts(inp):
 			picks["ldiskfs-dne"].add(s)
@@ -97,4 +107,4 @@ class Table:
 				if h / n >= self.share:
 					script, cls = k.split("|")
 					picks[cls].add(script)
-		return {"text": "\n".join(["trivial"] + lines_for(picks, CLASSES)), "meta": {}}
+		return picks

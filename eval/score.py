@@ -25,6 +25,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from grade import full, grade  # noqa: E402
 from predictors.baselines import Edited, Table, Trivial  # noqa: E402
+from predictors.principles import Principles, PrinciplesAndHistory  # noqa: E402
 
 ROOT = HERE.parent
 LOG = HERE / "results" / "log.jsonl"
@@ -33,7 +34,8 @@ BOOT = 1000
 
 def predictors() -> dict:
 	out = {"full": None}
-	for p in (Trivial(), Edited(), Table(0.5), Table(0.3), Table(0.2), Table(0.1), Table(0.05)):
+	for p in (Trivial(), Edited(), Table(0.5), Table(0.3), Table(0.2), Table(0.1), Table(0.05),
+		  Principles(), PrinciplesAndHistory(Table(0.3)), PrinciplesAndHistory(Table(0.1))):
 		out[p.name] = p
 	return out
 
