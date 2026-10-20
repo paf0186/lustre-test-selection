@@ -10,6 +10,18 @@ Source: [Rainshadow](https://github.com/lustre-tools/rainshadow), a mirror of
 Whamcloud's Maloo test results. Rainshadow needs a login, so the dataset is
 built by whoever has one; this repo holds the harvester and schema.
 
+## Test matrix
+
+[docs/test-matrix.md](docs/test-matrix.md) maps what runs against a patch: jobs,
+test groups, node layouts, variants, suites, and how the matrix changed over time.
+Its tables are generated and the prose is by hand:
+
+```bash
+./matrix_doc.py --lustre ~/lustre-release          # ask Rainshadow, rewrite the tables
+./matrix_doc.py --offline --lustre ~/lustre-release  # redo them from docs/data/*.json
+rainshadow matrix --days 30 --markdown             # the raw tables for any window or job
+```
+
 ## What is kept
 
 Only failures that are the patch's own fault, caught by testing. Flaky,
