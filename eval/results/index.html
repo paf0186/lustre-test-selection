@@ -27,18 +27,24 @@ section { background: var(--panel); border: 1px solid var(--grid); border-radius
 .chart { width: 100%; height: auto; max-width: 100%; display: block; }
 .chart .grid { stroke: var(--grid); stroke-width: 1; }
 .chart .tick, .chart .axis, .chart .tlabel, .chart .plabel { fill: var(--muted); font: 11px var(--mono); }
-.chart .axis { font-size: 12px; } .chart .plabel { fill: var(--fg); }
+.chart .axis { font-size: 12px; }
+.chart .plabel { fill: var(--fg); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
 .chart .target { fill: var(--target); stroke: none; } .chart .target.t1, .chart .target.t2 { fill: var(--target2); }
 .chart .pt { stroke-width: 2; } .chart .pt.hollow { fill: var(--panel) !important; }
 .chart .today { fill: var(--today); stroke: var(--today); } .chart .trivial { fill: var(--trivial); stroke: var(--trivial); }
 .chart .edited { fill: var(--edited); stroke: var(--edited); } .chart .table { fill: var(--table); stroke: var(--table); }
 .chart .other { fill: var(--other); stroke: var(--other); }
 .chart .ci { stroke-width: 1.5; opacity: 0.55; fill: none; }
+.chart .link { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 1 3; opacity: 0.7; }
 .chart .frontier { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 4 3; }
 .smalls { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
 .smalls figure { margin: 0; min-width: 0; } .smalls figcaption { font: 600 0.85rem var(--display); margin-bottom: 4px; }
 .legend { display: flex; flex-wrap: wrap; gap: 14px; font: 12px var(--mono); color: var(--muted); margin-top: 8px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+.legend i.dot { background: var(--fg); } .legend i.ring { border: 2px solid var(--fg); width: 6px; height: 6px; }
+dl.key { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 14px 0 0; font-size: 13px; }
+dl.key dt { font-weight: 600; } dl.key dd { margin: 0; color: var(--muted); min-width: 0; }
+@media (max-width: 560px) { dl.key { grid-template-columns: 1fr; } dl.key dd { margin-bottom: 6px; } }
 .scroll { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: 13px; }
 th, td { padding: 6px 10px; border-bottom: 1px solid var(--grid); text-align: left; white-space: nowrap; }
@@ -52,9 +58,9 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <header style="display:grid;gap:8px">
 <div class="eyebrow">Lustre CI: trivial plus predicted Test-Parameters</div>
 <h1>How much testing does a patch need?</h1>
-<p class='lede'>Backtest on <b>308</b> faulty patchsets the predictors never saw (changes first failing on or after 2026-08-01), holding <b>492</b> bugs. Today every patch runs the whole review matrix, about <b>133</b> session hours per build. "Share of today's bugs" is what each selection would catch of what today's matrix catches, with every change counting once.</p><ul class='targets'><li><b>90% at 25%:</b> not met yet. Best within the cost: table-0.2, 60% of today's bugs at 21%.</li><li><b>90% at 10%:</b> not met yet. Best within the cost: trivial, 34% of today's bugs at 10%.</li><li><b>95% at 10%:</b> not met yet. Best within the cost: trivial, 34% of today's bugs at 10%.</li></ul>
+<p class='lede'>Backtest on <b>308</b> faulty patchsets the predictors never saw (changes first failing on or after 2026-08-01), holding <b>492</b> bugs. Today every patch runs the whole review matrix, about <b>133</b> session hours per build. "Share of today's bugs" is what each selection would catch of what today's matrix catches, with every change counting once.</p><ul class='targets'><li><b>90% at 25%:</b> not met yet. Best within the cost: + directory history, 20%, 60% of today's bugs at 21%.</li><li><b>90% at 10%:</b> not met yet. Best within the cost: trivial only, 34% of today's bugs at 10%.</li><li><b>95% at 10%:</b> not met yet. Best within the cost: trivial only, 34% of today's bugs at 10%.</li></ul>
 </header>
-<section><h2>Bugs caught against test cost, on unseen patches</h2>
+<section><h2>Bugs caught against test cost</h2>
 <svg viewBox="0 0 640 420" role="img" aria-label="bugs caught against cost" class="chart">
 <line x1="56.0" y1="374.0" x2="56.0" y2="18.0" class="grid"/>
 <text x="56.0" y="390.0" class="tick" text-anchor="middle">0%</text>
@@ -87,49 +93,57 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <text x="108.6" y="29.8" class="tlabel" text-anchor="end">95/10</text>
 <text x="339.0" y="414" class="axis" text-anchor="middle">share of today's test cost</text>
 <text transform="translate(14 196.0) rotate(-90)" class="axis" text-anchor="middle">share of today's bugs caught</text>
+<line x1="622.0" y1="18.0" x2="622.0" y2="18.0" class="link"/>
+<line x1="98.9" y1="240.8" x2="109.8" y2="252.6" class="link"/>
+<line x1="105.8" y1="178.2" x2="120.1" y2="205.6" class="link"/>
+<line x1="112.3" y1="152.7" x2="124.7" y2="194.4" class="link"/>
+<line x1="132.9" y1="140.7" x2="144.3" y2="182.0" class="link"/>
+<line x1="168.9" y1="120.5" x2="175.2" y2="160.6" class="link"/>
+<line x1="260.2" y1="70.0" x2="278.7" y2="123.4" class="link"/>
+<line x1="331.1" y1="47.7" x2="357.2" y2="95.2" class="link"/>
 <line x1="622.0" y1="18.0" x2="622.0" y2="18.0" class="ci today"/>
 <line x1="622.0" y1="18.0" x2="622.0" y2="18.0" class="ci today"/>
-<circle cx="622.0" cy="18.0" r="5" class="pt today"><title>full (test): 100% at 100%</title></circle>
+<circle cx="622.0" cy="18.0" r="5" class="pt today"><title>today&#x27;s matrix (test set): 100% of today's bugs at 100% of its cost</title></circle>
 <line x1="107.1" y1="252.6" x2="112.5" y2="252.6" class="ci trivial"/>
 <line x1="109.8" y1="269.2" x2="109.8" y2="236.1" class="ci trivial"/>
-<circle cx="109.8" cy="252.6" r="5" class="pt trivial"><title>trivial (test): 34% at 10%</title></circle>
+<circle cx="109.8" cy="252.6" r="5" class="pt trivial"><title>trivial only (test set): 34% of today's bugs at 10% of its cost</title></circle>
 <line x1="116.6" y1="205.6" x2="124.1" y2="205.6" class="ci edited"/>
 <line x1="120.1" y1="224.2" x2="120.1" y2="186.7" class="ci edited"/>
-<circle cx="120.1" cy="205.6" r="5" class="pt edited"><title>edited (test): 47% at 11%</title></circle>
+<circle cx="120.1" cy="205.6" r="5" class="pt edited"><title>+ edited test scripts (test set): 47% of today's bugs at 11% of its cost</title></circle>
 <line x1="120.6" y1="194.4" x2="129.4" y2="194.4" class="ci table"/>
 <line x1="124.7" y1="212.5" x2="124.7" y2="176.6" class="ci table"/>
-<circle cx="124.7" cy="194.4" r="5" class="pt table"><title>table-0.5 (test): 50% at 12%</title></circle>
+<circle cx="124.7" cy="194.4" r="5" class="pt table"><title>+ directory history, 50% (test set): 50% of today's bugs at 12% of its cost</title></circle>
 <line x1="138.0" y1="182.0" x2="151.8" y2="182.0" class="ci table"/>
 <line x1="144.3" y1="200.0" x2="144.3" y2="163.4" class="ci table"/>
-<circle cx="144.3" cy="182.0" r="5" class="pt table"><title>table-0.3 (test): 54% at 16%</title></circle>
+<circle cx="144.3" cy="182.0" r="5" class="pt table"><title>+ directory history, 30% (test set): 54% of today's bugs at 16% of its cost</title></circle>
 <line x1="165.7" y1="160.6" x2="186.7" y2="160.6" class="ci table"/>
 <line x1="175.2" y1="178.0" x2="175.2" y2="143.0" class="ci table"/>
-<circle cx="175.2" cy="160.6" r="5" class="pt table"><title>table-0.2 (test): 60% at 21%</title></circle>
+<circle cx="175.2" cy="160.6" r="5" class="pt table"><title>+ directory history, 20% (test set): 60% of today's bugs at 21% of its cost</title></circle>
 <line x1="261.5" y1="123.4" x2="298.7" y2="123.4" class="ci table"/>
 <line x1="278.7" y1="140.0" x2="278.7" y2="106.6" class="ci table"/>
-<circle cx="278.7" cy="123.4" r="5" class="pt table"><title>table-0.1 (test): 70% at 39%</title></circle>
+<circle cx="278.7" cy="123.4" r="5" class="pt table"><title>+ directory history, 10% (test set): 70% of today's bugs at 39% of its cost</title></circle>
 <line x1="335.3" y1="95.2" x2="383.0" y2="95.2" class="ci table"/>
 <line x1="357.2" y1="109.9" x2="357.2" y2="79.0" class="ci table"/>
-<circle cx="357.2" cy="95.2" r="5" class="pt table"><title>table-0.05 (test): 78% at 53%</title></circle>
-<circle cx="622.0" cy="18.0" r="5" class="pt today hollow"><title>full (train): 100% at 100%</title></circle>
-<circle cx="98.9" cy="240.8" r="5" class="pt trivial hollow"><title>trivial (train): 37% at 8%</title></circle>
-<circle cx="105.8" cy="178.2" r="5" class="pt edited hollow"><title>edited (train): 55% at 9%</title></circle>
-<circle cx="112.3" cy="152.7" r="5" class="pt table hollow"><title>table-0.5 (train): 62% at 10%</title></circle>
-<circle cx="132.9" cy="140.7" r="5" class="pt table hollow"><title>table-0.3 (train): 66% at 14%</title></circle>
-<circle cx="168.9" cy="120.5" r="5" class="pt table hollow"><title>table-0.2 (train): 71% at 20%</title></circle>
-<circle cx="260.2" cy="70.0" r="5" class="pt table hollow"><title>table-0.1 (train): 85% at 36%</title></circle>
-<circle cx="331.1" cy="47.7" r="5" class="pt table hollow"><title>table-0.05 (train): 92% at 49%</title></circle>
+<circle cx="357.2" cy="95.2" r="5" class="pt table"><title>+ directory history, 5% (test set): 78% of today's bugs at 53% of its cost</title></circle>
+<circle cx="622.0" cy="18.0" r="5" class="pt today hollow"><title>today&#x27;s matrix (training set): 100% of today's bugs at 100% of its cost</title></circle>
+<circle cx="98.9" cy="240.8" r="5" class="pt trivial hollow"><title>trivial only (training set): 37% of today's bugs at 8% of its cost</title></circle>
+<circle cx="105.8" cy="178.2" r="5" class="pt edited hollow"><title>+ edited test scripts (training set): 55% of today's bugs at 9% of its cost</title></circle>
+<circle cx="112.3" cy="152.7" r="5" class="pt table hollow"><title>+ directory history, 50% (training set): 62% of today's bugs at 10% of its cost</title></circle>
+<circle cx="132.9" cy="140.7" r="5" class="pt table hollow"><title>+ directory history, 30% (training set): 66% of today's bugs at 14% of its cost</title></circle>
+<circle cx="168.9" cy="120.5" r="5" class="pt table hollow"><title>+ directory history, 20% (training set): 71% of today's bugs at 20% of its cost</title></circle>
+<circle cx="260.2" cy="70.0" r="5" class="pt table hollow"><title>+ directory history, 10% (training set): 85% of today's bugs at 36% of its cost</title></circle>
+<circle cx="331.1" cy="47.7" r="5" class="pt table hollow"><title>+ directory history, 5% (training set): 92% of today's bugs at 49% of its cost</title></circle>
 <polyline class="frontier" points="109.8,252.6 120.1,205.6 124.7,194.4 144.3,182.0 175.2,160.6 278.7,123.4 357.2,95.2 622.0,18.0"/>
-<text x="613.0" y="22.0" class="plabel" text-anchor="end">today</text>
-<text x="366.2" y="99.2" class="plabel" text-anchor="start">table-0.05</text>
-<text x="287.7" y="127.4" class="plabel" text-anchor="start">table-0.1</text>
-<text x="184.2" y="164.6" class="plabel" text-anchor="start">table-0.2</text>
-<text x="153.3" y="186.0" class="plabel" text-anchor="start">table-0.3</text>
-<text x="133.7" y="200.0" class="plabel" text-anchor="start">table-0.5</text>
-<text x="129.1" y="214.0" class="plabel" text-anchor="start">edited</text>
-<text x="118.8" y="256.6" class="plabel" text-anchor="start">trivial</text>
+<text x="613.0" y="22.0" class="plabel" text-anchor="end">today&#x27;s matrix</text>
+<text x="366.2" y="99.2" class="plabel" text-anchor="start">+ directory history, 5%</text>
+<text x="287.7" y="127.4" class="plabel" text-anchor="start">+ directory history, 10%</text>
+<text x="184.2" y="164.6" class="plabel" text-anchor="start">+ directory history, 20%</text>
+<text x="153.3" y="186.0" class="plabel" text-anchor="start">+ directory history, 30%</text>
+<text x="133.7" y="211.4" class="plabel" text-anchor="start">+ directory history, 50%</text>
+<text x="129.1" y="235.6" class="plabel" text-anchor="start">+ edited test scripts</text>
+<text x="118.8" y="256.6" class="plabel" text-anchor="start">trivial only</text>
 </svg>
-<div class='legend'><span><i style='background:var(--today)'></i>today's matrix</span><span><i style='background:var(--trivial)'></i>trivial</span><span><i style='background:var(--edited)'></i>edited scripts</span><span><i style='background:var(--table)'></i>learned table</span><span>filled: test, hollow: train</span></div></section>
+<div class='legend'><span><i class='dot'></i>test set</span><span><i class='ring'></i>training set (joined to the same selection's test set point)</span><span>whiskers: 95% interval</span><span>dashed: best cost for each catch rate</span></div><dl class='key'><dt>today&#x27;s matrix</dt><dd>every review session Autotest runs today</dd><dt>trivial only</dt><dd>Test-Parameters: trivial and nothing else: review-ldiskfs (sanity, lnet-selftest)</dd><dt>+ edited test scripts</dt><dd>trivial, plus every test script the patch changes, run once in DNE ldiskfs</dd><dt>+ directory history, 50%</dt><dd>trivial and edited scripts, plus each script and configuration that caught a bug on at least 50% of the training set&#x27;s patches changing the same directory</dd><dt>+ directory history, 30%</dt><dd>trivial and edited scripts, plus each script and configuration that caught a bug on at least 30% of the training set&#x27;s patches changing the same directory</dd><dt>+ directory history, 20%</dt><dd>trivial and edited scripts, plus each script and configuration that caught a bug on at least 20% of the training set&#x27;s patches changing the same directory</dd><dt>+ directory history, 10%</dt><dd>trivial and edited scripts, plus each script and configuration that caught a bug on at least 10% of the training set&#x27;s patches changing the same directory</dd><dt>+ directory history, 5%</dt><dd>trivial and edited scripts, plus each script and configuration that caught a bug on at least 5% of the training set&#x27;s patches changing the same directory</dd></dl></section>
 <section><h2>By kind of bug</h2><div class="smalls"><figure><figcaption>Easy bugs (in tests the patch edits)</figcaption><svg viewBox="0 0 320 240" role="img" aria-label="Easy bugs (in tests the patch edits)" class="chart">
 <line x1="46.0" y1="204.0" x2="46.0" y2="14.0" class="grid"/>
 <text x="46.0" y="220.0" class="tick" text-anchor="middle">0%</text>
@@ -155,22 +169,30 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <text x="40.0" y="37.0" class="tick" text-anchor="end">90%</text>
 <line x1="46.0" y1="14.0" x2="306.0" y2="14.0" class="grid"/>
 <text x="40.0" y="18.0" class="tick" text-anchor="end">100%</text>
-<circle cx="306.0" cy="14.0" r="3.5" class="pt today"><title>full (test): 100% at 100%</title></circle>
-<circle cx="70.7" cy="77.9" r="3.5" class="pt trivial"><title>trivial (test): 66% at 10%</title></circle>
-<circle cx="75.5" cy="53.9" r="3.5" class="pt edited"><title>edited (test): 79% at 11%</title></circle>
-<circle cx="77.6" cy="51.7" r="3.5" class="pt table"><title>table-0.5 (test): 80% at 12%</title></circle>
-<circle cx="86.6" cy="50.2" r="3.5" class="pt table"><title>table-0.3 (test): 81% at 16%</title></circle>
-<circle cx="100.8" cy="40.2" r="3.5" class="pt table"><title>table-0.2 (test): 86% at 21%</title></circle>
-<circle cx="148.3" cy="36.6" r="3.5" class="pt table"><title>table-0.1 (test): 88% at 39%</title></circle>
-<circle cx="184.4" cy="33.6" r="3.5" class="pt table"><title>table-0.05 (test): 90% at 53%</title></circle>
-<circle cx="306.0" cy="14.0" r="3.5" class="pt today hollow"><title>full (train): 100% at 100%</title></circle>
-<circle cx="65.7" cy="99.7" r="3.5" class="pt trivial hollow"><title>trivial (train): 55% at 8%</title></circle>
-<circle cx="68.9" cy="49.4" r="3.5" class="pt edited hollow"><title>edited (train): 81% at 9%</title></circle>
-<circle cx="71.9" cy="43.6" r="3.5" class="pt table hollow"><title>table-0.5 (train): 84% at 10%</title></circle>
-<circle cx="81.3" cy="41.5" r="3.5" class="pt table hollow"><title>table-0.3 (train): 86% at 14%</title></circle>
-<circle cx="97.9" cy="34.7" r="3.5" class="pt table hollow"><title>table-0.2 (train): 89% at 20%</title></circle>
-<circle cx="139.8" cy="29.0" r="3.5" class="pt table hollow"><title>table-0.1 (train): 92% at 36%</title></circle>
-<circle cx="172.4" cy="28.2" r="3.5" class="pt table hollow"><title>table-0.05 (train): 93% at 49%</title></circle>
+<line x1="306.0" y1="14.0" x2="306.0" y2="14.0" class="link"/>
+<line x1="65.7" y1="99.7" x2="70.7" y2="77.9" class="link"/>
+<line x1="68.9" y1="49.4" x2="75.5" y2="53.9" class="link"/>
+<line x1="71.9" y1="43.6" x2="77.6" y2="51.7" class="link"/>
+<line x1="81.3" y1="41.5" x2="86.6" y2="50.2" class="link"/>
+<line x1="97.9" y1="34.7" x2="100.8" y2="40.2" class="link"/>
+<line x1="139.8" y1="29.0" x2="148.3" y2="36.6" class="link"/>
+<line x1="172.4" y1="28.2" x2="184.4" y2="33.6" class="link"/>
+<circle cx="306.0" cy="14.0" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 100% of today's bugs at 100% of its cost</title></circle>
+<circle cx="70.7" cy="77.9" r="3.5" class="pt trivial"><title>trivial only (test set): 66% of today's bugs at 10% of its cost</title></circle>
+<circle cx="75.5" cy="53.9" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 79% of today's bugs at 11% of its cost</title></circle>
+<circle cx="77.6" cy="51.7" r="3.5" class="pt table"><title>+ directory history, 50% (test set): 80% of today's bugs at 12% of its cost</title></circle>
+<circle cx="86.6" cy="50.2" r="3.5" class="pt table"><title>+ directory history, 30% (test set): 81% of today's bugs at 16% of its cost</title></circle>
+<circle cx="100.8" cy="40.2" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 86% of today's bugs at 21% of its cost</title></circle>
+<circle cx="148.3" cy="36.6" r="3.5" class="pt table"><title>+ directory history, 10% (test set): 88% of today's bugs at 39% of its cost</title></circle>
+<circle cx="184.4" cy="33.6" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 90% of today's bugs at 53% of its cost</title></circle>
+<circle cx="306.0" cy="14.0" r="3.5" class="pt today hollow"><title>today&#x27;s matrix (training set): 100% of today's bugs at 100% of its cost</title></circle>
+<circle cx="65.7" cy="99.7" r="3.5" class="pt trivial hollow"><title>trivial only (training set): 55% of today's bugs at 8% of its cost</title></circle>
+<circle cx="68.9" cy="49.4" r="3.5" class="pt edited hollow"><title>+ edited test scripts (training set): 81% of today's bugs at 9% of its cost</title></circle>
+<circle cx="71.9" cy="43.6" r="3.5" class="pt table hollow"><title>+ directory history, 50% (training set): 84% of today's bugs at 10% of its cost</title></circle>
+<circle cx="81.3" cy="41.5" r="3.5" class="pt table hollow"><title>+ directory history, 30% (training set): 86% of today's bugs at 14% of its cost</title></circle>
+<circle cx="97.9" cy="34.7" r="3.5" class="pt table hollow"><title>+ directory history, 20% (training set): 89% of today's bugs at 20% of its cost</title></circle>
+<circle cx="139.8" cy="29.0" r="3.5" class="pt table hollow"><title>+ directory history, 10% (training set): 92% of today's bugs at 36% of its cost</title></circle>
+<circle cx="172.4" cy="28.2" r="3.5" class="pt table hollow"><title>+ directory history, 5% (training set): 93% of today's bugs at 49% of its cost</title></circle>
 <polyline class="frontier" points="70.7,77.9 75.5,53.9 77.6,51.7 86.6,50.2 100.8,40.2 148.3,36.6 184.4,33.6 306.0,14.0"/>
 </svg></figure><figure><figcaption>Hard bugs</figcaption><svg viewBox="0 0 320 240" role="img" aria-label="Hard bugs" class="chart">
 <line x1="46.0" y1="204.0" x2="46.0" y2="14.0" class="grid"/>
@@ -197,22 +219,30 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <text x="40.0" y="37.0" class="tick" text-anchor="end">90%</text>
 <line x1="46.0" y1="14.0" x2="306.0" y2="14.0" class="grid"/>
 <text x="40.0" y="18.0" class="tick" text-anchor="end">100%</text>
-<circle cx="306.0" cy="14.0" r="3.5" class="pt today"><title>full (test): 100% at 100%</title></circle>
-<circle cx="70.7" cy="184.6" r="3.5" class="pt trivial"><title>trivial (test): 10% at 10%</title></circle>
-<circle cx="75.5" cy="156.7" r="3.5" class="pt edited"><title>edited (test): 25% at 11%</title></circle>
-<circle cx="77.6" cy="147.2" r="3.5" class="pt table"><title>table-0.5 (test): 30% at 12%</title></circle>
-<circle cx="86.6" cy="136.5" r="3.5" class="pt table"><title>table-0.3 (test): 36% at 16%</title></circle>
-<circle cx="100.8" cy="118.8" r="3.5" class="pt table"><title>table-0.2 (test): 45% at 21%</title></circle>
-<circle cx="148.3" cy="87.5" r="3.5" class="pt table"><title>table-0.1 (test): 61% at 39%</title></circle>
-<circle cx="184.4" cy="67.5" r="3.5" class="pt table"><title>table-0.05 (test): 72% at 53%</title></circle>
-<circle cx="306.0" cy="14.0" r="3.5" class="pt today hollow"><title>full (train): 100% at 100%</title></circle>
-<circle cx="65.7" cy="180.1" r="3.5" class="pt trivial hollow"><title>trivial (train): 13% at 8%</title></circle>
-<circle cx="68.9" cy="149.5" r="3.5" class="pt edited hollow"><title>edited (train): 29% at 9%</title></circle>
-<circle cx="71.9" cy="128.0" r="3.5" class="pt table hollow"><title>table-0.5 (train): 40% at 10%</title></circle>
-<circle cx="81.3" cy="117.8" r="3.5" class="pt table hollow"><title>table-0.3 (train): 45% at 14%</title></circle>
-<circle cx="97.9" cy="100.3" r="3.5" class="pt table hollow"><title>table-0.2 (train): 55% at 20%</title></circle>
-<circle cx="139.8" cy="55.6" r="3.5" class="pt table hollow"><title>table-0.1 (train): 78% at 36%</title></circle>
-<circle cx="172.4" cy="36.4" r="3.5" class="pt table hollow"><title>table-0.05 (train): 88% at 49%</title></circle>
+<line x1="306.0" y1="14.0" x2="306.0" y2="14.0" class="link"/>
+<line x1="65.7" y1="180.1" x2="70.7" y2="184.6" class="link"/>
+<line x1="68.9" y1="149.5" x2="75.5" y2="156.7" class="link"/>
+<line x1="71.9" y1="128.0" x2="77.6" y2="147.2" class="link"/>
+<line x1="81.3" y1="117.8" x2="86.6" y2="136.5" class="link"/>
+<line x1="97.9" y1="100.3" x2="100.8" y2="118.8" class="link"/>
+<line x1="139.8" y1="55.6" x2="148.3" y2="87.5" class="link"/>
+<line x1="172.4" y1="36.4" x2="184.4" y2="67.5" class="link"/>
+<circle cx="306.0" cy="14.0" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 100% of today's bugs at 100% of its cost</title></circle>
+<circle cx="70.7" cy="184.6" r="3.5" class="pt trivial"><title>trivial only (test set): 10% of today's bugs at 10% of its cost</title></circle>
+<circle cx="75.5" cy="156.7" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 25% of today's bugs at 11% of its cost</title></circle>
+<circle cx="77.6" cy="147.2" r="3.5" class="pt table"><title>+ directory history, 50% (test set): 30% of today's bugs at 12% of its cost</title></circle>
+<circle cx="86.6" cy="136.5" r="3.5" class="pt table"><title>+ directory history, 30% (test set): 36% of today's bugs at 16% of its cost</title></circle>
+<circle cx="100.8" cy="118.8" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 45% of today's bugs at 21% of its cost</title></circle>
+<circle cx="148.3" cy="87.5" r="3.5" class="pt table"><title>+ directory history, 10% (test set): 61% of today's bugs at 39% of its cost</title></circle>
+<circle cx="184.4" cy="67.5" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 72% of today's bugs at 53% of its cost</title></circle>
+<circle cx="306.0" cy="14.0" r="3.5" class="pt today hollow"><title>today&#x27;s matrix (training set): 100% of today's bugs at 100% of its cost</title></circle>
+<circle cx="65.7" cy="180.1" r="3.5" class="pt trivial hollow"><title>trivial only (training set): 13% of today's bugs at 8% of its cost</title></circle>
+<circle cx="68.9" cy="149.5" r="3.5" class="pt edited hollow"><title>+ edited test scripts (training set): 29% of today's bugs at 9% of its cost</title></circle>
+<circle cx="71.9" cy="128.0" r="3.5" class="pt table hollow"><title>+ directory history, 50% (training set): 40% of today's bugs at 10% of its cost</title></circle>
+<circle cx="81.3" cy="117.8" r="3.5" class="pt table hollow"><title>+ directory history, 30% (training set): 45% of today's bugs at 14% of its cost</title></circle>
+<circle cx="97.9" cy="100.3" r="3.5" class="pt table hollow"><title>+ directory history, 20% (training set): 55% of today's bugs at 20% of its cost</title></circle>
+<circle cx="139.8" cy="55.6" r="3.5" class="pt table hollow"><title>+ directory history, 10% (training set): 78% of today's bugs at 36% of its cost</title></circle>
+<circle cx="172.4" cy="36.4" r="3.5" class="pt table hollow"><title>+ directory history, 5% (training set): 88% of today's bugs at 49% of its cost</title></circle>
 <polyline class="frontier" points="70.7,184.6 75.5,156.7 77.6,147.2 86.6,136.5 100.8,118.8 148.3,87.5 184.4,67.5 306.0,14.0"/>
 </svg></figure><figure><figcaption>Bugs also on the series</figcaption><svg viewBox="0 0 320 240" role="img" aria-label="Bugs also on the series" class="chart">
 <line x1="46.0" y1="204.0" x2="46.0" y2="14.0" class="grid"/>
@@ -239,22 +269,30 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <text x="40.0" y="37.0" class="tick" text-anchor="end">90%</text>
 <line x1="46.0" y1="14.0" x2="306.0" y2="14.0" class="grid"/>
 <text x="40.0" y="18.0" class="tick" text-anchor="end">100%</text>
-<circle cx="306.0" cy="14.0" r="3.5" class="pt today"><title>full (test): 100% at 100%</title></circle>
-<circle cx="70.7" cy="168.8" r="3.5" class="pt trivial"><title>trivial (test): 19% at 10%</title></circle>
-<circle cx="75.5" cy="127.0" r="3.5" class="pt edited"><title>edited (test): 41% at 11%</title></circle>
-<circle cx="77.6" cy="115.3" r="3.5" class="pt table"><title>table-0.5 (test): 47% at 12%</title></circle>
-<circle cx="86.6" cy="108.9" r="3.5" class="pt table"><title>table-0.3 (test): 50% at 16%</title></circle>
-<circle cx="100.8" cy="91.7" r="3.5" class="pt table"><title>table-0.2 (test): 59% at 21%</title></circle>
-<circle cx="148.3" cy="57.3" r="3.5" class="pt table"><title>table-0.1 (test): 77% at 39%</title></circle>
-<circle cx="184.4" cy="48.5" r="3.5" class="pt table"><title>table-0.05 (test): 82% at 53%</title></circle>
-<circle cx="306.0" cy="14.0" r="3.5" class="pt today hollow"><title>full (train): 100% at 100%</title></circle>
-<circle cx="65.7" cy="159.9" r="3.5" class="pt trivial hollow"><title>trivial (train): 23% at 8%</title></circle>
-<circle cx="68.9" cy="131.9" r="3.5" class="pt edited hollow"><title>edited (train): 38% at 9%</title></circle>
-<circle cx="71.9" cy="126.6" r="3.5" class="pt table hollow"><title>table-0.5 (train): 41% at 10%</title></circle>
-<circle cx="81.3" cy="110.6" r="3.5" class="pt table hollow"><title>table-0.3 (train): 49% at 14%</title></circle>
-<circle cx="97.9" cy="83.4" r="3.5" class="pt table hollow"><title>table-0.2 (train): 63% at 20%</title></circle>
-<circle cx="139.8" cy="50.4" r="3.5" class="pt table hollow"><title>table-0.1 (train): 81% at 36%</title></circle>
-<circle cx="172.4" cy="37.6" r="3.5" class="pt table hollow"><title>table-0.05 (train): 88% at 49%</title></circle>
+<line x1="306.0" y1="14.0" x2="306.0" y2="14.0" class="link"/>
+<line x1="65.7" y1="159.9" x2="70.7" y2="168.8" class="link"/>
+<line x1="68.9" y1="131.9" x2="75.5" y2="127.0" class="link"/>
+<line x1="71.9" y1="126.6" x2="77.6" y2="115.3" class="link"/>
+<line x1="81.3" y1="110.6" x2="86.6" y2="108.9" class="link"/>
+<line x1="97.9" y1="83.4" x2="100.8" y2="91.7" class="link"/>
+<line x1="139.8" y1="50.4" x2="148.3" y2="57.3" class="link"/>
+<line x1="172.4" y1="37.6" x2="184.4" y2="48.5" class="link"/>
+<circle cx="306.0" cy="14.0" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 100% of today's bugs at 100% of its cost</title></circle>
+<circle cx="70.7" cy="168.8" r="3.5" class="pt trivial"><title>trivial only (test set): 19% of today's bugs at 10% of its cost</title></circle>
+<circle cx="75.5" cy="127.0" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 41% of today's bugs at 11% of its cost</title></circle>
+<circle cx="77.6" cy="115.3" r="3.5" class="pt table"><title>+ directory history, 50% (test set): 47% of today's bugs at 12% of its cost</title></circle>
+<circle cx="86.6" cy="108.9" r="3.5" class="pt table"><title>+ directory history, 30% (test set): 50% of today's bugs at 16% of its cost</title></circle>
+<circle cx="100.8" cy="91.7" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 59% of today's bugs at 21% of its cost</title></circle>
+<circle cx="148.3" cy="57.3" r="3.5" class="pt table"><title>+ directory history, 10% (test set): 77% of today's bugs at 39% of its cost</title></circle>
+<circle cx="184.4" cy="48.5" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 82% of today's bugs at 53% of its cost</title></circle>
+<circle cx="306.0" cy="14.0" r="3.5" class="pt today hollow"><title>today&#x27;s matrix (training set): 100% of today's bugs at 100% of its cost</title></circle>
+<circle cx="65.7" cy="159.9" r="3.5" class="pt trivial hollow"><title>trivial only (training set): 23% of today's bugs at 8% of its cost</title></circle>
+<circle cx="68.9" cy="131.9" r="3.5" class="pt edited hollow"><title>+ edited test scripts (training set): 38% of today's bugs at 9% of its cost</title></circle>
+<circle cx="71.9" cy="126.6" r="3.5" class="pt table hollow"><title>+ directory history, 50% (training set): 41% of today's bugs at 10% of its cost</title></circle>
+<circle cx="81.3" cy="110.6" r="3.5" class="pt table hollow"><title>+ directory history, 30% (training set): 49% of today's bugs at 14% of its cost</title></circle>
+<circle cx="97.9" cy="83.4" r="3.5" class="pt table hollow"><title>+ directory history, 20% (training set): 63% of today's bugs at 20% of its cost</title></circle>
+<circle cx="139.8" cy="50.4" r="3.5" class="pt table hollow"><title>+ directory history, 10% (training set): 81% of today's bugs at 36% of its cost</title></circle>
+<circle cx="172.4" cy="37.6" r="3.5" class="pt table hollow"><title>+ directory history, 5% (training set): 88% of today's bugs at 49% of its cost</title></circle>
 <polyline class="frontier" points="70.7,168.8 75.5,127.0 77.6,115.3 86.6,108.9 100.8,91.7 148.3,57.3 184.4,48.5 306.0,14.0"/>
 </svg></figure><figure><figcaption>Patchsets with every bug caught</figcaption><svg viewBox="0 0 320 240" role="img" aria-label="Patchsets with every bug caught" class="chart">
 <line x1="46.0" y1="204.0" x2="46.0" y2="14.0" class="grid"/>
@@ -281,41 +319,49 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <text x="40.0" y="37.0" class="tick" text-anchor="end">90%</text>
 <line x1="46.0" y1="14.0" x2="306.0" y2="14.0" class="grid"/>
 <text x="40.0" y="18.0" class="tick" text-anchor="end">100%</text>
-<circle cx="306.0" cy="60.4" r="3.5" class="pt today"><title>full (test): 76% at 100%</title></circle>
-<circle cx="70.7" cy="158.0" r="3.5" class="pt trivial"><title>trivial (test): 24% at 10%</title></circle>
-<circle cx="75.5" cy="134.3" r="3.5" class="pt edited"><title>edited (test): 37% at 11%</title></circle>
-<circle cx="77.6" cy="132.2" r="3.5" class="pt table"><title>table-0.5 (test): 38% at 12%</title></circle>
-<circle cx="86.6" cy="127.4" r="3.5" class="pt table"><title>table-0.3 (test): 40% at 16%</title></circle>
-<circle cx="100.8" cy="117.6" r="3.5" class="pt table"><title>table-0.2 (test): 45% at 21%</title></circle>
-<circle cx="148.3" cy="102.2" r="3.5" class="pt table"><title>table-0.1 (test): 54% at 39%</title></circle>
-<circle cx="184.4" cy="94.5" r="3.5" class="pt table"><title>table-0.05 (test): 58% at 53%</title></circle>
-<circle cx="306.0" cy="65.6" r="3.5" class="pt today hollow"><title>full (train): 73% at 100%</title></circle>
-<circle cx="65.7" cy="163.5" r="3.5" class="pt trivial hollow"><title>trivial (train): 21% at 8%</title></circle>
-<circle cx="68.9" cy="131.7" r="3.5" class="pt edited hollow"><title>edited (train): 38% at 9%</title></circle>
-<circle cx="71.9" cy="124.9" r="3.5" class="pt table hollow"><title>table-0.5 (train): 42% at 10%</title></circle>
-<circle cx="81.3" cy="118.9" r="3.5" class="pt table hollow"><title>table-0.3 (train): 45% at 14%</title></circle>
-<circle cx="97.9" cy="109.0" r="3.5" class="pt table hollow"><title>table-0.2 (train): 50% at 20%</title></circle>
-<circle cx="139.8" cy="91.2" r="3.5" class="pt table hollow"><title>table-0.1 (train): 59% at 36%</title></circle>
-<circle cx="172.4" cy="83.5" r="3.5" class="pt table hollow"><title>table-0.05 (train): 63% at 49%</title></circle>
+<line x1="306.0" y1="65.6" x2="306.0" y2="60.4" class="link"/>
+<line x1="65.7" y1="163.5" x2="70.7" y2="158.0" class="link"/>
+<line x1="68.9" y1="131.7" x2="75.5" y2="134.3" class="link"/>
+<line x1="71.9" y1="124.9" x2="77.6" y2="132.2" class="link"/>
+<line x1="81.3" y1="118.9" x2="86.6" y2="127.4" class="link"/>
+<line x1="97.9" y1="109.0" x2="100.8" y2="117.6" class="link"/>
+<line x1="139.8" y1="91.2" x2="148.3" y2="102.2" class="link"/>
+<line x1="172.4" y1="83.5" x2="184.4" y2="94.5" class="link"/>
+<circle cx="306.0" cy="60.4" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 76% of today's bugs at 100% of its cost</title></circle>
+<circle cx="70.7" cy="158.0" r="3.5" class="pt trivial"><title>trivial only (test set): 24% of today's bugs at 10% of its cost</title></circle>
+<circle cx="75.5" cy="134.3" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 37% of today's bugs at 11% of its cost</title></circle>
+<circle cx="77.6" cy="132.2" r="3.5" class="pt table"><title>+ directory history, 50% (test set): 38% of today's bugs at 12% of its cost</title></circle>
+<circle cx="86.6" cy="127.4" r="3.5" class="pt table"><title>+ directory history, 30% (test set): 40% of today's bugs at 16% of its cost</title></circle>
+<circle cx="100.8" cy="117.6" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 45% of today's bugs at 21% of its cost</title></circle>
+<circle cx="148.3" cy="102.2" r="3.5" class="pt table"><title>+ directory history, 10% (test set): 54% of today's bugs at 39% of its cost</title></circle>
+<circle cx="184.4" cy="94.5" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 58% of today's bugs at 53% of its cost</title></circle>
+<circle cx="306.0" cy="65.6" r="3.5" class="pt today hollow"><title>today&#x27;s matrix (training set): 73% of today's bugs at 100% of its cost</title></circle>
+<circle cx="65.7" cy="163.5" r="3.5" class="pt trivial hollow"><title>trivial only (training set): 21% of today's bugs at 8% of its cost</title></circle>
+<circle cx="68.9" cy="131.7" r="3.5" class="pt edited hollow"><title>+ edited test scripts (training set): 38% of today's bugs at 9% of its cost</title></circle>
+<circle cx="71.9" cy="124.9" r="3.5" class="pt table hollow"><title>+ directory history, 50% (training set): 42% of today's bugs at 10% of its cost</title></circle>
+<circle cx="81.3" cy="118.9" r="3.5" class="pt table hollow"><title>+ directory history, 30% (training set): 45% of today's bugs at 14% of its cost</title></circle>
+<circle cx="97.9" cy="109.0" r="3.5" class="pt table hollow"><title>+ directory history, 20% (training set): 50% of today's bugs at 20% of its cost</title></circle>
+<circle cx="139.8" cy="91.2" r="3.5" class="pt table hollow"><title>+ directory history, 10% (training set): 59% of today's bugs at 36% of its cost</title></circle>
+<circle cx="172.4" cy="83.5" r="3.5" class="pt table hollow"><title>+ directory history, 5% (training set): 63% of today's bugs at 49% of its cost</title></circle>
 <polyline class="frontier" points="70.7,158.0 75.5,134.3 77.6,132.2 86.6,127.4 100.8,117.6 148.3,102.2 184.4,94.5 306.0,60.4"/>
 </svg></figure></div></section>
 <section><h2>Every predictor</h2><div class='scroll'><table><thead><tr><th>Predictor</th><th>Split</th><th>Bugs vs today, per change</th><th>Per bug</th><th>Hard bugs</th><th>All bugs caught</th><th>Test cost</th><th>Session h / build</th><th>LLM $ / patch</th></tr></thead><tbody>
-<tr class='test'><td>full</td><td>test</td><td class='n'>100% <span class='ci'>(100% to 100%)</span></td><td class='n'>100%</td><td class='n'>100%</td><td class='n'>76%</td><td class='n'>100%</td><td class='n'>133</td><td class='n'></td></tr>
-<tr class='test'><td>trivial</td><td>test</td><td class='n'>34% <span class='ci'>(29% to 39%)</span></td><td class='n'>28%</td><td class='n'>10%</td><td class='n'>24%</td><td class='n'>10%</td><td class='n'>13</td><td class='n'></td></tr>
-<tr class='test'><td>edited</td><td>test</td><td class='n'>47% <span class='ci'>(42% to 53%)</span></td><td class='n'>44%</td><td class='n'>25%</td><td class='n'>37%</td><td class='n'>11%</td><td class='n'>15</td><td class='n'></td></tr>
-<tr class='test'><td>table-0.5</td><td>test</td><td class='n'>50% <span class='ci'>(45% to 55%)</span></td><td class='n'>49%</td><td class='n'>30%</td><td class='n'>38%</td><td class='n'>12%</td><td class='n'>16</td><td class='n'></td></tr>
-<tr class='test'><td>table-0.3</td><td>test</td><td class='n'>54% <span class='ci'>(49% to 59%)</span></td><td class='n'>53%</td><td class='n'>36%</td><td class='n'>40%</td><td class='n'>16%</td><td class='n'>21</td><td class='n'></td></tr>
-<tr class='test'><td>table-0.2</td><td>test</td><td class='n'>60% <span class='ci'>(55% to 65%)</span></td><td class='n'>61%</td><td class='n'>45%</td><td class='n'>45%</td><td class='n'>21%</td><td class='n'>28</td><td class='n'></td></tr>
-<tr class='test'><td>table-0.1</td><td>test</td><td class='n'>70% <span class='ci'>(66% to 75%)</span></td><td class='n'>76%</td><td class='n'>61%</td><td class='n'>54%</td><td class='n'>39%</td><td class='n'>52</td><td class='n'></td></tr>
-<tr class='test'><td>table-0.05</td><td>test</td><td class='n'>78% <span class='ci'>(74% to 83%)</span></td><td class='n'>82%</td><td class='n'>72%</td><td class='n'>58%</td><td class='n'>53%</td><td class='n'>71</td><td class='n'></td></tr>
-<tr class='train'><td>full</td><td>train</td><td class='n'>100% <span class='ci'>(100% to 100%)</span></td><td class='n'>100%</td><td class='n'>100%</td><td class='n'>73%</td><td class='n'>100%</td><td class='n'>132</td><td class='n'></td></tr>
-<tr class='train'><td>trivial</td><td>train</td><td class='n'>37% <span class='ci'>(33% to 42%)</span></td><td class='n'>27%</td><td class='n'>13%</td><td class='n'>21%</td><td class='n'>8%</td><td class='n'>10</td><td class='n'></td></tr>
-<tr class='train'><td>edited</td><td>train</td><td class='n'>55% <span class='ci'>(50% to 60%)</span></td><td class='n'>44%</td><td class='n'>29%</td><td class='n'>38%</td><td class='n'>9%</td><td class='n'>12</td><td class='n'></td></tr>
-<tr class='train'><td>table-0.5</td><td>train</td><td class='n'>62% <span class='ci'>(58% to 67%)</span></td><td class='n'>48%</td><td class='n'>40%</td><td class='n'>42%</td><td class='n'>10%</td><td class='n'>13</td><td class='n'></td></tr>
-<tr class='train'><td>table-0.3</td><td>train</td><td class='n'>66% <span class='ci'>(62% to 70%)</span></td><td class='n'>57%</td><td class='n'>45%</td><td class='n'>45%</td><td class='n'>14%</td><td class='n'>18</td><td class='n'></td></tr>
-<tr class='train'><td>table-0.2</td><td>train</td><td class='n'>71% <span class='ci'>(67% to 76%)</span></td><td class='n'>67%</td><td class='n'>55%</td><td class='n'>50%</td><td class='n'>20%</td><td class='n'>26</td><td class='n'></td></tr>
-<tr class='train'><td>table-0.1</td><td>train</td><td class='n'>85% <span class='ci'>(83% to 89%)</span></td><td class='n'>83%</td><td class='n'>78%</td><td class='n'>59%</td><td class='n'>36%</td><td class='n'>48</td><td class='n'></td></tr>
-<tr class='train'><td>table-0.05</td><td>train</td><td class='n'>92% <span class='ci'>(90% to 94%)</span></td><td class='n'>89%</td><td class='n'>88%</td><td class='n'>63%</td><td class='n'>49%</td><td class='n'>64</td><td class='n'></td></tr>
+<tr class='test'><td>today&#x27;s matrix</td><td>test set</td><td class='n'>100% <span class='ci'>(100% to 100%)</span></td><td class='n'>100%</td><td class='n'>100%</td><td class='n'>76%</td><td class='n'>100%</td><td class='n'>133</td><td class='n'></td></tr>
+<tr class='test'><td>trivial only</td><td>test set</td><td class='n'>34% <span class='ci'>(29% to 39%)</span></td><td class='n'>28%</td><td class='n'>10%</td><td class='n'>24%</td><td class='n'>10%</td><td class='n'>13</td><td class='n'></td></tr>
+<tr class='test'><td>+ edited test scripts</td><td>test set</td><td class='n'>47% <span class='ci'>(42% to 53%)</span></td><td class='n'>44%</td><td class='n'>25%</td><td class='n'>37%</td><td class='n'>11%</td><td class='n'>15</td><td class='n'></td></tr>
+<tr class='test'><td>+ directory history, 50%</td><td>test set</td><td class='n'>50% <span class='ci'>(45% to 55%)</span></td><td class='n'>49%</td><td class='n'>30%</td><td class='n'>38%</td><td class='n'>12%</td><td class='n'>16</td><td class='n'></td></tr>
+<tr class='test'><td>+ directory history, 30%</td><td>test set</td><td class='n'>54% <span class='ci'>(49% to 59%)</span></td><td class='n'>53%</td><td class='n'>36%</td><td class='n'>40%</td><td class='n'>16%</td><td class='n'>21</td><td class='n'></td></tr>
+<tr class='test'><td>+ directory history, 20%</td><td>test set</td><td class='n'>60% <span class='ci'>(55% to 65%)</span></td><td class='n'>61%</td><td class='n'>45%</td><td class='n'>45%</td><td class='n'>21%</td><td class='n'>28</td><td class='n'></td></tr>
+<tr class='test'><td>+ directory history, 10%</td><td>test set</td><td class='n'>70% <span class='ci'>(66% to 75%)</span></td><td class='n'>76%</td><td class='n'>61%</td><td class='n'>54%</td><td class='n'>39%</td><td class='n'>52</td><td class='n'></td></tr>
+<tr class='test'><td>+ directory history, 5%</td><td>test set</td><td class='n'>78% <span class='ci'>(74% to 83%)</span></td><td class='n'>82%</td><td class='n'>72%</td><td class='n'>58%</td><td class='n'>53%</td><td class='n'>71</td><td class='n'></td></tr>
+<tr class='train'><td>today&#x27;s matrix</td><td>training set</td><td class='n'>100% <span class='ci'>(100% to 100%)</span></td><td class='n'>100%</td><td class='n'>100%</td><td class='n'>73%</td><td class='n'>100%</td><td class='n'>132</td><td class='n'></td></tr>
+<tr class='train'><td>trivial only</td><td>training set</td><td class='n'>37% <span class='ci'>(33% to 42%)</span></td><td class='n'>27%</td><td class='n'>13%</td><td class='n'>21%</td><td class='n'>8%</td><td class='n'>10</td><td class='n'></td></tr>
+<tr class='train'><td>+ edited test scripts</td><td>training set</td><td class='n'>55% <span class='ci'>(50% to 60%)</span></td><td class='n'>44%</td><td class='n'>29%</td><td class='n'>38%</td><td class='n'>9%</td><td class='n'>12</td><td class='n'></td></tr>
+<tr class='train'><td>+ directory history, 50%</td><td>training set</td><td class='n'>62% <span class='ci'>(58% to 67%)</span></td><td class='n'>48%</td><td class='n'>40%</td><td class='n'>42%</td><td class='n'>10%</td><td class='n'>13</td><td class='n'></td></tr>
+<tr class='train'><td>+ directory history, 30%</td><td>training set</td><td class='n'>66% <span class='ci'>(62% to 70%)</span></td><td class='n'>57%</td><td class='n'>45%</td><td class='n'>45%</td><td class='n'>14%</td><td class='n'>18</td><td class='n'></td></tr>
+<tr class='train'><td>+ directory history, 20%</td><td>training set</td><td class='n'>71% <span class='ci'>(67% to 76%)</span></td><td class='n'>67%</td><td class='n'>55%</td><td class='n'>50%</td><td class='n'>20%</td><td class='n'>26</td><td class='n'></td></tr>
+<tr class='train'><td>+ directory history, 10%</td><td>training set</td><td class='n'>85% <span class='ci'>(83% to 89%)</span></td><td class='n'>83%</td><td class='n'>78%</td><td class='n'>59%</td><td class='n'>36%</td><td class='n'>48</td><td class='n'></td></tr>
+<tr class='train'><td>+ directory history, 5%</td><td>training set</td><td class='n'>92% <span class='ci'>(90% to 94%)</span></td><td class='n'>89%</td><td class='n'>88%</td><td class='n'>63%</td><td class='n'>49%</td><td class='n'>64</td><td class='n'></td></tr>
 </tbody></table></div></section>
 <section><h2>The climb</h2><p class='muted'>No hillclimb rounds yet. Each round's train and test scores will be drawn here.</p></section>
 <section><h2>How this is measured</h2><ul class="notes"><li>Bugs: a patchset&#x27;s patch faults grouped by error signature across scripts; a failure over most of the scripts its build ran counts as one cascade; bugs no selection could tell apart (same scripts, same configurations) count as one. The label audit (eval/audit) checks the grouping and the labels.</li><li>Each change counts once: a change whose patchsets fail hundreds of tests weighs no more than one that fails one. The per-bug figure is in the table.</li><li>A selection catches a bug when it runs a script in a configuration where that script failed with the bug in the patchset&#x27;s own build, with the chance the build showed (failed runs over runs). A configuration where the script never ran counts as not caught.</li><li>Trivial (review-ldiskfs) and the subtest-change sessions run for every selection and are charged to it.</li><li>Cost is session time on a random sample of all review patchsets: 23 minutes of setup per added session plus each script&#x27;s mean run time in its configuration.</li><li>Single-MDT, Ubuntu and SLES client configurations are asked for with keys no custom session has used yet; SELinux, shared-key and IPv6 configurations can only be asked for as whole groups.</li></ul>

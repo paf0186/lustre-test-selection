@@ -97,7 +97,7 @@ def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> 
 		title = r.get("title") or r["predictor"]
 		s.append(f'<circle cx="{X(x):.1f}" cy="{Y(y):.1f}" r="{3.5 if small else 5}" '
 			 f'class="pt {fam}{" hollow" if hollow else ""}"><title>{esc(title)} '
-			 f'({"training patches" if hollow else "unseen patches"}): {pct(y)} of today\'s bugs at '
+			 f'({"training set" if hollow else "test set"}): {pct(y)} of today\'s bugs at '
 			 f'{pct(x)} of its cost</title></circle>')
 		if not hollow:
 			pts.append((x, y, title))
@@ -133,7 +133,7 @@ def table(rows: list[dict]) -> str:
 		per = (llm.get("dollars", 0) / r["sampled"]) if llm.get("dollars") and r.get("sampled") else None
 		ci = r.get("ci", {}).get("recall_vs_full")
 		vs = pct(r.get("recall_vs_full")) + (f" <span class='ci'>({pct(ci[0])} to {pct(ci[1])})</span>" if ci else "")
-		out.append(f"<tr class='{r['split']}'><td>{esc(r.get('title') or r['predictor'])}</td><td>{r['split']}</td>"
+		out.append(f"<tr class='{r['split']}'><td>{esc(r.get('title') or r['predictor'])}</td><td>{'training set' if r['split'] == 'train' else 'test set'}</td>"
 			   f"<td class='n'>{vs}</td><td class='n'>{pct(r.get('bug_recall_vs_full'))}</td>"
 			   f"<td class='n'>{pct(r.get('hard_change_vs_full'))}</td><td class='n'>{pct(r.get('all_caught'))}</td>"
 			   f"<td class='n'>{pct(r.get('cost_share'))}</td>"
@@ -255,9 +255,9 @@ def main() -> None:
 	test = [r for (p, s), r in last.items() if s == "test"]
 	train = [r for (p, s), r in last.items() if s == "train"]
 	both = test + train
-	legend = ("<div class='legend'><span><i class='dot'></i>patches the selection never saw (test)</span>"
-		  "<span><i class='ring'></i>the same selection on the patches it was learned from (train), "
-		  "joined to its test point</span><span>whiskers: 95% interval</span>"
+	legend = ("<div class='legend'><span><i class='dot'></i>test set</span>"
+		  "<span><i class='ring'></i>training set (joined to the same selection's test set point)</span>"
+		  "<span>whiskers: 95% interval</span>"
 		  "<span>dashed: best cost for each catch rate</span></div>")
 	seen = set()
 	key_rows = []
@@ -282,7 +282,7 @@ def main() -> None:
 <h1>How much testing does a patch need?</h1>
 {headline(test, manifest)}
 </header>
-<section><h2>Bugs caught against test cost, on unseen patches</h2>
+<section><h2>Bugs caught against test cost</h2>
 {chart(both, "recall_vs_full", "bugs caught against cost")}
 {legend}</section>
 <section><h2>By kind of bug</h2><div class="smalls">{smalls}</div></section>

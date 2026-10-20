@@ -66,9 +66,9 @@ class Table:
 	def __init__(self, share: float = 0.2, min_cases: int = 3):
 		self.share, self.min_cases = share, min_cases
 		self.name = f"table-{share:g}"
-		self.title = f"+ learned from files, {share:.0%}"
+		self.title = f"+ directory history, {share:.0%}"
 		self.about = (f"trivial and edited scripts, plus each script and configuration that caught a bug "
-			      f"on at least {share:.0%} of the training patches changing the same directory")
+			      f"on at least {share:.0%} of the training set's patches changing the same directory")
 
 	def fit(self, cases):
 		self.seen = Counter()
