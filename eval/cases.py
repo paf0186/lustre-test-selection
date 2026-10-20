@@ -62,7 +62,13 @@ def merge_same_catch(bugs: list[dict]) -> list[dict]:
 		ev = {}
 		for k in bs[0]["evidence"]:
 			ev[k] = max((b["evidence"][k] for b in bs), key=lambda rf: rf[1] / rf[0] if rf[0] else 0)
+		aev = {}
+		for b in bs:
+			for k, rf in b.get("always_evidence", {}).items():
+				if k not in aev or rf[1] / rf[0] > aev[k][1] / aev[k][0]:
+					aev[k] = rf
 		out.append({**bs[0], "units": [u for b in bs for u in b["units"]], "evidence": ev,
+			    "always_evidence": aev,
 			    "always": max(b["always"] for b in bs), "why": "same-catch",
 			    "easy": any(b["easy"] for b in bs), "series": any(b["series"] for b in bs),
 			    "statuses": sorted({x for b in bs for x in b["statuses"]}), "merged": len(bs)})
@@ -144,12 +150,14 @@ def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float):
 			ev = {f"{sc}|{c}": [len(evidence_ran[(sc, c)] | failed[(sc, c)]), len(failed[(sc, c)])]
 			      for (sc, c) in failed}
 			miss = 1.0
+			aev = {}
 			for (sc, g), fails in afailed.items():
 				r = len(always_ran[(sc, g)] | fails)
 				miss *= 1 - len(fails) / r
+				aev[f"{sc}|{g}"] = [r, len(fails)]
 			out_bugs.append({
 				"id": i, "units": [list(u) for u in b["units"]], "scripts": b["scripts"],
-				"why": b["why"], "evidence": ev, "always": round(1 - miss, 4),
+				"why": b["why"], "evidence": ev, "always": round(1 - miss, 4), "always_evidence": aev,
 				"easy": any(f["kind"] == "patch-changes-test" for f in fs),
 				"series": any((f.get("series_changes") or 0) > 0 for f in fs),
 				"statuses": sorted({f.get("status") or "" for f in fs}),

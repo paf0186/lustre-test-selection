@@ -140,6 +140,74 @@ def run(name, pred, cases, costs, split):
 	return m
 
 
+def curve(cases, costs, label, when) -> list[dict]:
+	"""The patch-blind baseline: rank on the training set, then score every
+	prefix of the order on both sets, until it costs more than today."""
+	from classes import CLASSES
+	from predictors import ranked
+	train = [c for c in cases if c["split"] == "train"]
+	order = ranked.rank(train, costs, CLASSES)
+	out = []
+	for split in ("train", "test"):
+		rows_all = [c for c in cases if c["split"] == split]
+		fulls = [full(c) for c in rows_all]
+		points = []
+		for n in range(len(order) + 1):
+			text = ranked.prediction(order, n, CLASSES)
+			rows = [(c, grade(c, text, costs), f) for c, f in zip(rows_all, fulls)]
+			m = metrics(rows)
+			points.append({"n": n, "cost_share": m.get("cost_share"), "recall_vs_full": m.get("recall_vs_full"),
+				       "hard_change_vs_full": m.get("hard_change_vs_full"),
+				       "series_vs_full": m.get("series_vs_full"), "easy_vs_full": m.get("easy_vs_full"),
+				       "all_caught": m.get("all_caught"), "pick": order[n - 1]["pick"] if n else "trivial"})
+			if (m.get("cost_share") or 0) > 1.0:
+				break
+		out.append({"when": when, "label": label, "predictor": "ranked", "split": split, "curve": points,
+			    "title": "patch-blind, best value first",
+			    "about": "the same tests for every patch: scripts and configurations ranked on the training "
+				     "set by bugs caught per second, added in that order",
+			    "order": [{k: v for k, v in st.items()} for st in order]})
+	return out
+
+
+def value(cases, costs, when, label) -> dict:
+	"""Each script in each configuration on its own: what it costs per build today,
+	how many of the patches' bugs it caught (each change counting once) and how
+	many only it caught, over every faulty case (a description of today's matrix,
+	not a predictor: no split)."""
+	per_change = defaultdict(int)
+	for c in cases:
+		if c["faulty"]:
+			per_change[c["change"]] += len(c["bugs"])
+	caught = defaultdict(float)
+	only = defaultdict(float)
+	bugs = defaultdict(float)
+	for c in cases:
+		if not c["faulty"]:
+			continue
+		w = 1 / per_change[c["change"]]
+		for b in c["bugs"]:
+			hit = [k for k, (r, f) in list(b["evidence"].items()) + list(b.get("always_evidence", {}).items()) if f]
+			for k in hit:
+				caught[k] += w
+				bugs[k] += 1
+			if len(hit) == 1:
+				only[hit[0]] += w
+	changes = len(per_change)
+	rows = []
+	total_h = sum(costs["secs_per_build"].values()) / 3600
+	for k, runs in costs["runs_per_build"].items():
+		hours = costs["secs_per_build"].get(k, 0) / 3600
+		share_b, share_h = caught[k] / changes, hours / total_h
+		rows.append({"key": k, "runs_per_build": runs, "hours_per_build": round(hours, 2),
+			     "share_hours": round(share_h, 4), "bugs": int(bugs[k]),
+			     "share_bugs": round(share_b, 4), "share_only": round(only[k] / changes, 4),
+			     "value": round(share_b / share_h, 2) if share_h else None})
+	rows.sort(key=lambda r: -(r["value"] or 0))
+	return {"when": when, "label": label, "predictor": "value", "split": "all", "changes": changes,
+		"rows": rows}
+
+
 def main() -> None:
 	ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
 	ap.add_argument("--cases", default=str(ROOT / "data" / "cases.jsonl"))
@@ -166,6 +234,18 @@ def main() -> None:
 					  if k not in ("ci", "llm")}))
 			if not args.no_log:
 				LOG.parent.mkdir(parents=True, exist_ok=True)
+				with LOG.open("a") as f:
+					f.write(json.dumps(rec) + "\n")
+	if not args.predictor:
+		v = value(cases, costs, when, args.label)
+		if not args.no_log:
+			with LOG.open("a") as f:
+				f.write(json.dumps(v) + "\n")
+		for rec in curve(cases, costs, args.label, when):
+			pts = rec["curve"]
+			print(json.dumps({"predictor": "ranked", "split": rec["split"], "steps": len(pts) - 1,
+					  "at": {f"{p['cost_share']:.2f}": round(p["recall_vs_full"], 3) for p in pts[::8]}}))
+			if not args.no_log:
 				with LOG.open("a") as f:
 					f.write(json.dumps(rec) + "\n")
 	if not args.no_log and (HERE / "report.py").exists():

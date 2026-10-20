@@ -7,6 +7,9 @@
   group_suites      the scripts each review group runs (in most of its sessions)
   group_class       the class each review group runs in
   session_s         mean seconds of a whole session per group
+  runs_per_build    how often each script runs in each class per review build today, and
+  secs_per_build    the session seconds it takes per build; the sessions that run whatever
+                    is selected (review-ldiskfs, subtest-change) are keyed by group, not class
 """
 from __future__ import annotations
 
@@ -27,11 +30,14 @@ INFRA = ("node-provisioning", "lustre-initialization")
 
 def build(db: sqlite3.Connection) -> dict:
 	db.row_factory = sqlite3.Row
-	cls, group = {}, {}
+	cls, group, build_of = {}, {}, {}
+	per_build = Counter()
+	secs_build = Counter()
 	sess_s = defaultdict(list)
 	for s in db.execute("SELECT * FROM session WHERE job = 'lustre-reviews'"):
 		cls[s["id"]] = class_of(dict(s))
 		group[s["id"]] = s["test_group"]
+		build_of[s["id"]] = s["build"]
 		if s["status"] in ("PASS", "FAIL") and s["duration"]:
 			sess_s[s["test_group"]].append(s["duration"])
 	per = defaultdict(list)
@@ -43,10 +49,16 @@ def build(db: sqlite3.Connection) -> dict:
 		if sid not in cls:
 			continue
 		g = group[sid]
+		always = g == "review-ldiskfs" or (g or "").endswith("subtest-change")
 		if sid not in seen:
 			seen.add(sid)
 			sessions_of[g] += 1
 		runs[g][suite] += 1
+		if suite not in INFRA and (cls[sid] or always):
+			# The sessions that run whatever is selected are their own rows.
+			where = g if always else cls[sid]
+			per_build[(suite, where)] += 1
+			secs_build[(suite, where)] += dur or 0
 		if not dur or status not in ("PASS", "FAIL"):
 			continue
 		if suite in INFRA:
@@ -68,6 +80,10 @@ def build(db: sqlite3.Connection) -> dict:
 				 for g in sorted(runs) if g and g.startswith("review") and sessions_of[g] >= 20},
 		"group_class": {g: c.most_common(1)[0][0] for g, c in sorted(group_class.items())},
 		"session_s": {g: round(mean(ds)) for g, ds in sorted(sess_s.items()) if g and len(ds) >= 20},
+		"runs_per_build": {f"{s}|{c}": round(n / max(1, len(set(build_of.values()))), 3)
+				   for (s, c), n in sorted(per_build.items())},
+		"secs_per_build": {f"{s}|{c}": round(n / max(1, len(set(build_of.values()))))
+				   for (s, c), n in sorted(secs_build.items())},
 	}
 
 

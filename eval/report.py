@@ -70,6 +70,18 @@ def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> 
 		s.append(f'<text x="{X(0.5):.1f}" y="{h - 6}" class="axis" text-anchor="middle">share of today\'s test cost</text>')
 		s.append(f'<text transform="translate(14 {Y(0.5):.1f}) rotate(-90)" class="axis" text-anchor="middle">'
 			 f'share of today\'s bugs caught</text>')
+	for r in rows:
+		if r.get("predictor") != "ranked" or not r.get("curve"):
+			continue
+		cpts = [(p["cost_share"], p.get(key)) for p in r["curve"]
+			if p.get("cost_share") is not None and p.get(key) is not None]
+		if len(cpts) > 1:
+			s.append(f'<polyline class="blind{" train" if r["split"] == "train" else ""}" points="'
+				 + " ".join(f"{X(a):.1f},{Y(b):.1f}" for a, b in cpts) + '"/>')
+		if not small and r["split"] == "test" and cpts:
+			a, b = next(((a, b) for a, b in cpts if a >= 0.3), cpts[-1])
+			s.append(f'<text x="{X(a) + 6:.1f}" y="{Y(b) + 16:.1f}" class="blabel">patch-blind, best value first</text>')
+	rows = [r for r in rows if r.get("predictor") != "ranked"]
 	pts = []
 	pos = {}
 	for r in rows:
@@ -143,12 +155,73 @@ def table(rows: list[dict]) -> str:
 	return "\n".join(out)
 
 
+def blind_table(r: dict | None) -> str:
+	"""The ranked order: what to add first if every patch got the same tests."""
+	if not r:
+		return "<p class='muted'>Not scored yet.</p>"
+	head = ("Step", "Adds", "Configuration", "Test cost", "Today's bugs caught", "Hard bugs")
+	out = ["<p class='lede'>What every patch would run if the tests were chosen without reading it: "
+	       "scripts and configurations ranked on the training set by bugs caught per second of session "
+	       "time, scored here on the test set. A patch-aware selection is worth having only to the left "
+	       "of this line.</p><div class='scroll'><table><thead><tr>"
+	       + "".join(f"<th>{h}</th>" for h in head) + "</tr></thead><tbody>"]
+	for p in r["curve"]:
+		pick = p["pick"]
+		if pick == "trivial":
+			adds, cls = "trivial", "ldiskfs (review-ldiskfs)"
+		elif pick.startswith("group:"):
+			adds, cls = pick[6:], "its own group"
+		else:
+			adds, cls = pick.split("|")
+		out.append(f"<tr><td class='n'>{p['n']}</td><td>{esc(adds)}</td><td>{esc(cls)}</td>"
+			   f"<td class='n'>{pct(p['cost_share'])}</td><td class='n'>{pct(p['recall_vs_full'])}</td>"
+			   f"<td class='n'>{pct(p.get('hard_change_vs_full'))}</td></tr>")
+	out.append("</tbody></table></div>")
+	return "\n".join(out)
+
+
+MIN_HOURS = 0.25     # per build: less runs too rarely in the review matrix to judge
+
+
+def value_table(v: dict | None) -> str:
+	"""Every script in every configuration on its own, best value first."""
+	if not v:
+		return "<p class='muted'>Not scored yet.</p>"
+	rows = [r for r in v["rows"] if r["hours_per_build"] >= MIN_HOURS]
+	rare = [r for r in v["rows"] if r["hours_per_build"] < MIN_HOURS and r["bugs"]]
+	head = ("Script", "Configuration", "Session h / build", "Share of today's hours",
+		"Share of the bugs it caught", "Only it caught", "Value")
+	out = [f"<p class='lede'>Each test script in each configuration on its own, over all {v['changes']} "
+	       "faulty changes (each change counting once). Value is its share of the bugs caught divided by its "
+	       "share of the session hours: 1 is average, 0 is time that caught nothing. \"Only it caught\" is "
+	       "bugs no other script or configuration showed, which dropping it would lose.</p>"
+	       "<div class='scroll'><table><thead><tr>" + "".join(f"<th>{h}</th>" for h in head)
+	       + "</tr></thead><tbody>"]
+	for r in rows:
+		script, cls = r["key"].split("|")
+		if cls == "review-ldiskfs":
+			cls = "review-ldiskfs (trivial, always runs)"
+		elif cls.endswith("subtest-change"):
+			cls = f"{cls} (edited subtests, always runs)"
+		poor = (r["value"] or 0) < 0.25
+		out.append(f"<tr class='{'poor' if poor else ''}'><td>{esc(script)}</td><td>{esc(cls)}</td>"
+			   f"<td class='n'>{r['hours_per_build']:.1f}</td><td class='n'>{pct(r['share_hours'], 1)}</td>"
+			   f"<td class='n'>{pct(r['share_bugs'], 1)}</td><td class='n'>{pct(r['share_only'], 1)}</td>"
+			   f"<td class='n'><b>{r['value'] if r['value'] is not None else 'n/a'}</b></td></tr>")
+	out.append("</tbody></table></div>")
+	if rare:
+		out.append("<p class='muted'>Run too rarely in today's matrix to judge (under "
+			   f"{MIN_HOURS:g} session hours per build), yet caught bugs: "
+			   + ", ".join(f"{esc(r['key'].replace('|', ' in '))} ({r['bugs']})" for r in rare) + ".</p>")
+	return "\n".join(out)
+
+
 def headline(test: list[dict], manifest: dict) -> str:
 	cases = manifest.get("cases", [])
 	n_test = sum(c["split"] == "test" and c["faulty"] for c in cases)
 	bugs = sum(c["bugs"] for c in cases if c["split"] == "test")
 	full = next((r for r in test if r["predictor"] == "full"), None)
-	cands = [r for r in test if r["predictor"] != "full" and r.get("recall_vs_full") is not None]
+	cands = [r for r in test if r["predictor"] not in ("full", "ranked") and r.get("recall_vs_full") is not None]
 	lines = []
 	for ty, tx in TARGETS:
 		ok = [r for r in cands if r["recall_vs_full"] >= ty and r["cost_share"] <= tx]
@@ -211,13 +284,16 @@ section { background: var(--panel); border: 1px solid var(--grid); border-radius
 .chart .edited { fill: var(--edited); stroke: var(--edited); } .chart .table { fill: var(--table); stroke: var(--table); }
 .chart .other { fill: var(--other); stroke: var(--other); }
 .chart .ci { stroke-width: 1.5; opacity: 0.55; fill: none; }
+.chart .blind { fill: none; stroke: var(--today); stroke-width: 2; }
+.chart .blind.train { stroke-dasharray: 2 4; stroke-width: 1.5; opacity: 0.8; }
+.chart .blabel { fill: var(--today); font: 11px var(--mono); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; }
 .chart .link { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 1 3; opacity: 0.7; }
 .chart .frontier { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 4 3; }
 .smalls { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
 .smalls figure { margin: 0; min-width: 0; } .smalls figcaption { font: 600 0.85rem var(--display); margin-bottom: 4px; }
 .legend { display: flex; flex-wrap: wrap; gap: 14px; font: 12px var(--mono); color: var(--muted); margin-top: 8px; }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
-.legend i.dot { background: var(--fg); } .legend i.ring { border: 2px solid var(--fg); width: 6px; height: 6px; }
+.legend i.dot { background: var(--fg); } .legend i.line { width: 16px; height: 2px; border-radius: 0; background: var(--today); vertical-align: 3px; } .legend i.ring { border: 2px solid var(--fg); width: 6px; height: 6px; }
 dl.key { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 14px 0 0; font-size: 13px; }
 dl.key dt { font-weight: 600; } dl.key dd { margin: 0; color: var(--muted); min-width: 0; }
 @media (max-width: 560px) { dl.key { grid-template-columns: 1fr; } dl.key dd { margin-bottom: 6px; } }
@@ -226,7 +302,7 @@ table { border-collapse: collapse; width: 100%; font-size: 13px; }
 th, td { padding: 6px 10px; border-bottom: 1px solid var(--grid); text-align: left; white-space: nowrap; }
 th { font: 600 0.72rem var(--mono); text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
 td.n { font-variant-numeric: tabular-nums; font-family: var(--mono); }
-tr.train td { color: var(--muted); } .ci { color: var(--muted); font-size: 11px; }
+tr.train td { color: var(--muted); } tr.poor td { color: var(--today); } .ci { color: var(--muted); font-size: 11px; }
 .muted { color: var(--muted); } code { font: 0.9em var(--mono); }
 ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80ch; }
 """
@@ -254,9 +330,13 @@ def main() -> None:
 	last = latest(log)
 	test = [r for (p, s), r in last.items() if s == "test"]
 	train = [r for (p, s), r in last.items() if s == "train"]
+	blind = next((r for r in test if r["predictor"] == "ranked"), None)
+	val = last.get(("value", "all"))
 	both = test + train
 	legend = ("<div class='legend'><span><i class='dot'></i>test set</span>"
 		  "<span><i class='ring'></i>training set (joined to the same selection's test set point)</span>"
+		  "<span><i class='line'></i>patch-blind baseline: the same tests for every patch, best value "
+		  "first (solid: test set, dotted: training set)</span>"
 		  "<span>whiskers: 95% interval</span>"
 		  "<span>dashed: best cost for each catch rate</span></div>")
 	seen = set()
@@ -286,7 +366,9 @@ def main() -> None:
 {chart(both, "recall_vs_full", "bugs caught against cost")}
 {legend}</section>
 <section><h2>By kind of bug</h2><div class="smalls">{smalls}</div></section>
-<section><h2>Every predictor</h2>{table(test + train)}</section>
+<section><h2>Every predictor</h2>{table([r for r in test + train if r["predictor"] != "ranked"])}</section>
+<section><h2>Value of each test set today</h2>{value_table(val)}</section>
+<section><h2>The patch-blind baseline</h2>{blind_table(blind)}</section>
 <section><h2>The climb</h2>{climb(log)}</section>
 <section><h2>How this is measured</h2><ul class="notes">{''.join(f'<li>{esc(n)}</li>' for n in NOTES)}</ul>
 <p class="muted">Regenerate: <code>harvest.py fetch|sessions|patches|sample</code>, then
