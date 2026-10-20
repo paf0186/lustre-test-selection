@@ -22,6 +22,29 @@ Its tables are generated and the prose is by hand:
 rainshadow matrix --days 30 --markdown             # the raw tables for any window or job
 ```
 
+## The eval
+
+An eval for predicting, per patch, which test scripts and configurations to run on
+top of `Test-Parameters: trivial`: the plan is `test_selection_design.md` in the
+design docs (project test-selection).  Every faulty patchset, and a random sample
+of all review patchsets for cost, is a case; its patch faults are grouped into
+bugs, and a prediction catches a bug when it runs a script in a configuration
+where that script failed with the bug in the patchset's own build.
+
+```bash
+./harvest.py sessions && ./harvest.py patches     # what ran, and the patch text
+./harvest.py sample --start 2026-03-20 --end 2026-10-19
+eval/cases.py          # data/cases.jsonl (not committed) and eval/manifest.json
+eval/costs.py          # eval/costs.json: setup and script run times per configuration
+eval/score.py          # scores predictors, logs eval/results/log.jsonl, redraws the page
+eval/check_classes.py  # which Test-Parameters keys gave which configuration
+```
+
+`eval/results/index.html` is drawn only from the results log (`eval/report.py`).
+`eval/classes.py` holds the configuration classes and the keys that ask for them;
+`eval/bugs.py` the bug grouping; `eval/grade.py` the grader;
+`eval/predictors/` the predictors, which see only a case's `input`.
+
 ## What is kept
 
 Only failures that are the patch's own fault, caught by testing. Flaky,

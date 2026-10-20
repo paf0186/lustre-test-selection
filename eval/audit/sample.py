@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Draw the label audit's stratified sample of patch faults (seeded, repeatable)."""
-import json, random, sqlite3, sys
+import json
+import random
+import sqlite3
+import sys
 
 STRATA = [
 	# name, count, WHERE over failure f (and ps: per-patchset flags)

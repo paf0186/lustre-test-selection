@@ -302,7 +302,7 @@ def sample(args, db) -> None:
 		      file=sys.stderr)
 	for i in range(0, len(drawn), 300):
 		chunk = drawn[i:i + 300]
-		d = cl.call("/export/patchsets", {"key": ",".join(f"{c}/{p}" for c, p in chunk), "limit": 2000})
+		d = cl.call("/export/patchsets", body={"keys": [list(k) for k in chunk], "limit": 2000})
 		for p in d["rows"]:
 			files = p.get("files")
 			db.execute("INSERT INTO patchset (change, patchset, files, n_files, scripts, test_parameters, "

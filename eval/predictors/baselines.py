@@ -1,0 +1,93 @@
+"""The baselines (design 2.6).  A predictor has `fit(train_cases)` and
+`predict(input) -> {"text": Test-Parameters text, "meta": {...}}`; it sees only a
+case's `input`, never its bugs."""
+from __future__ import annotations
+
+import os
+import re
+from collections import Counter, defaultdict
+
+TEST_SCRIPT = re.compile(r"^lustre/tests/([\w-]+)\.sh$")
+NOT_SCRIPTS = {"test-framework", "functions", "sanity-lnet-ref"}
+
+
+def edited_scripts(inp: dict) -> list[str]:
+	"""Test scripts whose tests or helpers the patch changes."""
+	out = set((inp.get("scripts") or {}).keys())
+	for f in inp.get("files") or []:
+		m = TEST_SCRIPT.match(f)
+		if m and m.group(1) not in NOT_SCRIPTS:
+			out.add(m.group(1))
+	return sorted(out - NOT_SCRIPTS)
+
+
+def lines_for(picks: dict[str, set[str]], classes: dict) -> list[str]:
+	"""One Test-Parameters line per class, scripts sharing it."""
+	out = []
+	for cls in sorted(picks):
+		keys = classes[cls][0]
+		if keys is None or not picks[cls]:
+			continue
+		out.append(" ".join(x for x in (keys, "testlist=" + ",".join(sorted(picks[cls]))) if x))
+	return out
+
+
+class Trivial:
+	name = "trivial"
+
+	def fit(self, cases):
+		return self
+
+	def predict(self, inp):
+		return {"text": "trivial", "meta": {}}
+
+
+class Edited:
+	"""Trivial, plus every script the patch edits, in DNE ldiskfs."""
+	name = "edited"
+
+	def fit(self, cases):
+		return self
+
+	def predict(self, inp):
+		s = edited_scripts(inp)
+		return {"text": "trivial" + (f"\ntestlist={','.join(s)}" if s else ""), "meta": {}}
+
+
+class Table:
+	"""Trivial, plus edited scripts, plus what files like these broke in train:
+	for each directory the patch changes, the (script, class) pairs that caught a
+	bug of a train patchset changing that directory, in at least `share` of them."""
+
+	def __init__(self, share: float = 0.2, min_cases: int = 3):
+		self.share, self.min_cases = share, min_cases
+		self.name = f"table-{share:g}"
+
+	def fit(self, cases):
+		self.seen = Counter()
+		self.hits = defaultdict(Counter)
+		for c in cases:
+			if not c["faulty"]:
+				continue
+			dirs = {os.path.dirname(f) for f in c["input"]["files"] or []}
+			caught = {k for b in c["bugs"] for k, (r, f) in b["evidence"].items() if f}
+			for d in dirs:
+				self.seen[d] += 1
+				for k in caught:
+					self.hits[d][k] += 1
+		return self
+
+	def predict(self, inp):
+		from classes import CLASSES
+		picks: dict[str, set[str]] = defaultdict(set)
+		for s in edited_scripts(inp):
+			picks["ldiskfs-dne"].add(s)
+		for d in {os.path.dirname(f) for f in inp.get("files") or []}:
+			n = self.seen.get(d, 0)
+			if n < self.min_cases:
+				continue
+			for k, h in self.hits[d].items():
+				if h / n >= self.share:
+					script, cls = k.split("|")
+					picks[cls].add(script)
+		return {"text": "\n".join(["trivial"] + lines_for(picks, CLASSES)), "meta": {}}
