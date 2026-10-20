@@ -19,6 +19,14 @@ LOG = HERE / "results" / "log.jsonl"
 OUT = HERE / "results" / "index.html"
 MANIFEST = HERE / "manifest.json"
 TARGETS = [(0.90, 0.25), (0.90, 0.10), (0.95, 0.10)]
+CURVES = {"ranked": "blind", "oracle": "oracle", "principles-on-blind": "onblind"}
+CURVE_LABELS = {"ranked": "patch-blind, best value first", "oracle": "oracle (the ceiling)",
+		"principles-on-blind": "principles on a blind base"}
+CURVE_LABEL_AT = {
+	"ranked": lambda c: next(((a, b - 0.04) for a, b in c if a >= 0.62), c[-1]),
+	"oracle": lambda c: (max(c, key=lambda p: p[1])[0] + 0.005, 0.17),
+	"principles-on-blind": lambda c: (c[-1][0] + 0.01, c[-1][1] - 0.035),
+}
 FAMILIES = {"full": "today", "trivial": "trivial", "edited": "edited", "table": "table"}
 
 
@@ -71,17 +79,19 @@ def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> 
 		s.append(f'<text transform="translate(14 {Y(0.5):.1f}) rotate(-90)" class="axis" text-anchor="middle">'
 			 f'share of today\'s bugs caught</text>')
 	for r in rows:
-		if r.get("predictor") != "ranked" or not r.get("curve"):
+		cls_name = CURVES.get(r.get("predictor"))
+		if not cls_name or not r.get("curve"):
 			continue
-		cpts = [(p["cost_share"], p.get(key)) for p in r["curve"]
-			if p.get("cost_share") is not None and p.get(key) is not None]
+		cpts = sorted((p["cost_share"], p.get(key)) for p in r["curve"]
+			      if p.get("cost_share") is not None and p.get(key) is not None)
 		if len(cpts) > 1:
-			s.append(f'<polyline class="blind{" train" if r["split"] == "train" else ""}" points="'
+			s.append(f'<polyline class="{cls_name}{" train" if r["split"] == "train" else ""}" points="'
 				 + " ".join(f"{X(a):.1f},{Y(b):.1f}" for a, b in cpts) + '"/>')
 		if not small and r["split"] == "test" and cpts:
-			a, b = next(((a, b) for a, b in cpts if a >= 0.3), cpts[-1])
-			s.append(f'<text x="{X(a) + 6:.1f}" y="{Y(b) + 16:.1f}" class="blabel">patch-blind, best value first</text>')
-	rows = [r for r in rows if r.get("predictor") != "ranked"]
+			a, b = CURVE_LABEL_AT[r["predictor"]](cpts)
+			s.append(f'<text x="{X(a) + 6:.1f}" y="{Y(b) + 16:.1f}" class="clabel {cls_name}">'
+				 f'{esc(CURVE_LABELS[r["predictor"]])}</text>')
+	rows = [r for r in rows if r.get("predictor") not in CURVES]
 	pts = []
 	pos = {}
 	for r in rows:
@@ -113,9 +123,6 @@ def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> 
 			 f'{pct(x)} of its cost</title></circle>')
 		if not hollow:
 			pts.append((x, y, title))
-	fr = frontier(pts)
-	if len(fr) > 1:
-		s.append('<polyline class="frontier" points="' + " ".join(f"{X(a):.1f},{Y(b):.1f}" for a, b, _ in fr) + '"/>')
 	if not small:
 		placed: list[tuple[float, float, float, float]] = []
 		for x, y, n in sorted(pts, key=lambda p: -p[1]):
@@ -218,7 +225,8 @@ def headline(test: list[dict], manifest: dict) -> str:
 	n_test = sum(c["split"] == "test" and c["faulty"] for c in cases)
 	bugs = sum(c["bugs"] for c in cases if c["split"] == "test")
 	full = next((r for r in test if r["predictor"] == "full"), None)
-	cands = [r for r in test if r["predictor"] not in ("full", "ranked") and r.get("recall_vs_full") is not None]
+	cands = [r for r in test if r["predictor"] not in ("full",) and not r.get("curve")
+		 and r.get("recall_vs_full") is not None]
 	lines = []
 	for ty, tx in TARGETS:
 		ok = [r for r in cands if r["recall_vs_full"] >= ty and r["cost_share"] <= tx]
@@ -283,7 +291,13 @@ section { background: var(--panel); border: 1px solid var(--grid); border-radius
 .chart .ci { stroke-width: 1.5; opacity: 0.55; fill: none; }
 .chart .blind { fill: none; stroke: var(--today); stroke-width: 2; }
 .chart .blind.train { stroke-dasharray: 2 4; stroke-width: 1.5; opacity: 0.8; }
-.chart .blabel { fill: var(--today); font: 11px var(--mono); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; }
+.chart .oracle { fill: none; stroke: var(--edited); stroke-width: 2; }
+.chart .oracle.train { stroke-dasharray: 2 4; stroke-width: 1.5; opacity: 0.8; }
+.chart .onblind { fill: none; stroke: var(--other); stroke-width: 2; }
+.chart .onblind.train { stroke-dasharray: 2 4; stroke-width: 1.5; opacity: 0.8; }
+.chart .clabel { font: 11px var(--mono); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; }
+.chart .clabel.blind { fill: var(--today); } .chart .clabel.oracle { fill: var(--edited); }
+.chart .clabel.onblind { fill: var(--other); }
 .chart .link { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 1 3; opacity: 0.7; }
 .chart .frontier { fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 4 3; }
 .smalls { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
@@ -328,14 +342,19 @@ def main() -> None:
 	test = [r for (p, s), r in last.items() if s == "test"]
 	train = [r for (p, s), r in last.items() if s == "train"]
 	blind = next((r for r in test if r["predictor"] == "ranked"), None)
+	test = [r for r in test if r["predictor"] not in ("oracle", "principles-on-blind")] + \
+		[r for r in test if r["predictor"] in ("oracle", "principles-on-blind")]
 	val = last.get(("value", "all"))
 	both = test + train
 	legend = ("<div class='legend'><span><i class='dot'></i>test set</span>"
 		  "<span><i class='ring'></i>training set (joined to the same selection's test set point)</span>"
-		  "<span><i class='line'></i>patch-blind baseline: the same tests for every patch, best value "
-		  "first (solid: test set, dotted: training set)</span>"
+		  "<span><i class='line'></i>patch-blind baseline: the same tests for every patch, best value first</span>"
+		  "<span><i class='line' style='background:var(--edited)'></i>oracle: each patch's own cheapest "
+		  "catches, the ceiling</span>"
+		  "<span><i class='line' style='background:var(--other)'></i>principles on a blind base</span>"
+		  "<span>curves: solid test set, dotted training set</span>"
 		  "<span>whiskers: 95% interval</span>"
-		  "<span>dashed: best cost for each catch rate</span></div>")
+		  "</div>")
 	seen = set()
 	key_rows = []
 	for r in test:
@@ -363,7 +382,7 @@ def main() -> None:
 {chart(both, "recall_vs_full", "bugs caught against cost")}
 {legend}</section>
 <section><h2>By kind of bug</h2><div class="smalls">{smalls}</div></section>
-<section><h2>Every predictor</h2>{table([r for r in test + train if r["predictor"] != "ranked"])}</section>
+<section><h2>Every predictor</h2>{table([r for r in test + train if not r.get("curve") and r["predictor"] != "value"])}</section>
 <section><h2>Bugs per session hour, by test set</h2>{value_table(val, costs_builds())}</section>
 <section><h2>The patch-blind baseline</h2>{blind_table(blind)}</section>
 <section><h2>The climb</h2>{climb(log)}</section>

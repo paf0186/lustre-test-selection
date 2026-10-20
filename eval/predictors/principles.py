@@ -34,6 +34,13 @@ class Principles:
 	def fit(self, cases):
 		return self
 
+	def narrow(self, inp: dict) -> bool:
+		"""Every file matches a narrow rule and no other."""
+		files = inp.get("files") or []
+		return bool(files) and all(
+			any(matches(r, f) for r in self.rules if r.get("narrow"))
+			and not any(matches(r, f) for r in self.rules if not r.get("narrow")) for f in files)
+
 	def select(self, inp: dict) -> tuple[dict[str, set[str]], set[str], list[str]]:
 		picks: dict[str, set[str]] = defaultdict(set)
 		groups: set[str] = set()
@@ -77,4 +84,28 @@ class PrinciplesAndHistory(Principles):
 		picks, groups, why = self.select(inp)
 		for cls, scripts in self.table.picks(inp).items():
 			picks[cls] |= scripts
+		return {"text": "\n".join(["trivial"] + lines_for(picks, CLASSES, groups)), "why": why, "meta": {}}
+
+
+class OnBlindBase(Principles):
+	"""The first `n` tests of the patch-blind order for every patch, unless the
+	patch is narrow, plus what the principles add."""
+
+	def __init__(self, order: list[dict], n: int, rules: list[dict] | None = None):
+		super().__init__(rules)
+		self.order, self.n = order, n
+		self.name = f"principles-on-blind-{n}"
+		self.title = f"+ principles on the blind base, {n} sets"
+		self.about = (f"the first {n} test sets of the patch-blind order, skipped for a patch whose "
+			      "files are all narrow (documentation, tests, LNet, lfs), plus the principles' selection")
+
+	def predict(self, inp):
+		from classes import CLASSES
+		picks, groups, why = self.select(inp)
+		if not self.narrow(inp):
+			for step in self.order[:self.n]:
+				if step.get("group"):
+					groups.add(step["group"])
+				else:
+					picks[step["cls"]].add(step["script"])
 		return {"text": "\n".join(["trivial"] + lines_for(picks, CLASSES, groups)), "why": why, "meta": {}}

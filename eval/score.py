@@ -25,7 +25,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from grade import full, grade  # noqa: E402
 from predictors.baselines import Edited, Table, Trivial  # noqa: E402
-from predictors.principles import Principles, PrinciplesAndHistory  # noqa: E402
+from predictors.principles import Principles  # noqa: E402
 
 ROOT = HERE.parent
 LOG = HERE / "results" / "log.jsonl"
@@ -34,8 +34,7 @@ BOOT = 1000
 
 def predictors() -> dict:
 	out = {"full": None}
-	for p in (Trivial(), Edited(), Table(0.5), Table(0.3), Table(0.2), Table(0.1), Table(0.05),
-		  Principles(), PrinciplesAndHistory(Table(0.3)), PrinciplesAndHistory(Table(0.1))):
+	for p in (Trivial(), Edited(), Table(0.2), Table(0.05), Principles()):
 		out[p.name] = p
 	return out
 
@@ -140,11 +139,25 @@ def run(name, pred, cases, costs, split):
 	return m
 
 
+def _points(rows_all, fulls, texts) -> dict:
+	"""Metrics of one selection per case (texts[i] for rows_all[i])."""
+	rows = [(c, grade(c, t, costs_g), f) for c, t, f in zip(rows_all, texts, fulls)]
+	m = metrics(rows)
+	return {k: m.get(k) for k in ("cost_share", "recall_vs_full", "hard_change_vs_full", "series_vs_full",
+				      "easy_vs_full", "all_caught")}
+
+
+costs_g: dict = {}
+
+
 def curve(cases, costs, label, when) -> list[dict]:
-	"""The patch-blind baseline: rank on the training set, then score every
-	prefix of the order on both sets, until it costs more than today."""
+	"""The curves: the patch-blind baseline (ranked on the training set, every
+	prefix scored), the oracle (each patch's own cheapest catches: the ceiling),
+	and the principles on blind bases of several sizes."""
 	from classes import CLASSES
-	from predictors import ranked
+	from predictors import oracle, ranked
+	from predictors.principles import OnBlindBase
+	costs_g.update(costs)
 	train = [c for c in cases if c["split"] == "train"]
 	order = ranked.rank(train, costs, CLASSES)
 	out = []
@@ -154,19 +167,32 @@ def curve(cases, costs, label, when) -> list[dict]:
 		points = []
 		for n in range(len(order) + 1):
 			text = ranked.prediction(order, n, CLASSES)
-			rows = [(c, grade(c, text, costs), f) for c, f in zip(rows_all, fulls)]
-			m = metrics(rows)
-			points.append({"n": n, "cost_share": m.get("cost_share"), "recall_vs_full": m.get("recall_vs_full"),
-				       "hard_change_vs_full": m.get("hard_change_vs_full"),
-				       "series_vs_full": m.get("series_vs_full"), "easy_vs_full": m.get("easy_vs_full"),
-				       "all_caught": m.get("all_caught"), "pick": order[n - 1]["pick"] if n else "trivial"})
-			if (m.get("cost_share") or 0) > 1.0:
+			pt = _points(rows_all, fulls, [text] * len(rows_all))
+			points.append({"n": n, **pt, "pick": order[n - 1]["pick"] if n else "trivial"})
+			if (pt.get("cost_share") or 0) > 1.0:
 				break
 		out.append({"when": when, "label": label, "predictor": "ranked", "split": split, "curve": points,
 			    "title": "patch-blind, best value first",
 			    "about": "the same tests for every patch: scripts and configurations ranked on the training "
 				     "set by bugs caught per second, added in that order",
-			    "order": [{k: v for k, v in st.items()} for st in order]})
+			    "order": order})
+		opts = []
+		for rate in oracle.RATES:
+			texts = [oracle.selection(c, costs, CLASSES, rate) for c in rows_all]
+			opts.append({"rate": rate, **_points(rows_all, fulls, texts)})
+		out.append({"when": when, "label": label, "predictor": "oracle", "split": split, "curve": opts,
+			    "title": "oracle: each patch's own cheapest catches",
+			    "about": "knowing each patch's bugs, the tests that catch them for the least session time; "
+				     "no predictor can do better"})
+		fam = []
+		for n in (0, 2, 4, 6, 8, 10, 13, 16, 20, 25):
+			p = OnBlindBase(order, n)
+			texts = [p.predict(c["input"])["text"] for c in rows_all]
+			fam.append({"n": n, **_points(rows_all, fulls, texts)})
+		out.append({"when": when, "label": label, "predictor": "principles-on-blind", "split": split,
+			    "curve": fam, "title": "principles on a blind base",
+			    "about": "the first n sets of the patch-blind order (skipped for narrow patches: docs, "
+				     "tests, LNet, lfs), plus the principles' selection; n from 0 to 25"})
 	return out
 
 
@@ -245,8 +271,10 @@ def main() -> None:
 				f.write(json.dumps(v) + "\n")
 		for rec in curve(cases, costs, args.label, when):
 			pts = rec["curve"]
-			print(json.dumps({"predictor": "ranked", "split": rec["split"], "steps": len(pts) - 1,
-					  "at": {f"{p['cost_share']:.2f}": round(p["recall_vs_full"], 3) for p in pts[::8]}}))
+			step = 8 if rec["predictor"] == "ranked" else 1
+			print(json.dumps({"predictor": rec["predictor"], "split": rec["split"],
+					  "at": {f"{p['cost_share']:.3f}": round(p["recall_vs_full"] or 0, 3)
+						 for p in pts[::step] if p.get("cost_share") is not None}}))
 			if not args.no_log:
 				with LOG.open("a") as f:
 					f.write(json.dumps(rec) + "\n")

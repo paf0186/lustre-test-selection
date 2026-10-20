@@ -8,6 +8,10 @@
 # Every selection carries its rule's `why`, so a prediction explains itself.
 #
 # Rules name mechanisms, never a change or a test that once failed (design 4.2).
+#
+# `narrow = true`: the rule's scripts cover all a file it matches can break.  A
+# patch whose every file matches a narrow rule, and no other, skips the
+# patch-blind base and runs only what its rules add.
 
 # -- what the patch itself says ------------------------------------------------
 
@@ -15,7 +19,15 @@
 name = "docs-only"
 paths = ["Documentation/", "lustre/doc/", "contrib/", "LICENSE", "README", "ChangeLog", "lustre/ChangeLog"]
 scripts = []
+narrow = true
 why = "documentation and contrib changes do not change what runs"
+
+[[rule]]
+name = "tests-only"
+paths = ["lustre/tests/"]
+scripts = []
+narrow = true
+why = "a test script change breaks only that script, which runs as an edited script"
 
 # -- client -------------------------------------------------------------------
 
@@ -163,6 +175,7 @@ name = "kerberos"
 paths = ["lustre/ptlrpc/gss/", "lustre/utils/gss/"]
 contains = ["krb5", "kerberos"]
 scripts = ["sanity-krb5"]
+narrow = true
 why = "Kerberos flavors of GSS"
 
 [[rule]]
@@ -182,6 +195,7 @@ why = "shared object, FID and llog infrastructure used by every target and clien
 name = "lnet"
 paths = ["lnet/"]
 scripts = ["sanity-lnet", "lnet-selftest", "sanity"]
+narrow = true
 why = "the network layer: sanity-lnet for configuration, lnet-selftest for traffic, sanity as a client of it"
 
 [[rule]]
@@ -196,6 +210,7 @@ why = "portability and debug infrastructure under everything"
 name = "lfs-api"
 paths = ["lustre/utils/lfs", "lustre/utils/liblustreapi", "lustre/include/lustre/lustreapi"]
 scripts = ["sanity", "sanity-pfl", "sanity-flr"]
+narrow = true
 why = "lfs and llapi: setstripe, find, getstripe and mirror commands are tested in sanity, sanity-pfl and sanity-flr"
 
 [[rule]]
@@ -203,6 +218,7 @@ name = "lsnapshot"
 contains = ["lsnapshot", "snapshot"]
 scripts = ["sanity-lsnapshot"]
 classes = ["zfs-dne"]
+narrow = true
 why = "snapshots need ZFS"
 
 # -- builds across platforms --------------------------------------------------
