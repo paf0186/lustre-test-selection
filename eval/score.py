@@ -45,8 +45,17 @@ def load(path: Path) -> list[dict]:
 def metrics(rows: list[dict]) -> dict:
 	"""rows: (case, grade, full grade) for one split."""
 	m = defaultdict(float)
+	per_change = defaultdict(int)
+	for case, g, f in rows:
+		if case["faulty"]:
+			per_change[case["change"]] += g["n_bugs"]
 	for case, g, f in rows:
 		if case["faulty"] and g["n_bugs"]:
+			w = 1 / per_change[case["change"]]           # each change counts once
+			m["w_caught"] += w * g["caught"]
+			m["w_full"] += w * f["caught"]
+			m["w_hard_caught"] += w * sum(p for b, p in zip(case["bugs"], g["bugs"]) if not b["easy"])
+			m["w_hard_full"] += w * sum(p for b, p in zip(case["bugs"], f["bugs"]) if not b["easy"])
 			m["faulty"] += 1
 			m["bugs"] += g["n_bugs"]
 			m["caught"] += g["caught"]
@@ -65,7 +74,9 @@ def metrics(rows: list[dict]) -> dict:
 	out = {"faulty": int(m["faulty"]), "bugs": int(m["bugs"]), "sampled": int(m["sampled"])}
 	if m["bugs"]:
 		out["recall"] = m["caught"] / m["bugs"]
-		out["recall_vs_full"] = m["caught"] / m["full_caught"] if m["full_caught"] else None
+		out["bug_recall_vs_full"] = m["caught"] / m["full_caught"] if m["full_caught"] else None
+		out["recall_vs_full"] = m["w_caught"] / m["w_full"] if m["w_full"] else None
+		out["hard_change_vs_full"] = m["w_hard_caught"] / m["w_hard_full"] if m["w_hard_full"] else None
 		out["all_caught"] = m["all_caught"] / m["faulty"]
 		out["any_caught"] = m["any_caught"] / m["faulty"]
 		for t in ("easy", "hard", "series"):
@@ -79,7 +90,8 @@ def metrics(rows: list[dict]) -> dict:
 	return out
 
 
-def bootstrap(rows: list[dict], keys=("recall_vs_full", "all_caught", "cost_share"), seed: int = 1) -> dict:
+def bootstrap(rows: list[dict], keys=("recall_vs_full", "bug_recall_vs_full", "all_caught", "cost_share"),
+	      seed: int = 1) -> dict:
 	"""95% intervals, resampling changes (a change's patchsets are not independent)."""
 	by_change = defaultdict(list)
 	for r in rows:

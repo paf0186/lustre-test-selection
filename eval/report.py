@@ -108,7 +108,7 @@ def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> 
 
 
 def table(rows: list[dict]) -> str:
-	head = ("Predictor", "Split", "Bugs caught", "vs today", "Hard bugs vs today", "All bugs caught",
+	head = ("Predictor", "Split", "Bugs vs today, per change", "Per bug", "Hard bugs", "All bugs caught",
 		"Test cost", "Session h / build", "LLM $ / patch")
 	out = ["<div class='scroll'><table><thead><tr>" + "".join(f"<th>{h}</th>" for h in head) + "</tr></thead><tbody>"]
 	for r in rows:
@@ -117,8 +117,8 @@ def table(rows: list[dict]) -> str:
 		ci = r.get("ci", {}).get("recall_vs_full")
 		vs = pct(r.get("recall_vs_full")) + (f" <span class='ci'>({pct(ci[0])} to {pct(ci[1])})</span>" if ci else "")
 		out.append(f"<tr class='{r['split']}'><td>{esc(r['predictor'])}</td><td>{r['split']}</td>"
-			   f"<td class='n'>{pct(r.get('recall'))}</td><td class='n'>{vs}</td>"
-			   f"<td class='n'>{pct(r.get('hard_vs_full'))}</td><td class='n'>{pct(r.get('all_caught'))}</td>"
+			   f"<td class='n'>{vs}</td><td class='n'>{pct(r.get('bug_recall_vs_full'))}</td>"
+			   f"<td class='n'>{pct(r.get('hard_change_vs_full'))}</td><td class='n'>{pct(r.get('all_caught'))}</td>"
 			   f"<td class='n'>{pct(r.get('cost_share'))}</td>"
 			   f"<td class='n'>{r.get('hours_per_build', 0):.0f}</td>"
 			   f"<td class='n'>{'' if per is None else f'{per:.3f}'}</td></tr>")
@@ -149,7 +149,8 @@ def headline(test: list[dict], manifest: dict) -> str:
 	return (f"<p class='lede'>Backtest on <b>{n_test}</b> faulty patchsets the predictors never saw "
 		f"(changes first failing on or after {esc(manifest.get('cutoff', '?'))}), holding <b>{bugs}</b> bugs. "
 		f"Today every patch runs the whole review matrix, about <b>{hours}</b> session hours per build. "
-		f"\"Share of today's bugs\" is what each selection would catch of what today's matrix catches.</p>"
+		f"\"Share of today's bugs\" is what each selection would catch of what today's matrix catches, "
+		f"with every change counting once.</p>"
 		f"<ul class='targets'>{''.join(lines)}</ul>")
 
 
@@ -209,7 +210,10 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 
 NOTES = [
 	"Bugs: a patchset's patch faults grouped by error signature across scripts; a failure over most of "
-	"the scripts its build ran counts as one cascade. The label audit (eval/audit) checks both.",
+	"the scripts its build ran counts as one cascade; bugs no selection could tell apart (same scripts, "
+	"same configurations) count as one. The label audit (eval/audit) checks the grouping and the labels.",
+	"Each change counts once: a change whose patchsets fail hundreds of tests weighs no more than one "
+	"that fails one. The per-bug figure is in the table.",
 	"A selection catches a bug when it runs a script in a configuration where that script failed with "
 	"the bug in the patchset's own build, with the chance the build showed (failed runs over runs). "
 	"A configuration where the script never ran counts as not caught.",
@@ -233,7 +237,7 @@ def main() -> None:
 		   ("learned table", "table"))) + "<span>filled: test, hollow: train</span></div>")
 	smalls = "".join(f"<figure><figcaption>{t}</figcaption>{chart(both, k, t, 320, 240, True)}</figure>"
 			 for k, t in (("easy_vs_full", "Easy bugs (in tests the patch edits)"),
-				      ("hard_vs_full", "Hard bugs"), ("series_vs_full", "Bugs also on the series"),
+				      ("hard_change_vs_full", "Hard bugs"), ("series_vs_full", "Bugs also on the series"),
 				      ("all_caught", "Patchsets with every bug caught")))
 	page = f"""<title>Lustre Test Selection</title>
 <meta name="claude:viewport-fit-sides" content="cover">

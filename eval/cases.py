@@ -47,6 +47,30 @@ def always_run(group_name: str | None) -> bool:
 	return g == "review-ldiskfs" or g.endswith("subtest-change")
 
 
+def merge_same_catch(bugs: list[dict]) -> list[dict]:
+	"""Bugs of the same scripts that failed in exactly the same configurations are
+	caught by exactly the same selections: no prediction can tell them apart, so
+	they count as one (a script that broke fails hundreds of subtests)."""
+	groups: dict[tuple, list[dict]] = {}
+	for b in bugs:
+		groups.setdefault((tuple(b["scripts"]), tuple(sorted(b["evidence"])), b["always"] > 0), []).append(b)
+	out = []
+	for bs in groups.values():
+		if len(bs) == 1:
+			out.append(bs[0])
+			continue
+		ev = {}
+		for k in bs[0]["evidence"]:
+			ev[k] = max((b["evidence"][k] for b in bs), key=lambda rf: rf[1] / rf[0] if rf[0] else 0)
+		out.append({**bs[0], "units": [u for b in bs for u in b["units"]], "evidence": ev,
+			    "always": max(b["always"] for b in bs), "why": "same-catch",
+			    "easy": any(b["easy"] for b in bs), "series": any(b["series"] for b in bs),
+			    "statuses": sorted({x for b in bs for x in b["statuses"]}), "merged": len(bs)})
+	for i, b in enumerate(out):
+		b["id"] = i
+	return out
+
+
 def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float):
 	db.row_factory = sqlite3.Row
 	faults = defaultdict(list)
@@ -130,6 +154,7 @@ def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float):
 				"series": any((f.get("series_changes") or 0) > 0 for f in fs),
 				"statuses": sorted({f.get("status") or "" for f in fs}),
 			})
+		out_bugs = merge_same_catch(out_bugs)
 		# One session per (build, Autotest name): retests are today's cost too,
 		# but a prediction is compared with one run of each session.
 		first = {}
