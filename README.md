@@ -10,52 +10,53 @@ Source: [Rainshadow](https://github.com/lustre-tools/rainshadow), a mirror of
 Whamcloud's Maloo test results. Rainshadow needs a login, so the dataset is
 built by whoever has one; this repo holds the harvester and schema.
 
+## What is kept
+
+Only failures that are the patch's own fault, caught by testing. Flaky,
+ambient and infrastructure failures are dropped. A failure is kept when
+Rainshadow's verdict is
+
+- `patch-changes-test`: the patch edits the failing test's function, or
+- `patch-suspect`: the test fails only on this uploader's changes or this
+  change's series,
+
+and the test is not ambient (Rainshadow class `ambient`) and did not fail on a
+branch run or for another uploader in the 30 days before (`branch_fails` and
+`other_uploaders` are 0). The harvester judges each failure as of its own date,
+so old failures are judged on the evidence that existed then.
+
+This is Rainshadow's heuristic, not ground truth. Use the `fault_evidence`
+view to see how well each is corroborated: `sessions_failed` (it failed in
+several configurations), `patchsets_failed` (it persisted across patchsets of
+the change) and `retest_status` (`FAIL` means it failed again on retest).
+A patch that breaks everything fails many tests in many sessions, so weight
+examples by change, not by row.
+
 ## Tables (`schema.sql`)
 
 | table | one row per |
 |---|---|
-| `patchset` | Gerrit (change, patchset) with a failure: files changed, test functions touched per script, `Test-Parameters` |
-| `session` | failed test session on that patchset: test group, distro, filesystem, enforcing, its retest and the retest's status |
-| `failure` | failed test (suite, subtest): status, error, plus Rainshadow's verdict |
-
-Views: `patch_caused` (verdict `patch-changes-test` or `patch-suspect`, the
-positive examples) and `unrelated` (known flaky or infrastructure).
+| `patchset` | Gerrit (change, patchset) with a fault: files changed, test functions touched per script, `Test-Parameters` |
+| `session` | failed test session holding a fault: test group, distro, filesystem, enforcing, its retest and the retest's status |
+| `failure` | the faulty test (suite, subtest): status, error, Rainshadow's verdict and the evidence behind it |
 
 Uploaders are stored as a hash of their address, not the address.
 
-### Verdicts
-
-Rainshadow's judgement of a failure, from how it fails elsewhere:
-
-| verdict | meaning |
-|---|---|
-| `patch-changes-test` | the patch edits this test's function |
-| `patch-suspect` | fails only on this uploader's changes, or this change's series |
-| `covered`, `known`, `unmatched`, `ambient-no-ticket` | fails on branch runs or for other uploaders: not the patch's |
-| `seen-before`, `new` | rare; only this patch in the last 30 days |
-| `infra`, `infra-active` | test infrastructure |
-
-`elsewhere` counts (`branch_fails`, `other_uploaders`, `other_changes`,
-`series_changes`) are the evidence behind the verdict. A verdict is a heuristic,
-not ground truth: `patch-suspect` in particular mixes real regressions with
-unlucky flaky failures on a small uploader's changes.
-
 ## Harvesting
 
-Needs only the Python standard library and a Rainshadow login in
-`~/.config/rainshadow/cli.env` (`RAINSHADOW_URL`, `RAINSHADOW_USER`,
-`RAINSHADOW_PASSWORD`).
+Rainshadow does the work: `rainshadow patch-faults` judges every failure of a
+period from one pass over its evidence per day (seconds for a month, with what
+each patch changed and every session that ran on those changes).
+`harvest.py` keeps the answer in `data/failures.db` (gitignored). Needs only the
+Python standard library and a Rainshadow login in `~/.config/rainshadow/cli.env`.
 
 ```bash
-./harvest.py discover --days 30      # failures on patchsets, test by test
-./harvest.py triage --sample 2000    # patch contents and verdicts for 2000 random patchsets
+./harvest.py fetch --days 180 --fill       # --fill: Rainshadow reads missing patch contents from Gerrit
 ./harvest.py stats
+rainshadow patch-faults --days 30 --sessions > faults.json && ./harvest.py load faults.json
 ```
 
-The database is `data/failures.db` (gitignored). Both stages record what they
-finished and resume where they stopped. `triage` costs a few seconds a
-patchset, so `--sample` bounds it; a flood from one bad patch can put thousands
-of failures on a handful of patchsets, so count patchsets, not failures.
-
-Rainshadow can also page everything directly: `/api/v1/export/failures` and
-`/api/v1/export/patchsets` (added in Rainshadow's `export.py`), once deployed.
+Rainshadow keeps a patchset's contents (files, test functions, `Test-Parameters`)
+only for the last two weeks of failures; `--fill` has it read the rest from Gerrit.
+The group-level view is `group_catches`: for each test group, the sessions that ran
+on these patches and the faults they caught.
