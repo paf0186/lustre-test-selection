@@ -38,3 +38,24 @@ def test_store_is_repeatable(tmp_path):
 	harvest.store(d, ANSWER)
 	harvest.store(d, ANSWER)
 	assert d.execute("SELECT count(*) FROM failure").fetchone()[0] == 1
+
+
+def test_richer_session_keeps_old_fields_and_adds_layout(tmp_path):
+	d = harvest.connect(tmp_path / "t.db")
+	harvest.store(d, ANSWER)
+	harvest.put_session(d, {"id": "s1", "change": 5, "patchset": 2, "arch": "aarch64",
+				"nodes": {"clients": 2, "mds_nodes": 2, "mdts": 4, "oss_nodes": 1, "osts": 8}})
+	row = d.execute("SELECT test_group, duration, arch, mdts, osts FROM session WHERE id = 's1'").fetchone()
+	assert row == ("review-ldiskfs", 100, "aarch64", 4, 8)
+
+
+def test_split_patch_takes_message_and_diff_without_addresses():
+	text = ("From 38d9 Mon Sep 17 00:00:00 2001\nFrom: A Person <a.person@example.com>\n"
+		"Date: Fri, 31 Jul 2026 03:47:34 +0000\nSubject: [PATCH] LU-1 llite: fix x\n\n"
+		"Body line.\n\nSigned-off-by: A Person <a.person@example.com>\nChange-Id: I12\n---\n"
+		" lustre/llite/file.c | 2 +-\n\ndiff --git a/lustre/llite/file.c b/lustre/llite/file.c\n"
+		"@@ -1 +1 @@\n-a\n+b\n")
+	msg, diff = harvest.split_patch(text)
+	assert msg.startswith("LU-1 llite: fix x\n\nBody line.") and "Change-Id: I12" in msg
+	assert "example.com" not in msg + diff and "<email>" in msg
+	assert diff.startswith("diff --git a/lustre/llite/file.c") and diff.endswith("+b\n")
