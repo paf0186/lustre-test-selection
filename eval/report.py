@@ -297,13 +297,18 @@ def value_table(v: dict | None, builds: int) -> str:
 
 
 def wowy_section() -> str:
-	"""With or without you: each part of the stack switched off, or on alone."""
+	"""With or without you: each part of the stack switched off, or on alone.
+	Decisions come from cross-validation on the training months; the lockbox
+	(the held-out test months) only confirms."""
 	f = HERE / "results" / "wowy.json"
 	if not f.exists():
 		return "<p class='muted'>Not run yet: <code>.venv/bin/python eval/wowy.py</code>.</p>"
 	d = json.loads(f.read_text())
+	lb = HERE / "results" / "wowy-lockbox.json"
+	lock = json.loads(lb.read_text()) if lb.exists() else None
 	pp = lambda v: "n/a" if v is None else f"{100 * v:+.1f}"  # noqa: E731
 	ci = lambda c: "" if not c else f" <span class='ci'>({100 * c[0]:+.1f} to {100 * c[1]:+.1f})</span>"  # noqa: E731
+	view = d.get("mode", "test") if d.get("mode") == "cv" else "test"
 
 	def verdict(r, without):
 		c = r.get("diff_ci")
@@ -312,33 +317,38 @@ def wowy_section() -> str:
 		if without:
 			return "keep" if c[1] < 0 else ("remove (it hurts)" if c[0] > 0 else "unclear")
 		return "helps" if c[0] > 0 else ("hurts" if c[1] < 0 else "unclear")
-	out = [f"<p class='lede'>Each part of the stack switched off from the full model (\"without\"), or added "
-	       "alone to a base of base rates and edited scripts (\"base +\"). Gain is the mean, over "
-	       f"{int(d['grid'][0] * 100)} to {int(d['grid'][-1] * 100)}% cost, of the share of today's bugs caught "
-	       "minus the patch-blind line's, in points; the difference is paired against the reference and "
-	       f"bootstrapped over changes. {len(d['seeds'])} training seeds each. A part is worth keeping only if "
-	       "removing it costs points with the interval clear of zero.</p>"]
-	for sec, title in (("families", "Signals"), ("selector", "Selector"), ("models", "Model")):
+	out = [f"<p class='lede'>Each part switched off from the reference ({esc(d.get('ref', 'model'))}, "
+	       "\"without\"), or added alone to a base of base rates and edited scripts (\"base +\"). Gain is the "
+	       f"mean, over {int(d['grid'][0] * 100)} to {int(d['grid'][-1] * 100)}% cost, of the share of today's bugs "
+	       "caught minus the patch-blind line's, in points; the difference is paired against the reference and "
+	       f"bootstrapped over changes; {len(d['seeds'])} training seeds each. "
+	       + ("Decided by cross-validation on the training months; the lockbox column is the held-out test "
+		  "months, for confirmation only. " if view == "cv" else "")
+	       + "A family of pure noise is the negative control: it must come out unclear.</p>"]
+	for sec, title in (("families", "Signals"), ("spend", "Spend by risk"), ("selector", "Selector"),
+			   ("models", "Model")):
 		rows = d["sections"].get(sec, {})
 		if not rows:
 			continue
-		recent = {r["name"]: r for r in rows.get("recent", [])}
+		lockrows = {r["name"]: r for r in ((lock or {}).get("sections", {}).get(sec, {}).get("test", []))}
 		out.append(f"<h2>{title}</h2><div class='scroll'><table><thead><tr><th>Variant</th>"
 			   "<th>Gain over blind</th><th>Against the reference</th><th>Verdict</th>"
-			   "<th>at 20%</th><th>at 25%</th><th>Recent: gain</th></tr></thead><tbody>")
-		for r in rows.get("test", []):
+			   "<th>at 20%</th><th>at 25%</th><th>Lockbox: against the reference</th></tr></thead><tbody>")
+		for r in rows.get(view, []):
 			v = verdict(r, r["name"].startswith("without"))
-			rc = recent.get(r["name"], {})
-			out.append(f"<tr class='{v.split()[0] if v else ''}'><td>{esc(r['name'])}</td><td class='n'>{pp(r['gain'])}{ci(r['gain_ci'])}</td>"
+			lr = lockrows.get(r["name"], {})
+			out.append(f"<tr class='{v.split()[0] if v else ''}'><td>{esc(r['name'])}</td>"
+				   f"<td class='n'>{pp(r['gain'])}{ci(r['gain_ci'])}</td>"
 				   f"<td class='n'>{pp(r['diff'])}{ci(r['diff_ci'])}</td><td>{v}</td>"
 				   f"<td class='n'>{pp(r['at20'])}</td><td class='n'>{pp(r['at25'])}</td>"
-				   f"<td class='n'>{pp(rc.get('gain'))}</td></tr>")
+				   f"<td class='n'>{pp(lr.get('diff'))}{ci(lr.get('diff_ci'))}</td></tr>")
 		out.append("</tbody></table></div>")
-	rules = d["sections"].get("rules", {}).get("test", [])
+	rules = d["sections"].get("rules", {}).get(view, [])
 	if rules:
 		rules = sorted(rules, key=lambda r: -r["bugs_lost"])
 		out.append("<h2>Each principle, removed</h2><p class='muted'>Bugs the principles alone would lose, and "
-			   "cost they would save, without each rule; test set.</p><div class='scroll'><table><thead><tr>"
+			   "cost they would save, without each rule. A rule no patch here exercised shows zero: unproven, "
+			   "not useless.</p><div class='scroll'><table><thead><tr>"
 			   "<th>Rule</th><th>Bugs lost</th><th>Cost saved</th></tr></thead><tbody>")
 		for r in rules:
 			out.append(f"<tr><td>{esc(r['name'])}</td><td class='n'>{pp(r['bugs_lost'])}{ci(r['bugs_lost_ci'])}</td>"

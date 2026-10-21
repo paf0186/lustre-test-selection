@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
 """WOWY, with or without you: what each part of the stack is worth.
 
-Every part is switched off from the full stack (without) and switched on alone
+Every part is switched off from the reference (without) and switched on alone
 over a small base (with), and each variant is scored against the patch-blind
 line: the mean gain in today's bugs caught across a range of costs.  The
 difference from the reference is bootstrapped over changes, paired (both
 variants on the same resampled changes), so the interval is on the difference
 itself.  Model variants are trained with several seeds.
 
-  .venv/bin/python eval/wowy.py                 # everything; writes eval/results/wowy.json
-  .venv/bin/python eval/wowy.py --only families # one section: families, selector, rules, models
+Decisions are made by cross-validation on the training months (--mode cv, the
+default): the training months are split in two folds, and each fold's model,
+history and blind order are fitted on the other.  The held-out test months are
+a lockbox, scored with --mode lockbox only to confirm.  A family of pure noise
+is a negative control: it must come out unclear.
 
-The feature matrix is built once; a variant only picks its columns.
+  .venv/bin/python eval/wowy.py                         # cv; eval/results/wowy.json
+  .venv/bin/python eval/wowy.py --mode lockbox          # eval/results/wowy-lockbox.json
+  .venv/bin/python eval/wowy.py --only families --only spend
 """
 from __future__ import annotations
 
@@ -31,14 +36,21 @@ from grade import full, grade  # noqa: E402
 from predictors import ranked  # noqa: E402
 from predictors.model import FAMILIES, Model  # noqa: E402
 from predictors.principles import Principles, load  # noqa: E402
+from predictors.risk import Risk, changed_lines  # noqa: E402
 
 ROOT = HERE.parent
-OUT = HERE / "results" / "wowy.json"
 RATES = [1.0, 0.4, 0.25, 0.15, 0.1, 0.07, 0.05, 0.035, 0.025, 0.015, 0.01]
 GRID = [0.15, 0.175, 0.2, 0.225, 0.25, 0.275, 0.3, 0.35, 0.4]
 BOOT = 1000
 SEEDS = (1, 2, 3)
 BASE = {"base", "edited"}
+REF_FAMILIES = set(FAMILIES) - {"base"}         # base rates hurt (WOWY, round 1)
+NOISE = 4                                        # noise columns, the negative control
+SMALL = 25                                       # lines: the size gate
+
+
+def month(day: str) -> int:
+	return int(day[:4]) * 12 + int(day[5:7])
 
 
 class Split:
@@ -70,8 +82,7 @@ class Split:
 		return out
 
 
-def curve(aggs: list[np.ndarray], weights: np.ndarray | None = None) -> list[tuple[float, float]]:
-	"""(cost share, share of today's bugs) per operating point, on resampled changes."""
+def curve(aggs, weights=None):
 	pts = []
 	for a in aggs:
 		s = a.sum(0) if weights is None else (a * weights[:, None]).sum(0)
@@ -80,7 +91,7 @@ def curve(aggs: list[np.ndarray], weights: np.ndarray | None = None) -> list[tup
 	return sorted(pts)
 
 
-def interp(pts: list[tuple[float, float]], x: float) -> float | None:
+def interp(pts, x):
 	if not pts or x < pts[0][0] or x > pts[-1][0]:
 		return None
 	for (a, b), (c, d) in zip(pts, pts[1:]):
@@ -89,7 +100,7 @@ def interp(pts: list[tuple[float, float]], x: float) -> float | None:
 	return pts[-1][1]
 
 
-def gain(pts, blind) -> tuple[float | None, dict]:
+def gain(pts, blind):
 	vals = {}
 	for x in GRID:
 		v, b = interp(pts, x), interp(blind, x)
@@ -99,8 +110,6 @@ def gain(pts, blind) -> tuple[float | None, dict]:
 
 
 def summarize(name, aggs, ref_aggs, blind_aggs, n_changes, rng_seed=7) -> dict:
-	"""Mean gain over blind on the grid, at 20% and 25%, and the paired difference
-	from the reference, bootstrapped over changes."""
 	g, at = gain(curve(aggs), curve(blind_aggs))
 	rng = np.random.default_rng(rng_seed)
 	diffs, gains = [], []
@@ -117,143 +126,193 @@ def summarize(name, aggs, ref_aggs, blind_aggs, n_changes, rng_seed=7) -> dict:
 				diffs.append(mine - ref)
 	ci = lambda v: [float(np.percentile(v, 2.5)), float(np.percentile(v, 97.5))] if v else None  # noqa: E731
 	return {"name": name, "gain": g, "gain_ci": ci(gains), "at20": at.get(0.2), "at25": at.get(0.25),
-		"diff": float(np.mean(diffs)) if diffs else None, "diff_ci": ci(diffs),
-		"curve": curve(aggs)}
+		"diff": float(np.mean(diffs)) if diffs else None, "diff_ci": ci(diffs), "curve": curve(aggs)}
+
+
+class Fold:
+	"""Everything fitted on one fold's training cases, and its evaluation cases'
+	features: a variant only picks columns and refits the classifier."""
+
+	def __init__(self, train: list[dict], evals: list[dict], costs: dict, seed: int = 0):
+		self.train, self.evals = train, evals
+		self.M = Model(costs, CLASSES, families=FAMILIES).fit(train)
+		self.risk = Risk().fit(train)
+		self.order = ranked.rank(train, costs, CLASSES)
+		self.names = list(self.M.cands)
+		tags = [f for f, _ in self.M.tagged(train[0]["input"], self.names[0], train[0]["change"])]
+		self.col = {fam: [i for i, f in enumerate(tags) if f == fam] for fam in FAMILIES}
+		rows = self.M.rows
+		rng = np.random.default_rng(1000 + seed)
+		self.Xtr = np.array([[v for _, v in self.M.tagged(c["input"], n, c["change"])] for c, n, _ in rows])
+		self.ytr = np.array([y for _, _, y in rows])
+		per = defaultdict(int)
+		for c, _, _ in rows:
+			per[c["change"]] += 1
+		self.wtr = np.array([1.0 / per[c["change"]] for c, _, _ in rows])
+		self.wtr *= len(self.wtr) / self.wtr.sum()
+		self.groups = []
+		last = None
+		for c, _, _ in rows:
+			if id(c) != last:
+				self.groups.append(0)
+				last = id(c)
+			self.groups[-1] += 1
+		self.Xev = np.array([[v for _, v in self.M.tagged(c["input"], n)] for c in evals for n in self.names])
+		# the negative control: columns of noise, the same for every variant
+		self.Xtr = np.hstack([self.Xtr, rng.normal(size=(len(self.Xtr), NOISE))])
+		self.Xev = np.hstack([self.Xev, rng.normal(size=(len(self.Xev), NOISE))])
+		width = self.Xtr.shape[1]
+		self.col["noise"] = list(range(width - NOISE, width))
+		self.risks = [self.risk(c["input"]) for c in evals]
+
+	def probabilities(self, families, kind, seed):
+		cols = sorted(i for f in families for i in self.col[f])
+		Xtr, Xev = self.Xtr[:, cols], self.Xev[:, cols]
+		if kind == "gbdt":
+			from sklearn.ensemble import HistGradientBoostingClassifier
+			clf = HistGradientBoostingClassifier(max_depth=4, learning_rate=0.05, max_iter=250,
+							     l2_regularization=1.0, min_samples_leaf=40, random_state=seed)
+			clf.fit(Xtr, self.ytr, sample_weight=self.wtr)
+			p = clf.predict_proba(Xev)[:, 1]
+		elif kind == "lgbm-rank":
+			import lightgbm as lgb
+			from sklearn.isotonic import IsotonicRegression
+			rk = lgb.LGBMRanker(n_estimators=300, learning_rate=0.05, num_leaves=15, min_child_samples=40,
+					    random_state=seed, verbose=-1)
+			rk.fit(Xtr, self.ytr, group=self.groups)
+			# a ranker's scores are not chances: map them onto the training rows' catch rate
+			iso = IsotonicRegression(out_of_bounds="clip").fit(rk.predict(Xtr), self.ytr)
+			p = iso.predict(rk.predict(Xev))
+		else:
+			from sklearn.linear_model import LogisticRegression
+			from sklearn.preprocessing import StandardScaler
+			sc = StandardScaler().fit(Xtr)
+			lr = LogisticRegression(C=0.3, max_iter=3000).fit(sc.transform(Xtr), self.ytr, sample_weight=self.wtr)
+			p = lr.predict_proba(sc.transform(Xev))[:, 1]
+		return p.reshape(len(self.evals), len(self.names))
+
+	def texts(self, families, kind, seed, *, seed_principles=False, redundancy="none", alpha=0.0, gate=False):
+		"""Per operating point, each evaluation case's Test-Parameters."""
+		p = self.probabilities(families, kind, seed)
+		out = []
+		for rate in RATES:
+			row = []
+			for c, sc, r in zip(self.evals, p, self.risks):
+				spend = (r / self.risk.mean) ** alpha if alpha else 1.0
+				if gate and changed_lines(c["input"]) <= SMALL:
+					spend = 0.0
+				row.append(self.M.select(c["input"], rate, dict(zip(self.names, sc)), redundancy=redundancy,
+							 seed=seed_principles, spend=spend))
+			out.append(row)
+		return out
 
 
 def main() -> None:
 	ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
 	ap.add_argument("--cases", default=str(ROOT / "data" / "cases.jsonl"))
-	ap.add_argument("--only", choices=["families", "selector", "rules", "models"], action="append")
+	ap.add_argument("--mode", choices=["cv", "lockbox"], default="cv")
+	ap.add_argument("--only", choices=["families", "selector", "spend", "rules", "models"], action="append")
 	ap.add_argument("--seeds", type=int, default=len(SEEDS))
+	ap.add_argument("--ref", default="lgbm-rank", choices=["gbdt", "lgbm-rank", "linear"])
 	args = ap.parse_args()
-	sections = set(args.only or ["families", "selector", "rules", "models"])
+	out_path = HERE / "results" / ("wowy.json" if args.mode == "cv" else "wowy-lockbox.json")
+	sections = set(args.only or ["families", "selector", "spend", "models", "rules"])
 	t0 = time.time()
 	cases = [json.loads(x) for x in open(args.cases)]
 	costs = json.loads((HERE / "costs.json").read_text())
 	train = [c for c in cases if c["split"] == "train"]
-	splits = {"test": Split([c for c in cases if c["split"] == "test"], costs),
-		  "recent": Split([c for c in cases if c["split"] == "test" and c.get("recent")], costs)}
-	order = ranked.rank(train, costs, CLASSES)
-	blind = {k: [sp.aggregate([ranked.prediction(order, n, CLASSES)] * len(sp.cases))
-		     for n in range(0, len(order) + 1, 1)][:60] for k, sp in splits.items()}
+	if args.mode == "cv":
+		# two folds of the training months, alternating by month
+		folds = [([c for c in train if month(c["day"]) % 2 != f], [c for c in train if month(c["day"]) % 2 == f])
+			 for f in (0, 1)]
+		views = {"cv": None}
+	else:
+		test = [c for c in cases if c["split"] == "test"]
+		folds = [(train, test)]
+		views = {"test": None, "recent": lambda c: c.get("recent")}
+	fits = [Fold(tr, ev, costs, i) for i, (tr, ev) in enumerate(folds)]
+	evals = [c for f in fits for c in f.evals]
+	splits = {v: Split([c for c in evals if not keep or keep(c)], costs) for v, keep in views.items()}
+	print(f"{args.mode}: {len(fits)} folds, {sum(len(f.Xtr) for f in fits)} training rows, "
+	      f"{len(evals)} evaluation cases, features in {time.time() - t0:.0f} s", file=sys.stderr)
 
-	# the full feature matrix, once: training rows (each change left out of its own
-	# history) and every (case, test set) pair of the evaluation sets
-	M = Model(costs, CLASSES, families=FAMILIES).fit(train)
-	names = list(M.cands)
-	tags = [f for f, _ in M.tagged(train[0]["input"], names[0], train[0]["change"])]
-	col = {fam: [i for i, f in enumerate(tags) if f == fam] for fam in FAMILIES}
-	Xtr = np.array([[v for _, v in M.tagged(c["input"], n, c["change"])] for c, n, _ in M.rows])
-	ytr = np.array([y for _, _, y in M.rows])
-	per = defaultdict(int)
-	for c, _, _ in M.rows:
-		per[c["change"]] += 1
-	wtr = np.array([1.0 / per[c["change"]] for c, _, _ in M.rows])
-	wtr *= len(wtr) / wtr.sum()
-	Xev = {k: np.array([[v for _, v in M.tagged(c["input"], n)] for c in sp.cases for n in names])
-	       for k, sp in splits.items()}
-	print(f"features: {Xtr.shape[0]} training rows, {Xev['test'].shape[0]} test pairs, "
-	      f"{time.time() - t0:.0f} s", file=sys.stderr)
+	pos = {id(c): i for i, c in enumerate(evals)}
 
-	def run_model(families: set[str], seed: int, kind="gbdt", seed_principles=False, redundancy="none"):
-		cols = sorted(i for f in families for i in col[f])
-		if kind == "gbdt":
-			from sklearn.ensemble import HistGradientBoostingClassifier
-			clf = HistGradientBoostingClassifier(max_depth=4, learning_rate=0.05, max_iter=250,
-							     l2_regularization=1.0, min_samples_leaf=40, random_state=seed)
-			clf.fit(Xtr[:, cols], ytr, sample_weight=wtr)
-			prob = lambda X: clf.predict_proba(X[:, cols])[:, 1]  # noqa: E731
-		elif kind == "lgbm-rank":
-			import lightgbm as lgb
-			groups, keys = [], []
-			for c, _, _ in M.rows:
-				if not keys or keys[-1] != id(c):
-					keys.append(id(c))
-					groups.append(0)
-				groups[-1] += 1
-			rk = lgb.LGBMRanker(n_estimators=300, learning_rate=0.05, num_leaves=15, min_child_samples=40,
-					    random_state=seed, verbose=-1)
-			rk.fit(Xtr[:, cols], ytr, group=groups)
-			raw = lambda X: rk.predict(X[:, cols])  # noqa: E731
-			# a ranker's scores are not chances: map them to the training rows' catch rate
-			from sklearn.isotonic import IsotonicRegression
-			iso = IsotonicRegression(out_of_bounds="clip").fit(raw(Xtr), ytr)
-			prob = lambda X: iso.predict(raw(X))  # noqa: E731
-		else:
-			from sklearn.linear_model import LogisticRegression
-			from sklearn.preprocessing import StandardScaler
-			sc = StandardScaler().fit(Xtr[:, cols])
-			lr = LogisticRegression(C=0.3, max_iter=3000).fit(sc.transform(Xtr[:, cols]), ytr, sample_weight=wtr)
-			prob = lambda X: lr.predict_proba(sc.transform(X[:, cols]))[:, 1]  # noqa: E731
-		out = {}
-		for k, sp in splits.items():
-			p = prob(Xev[k]).reshape(len(sp.cases), len(names))
-			scores = [dict(zip(names, row)) for row in p]
-			out[k] = [sp.aggregate([M.select(c["input"], rate, sc_, redundancy=redundancy, seed=seed_principles)
-						for c, sc_ in zip(sp.cases, scores)]) for rate in RATES]
-		return out
+	def aggregate(per_fold_texts):
+		"""Join the folds' texts in evaluation order, then aggregate per view."""
+		joined = [sum((ft[i] for ft in per_fold_texts), []) for i in range(len(per_fold_texts[0]))]
+		return {v: [sp.aggregate([row[pos[id(c)]] for c in sp.cases]) for row in joined] for v, sp in splits.items()}
 
-	def averaged(families, kind="gbdt", **kw):
-		runs = [run_model(families, s, kind, **kw) for s in SEEDS[:args.seeds]]
-		return {k: [sum(r[k][i] for r in runs) / len(runs) for i in range(len(RATES))] for k in splits}
+	blind = aggregate([[[ranked.prediction(f.order, n, CLASSES)] * len(f.evals) for n in range(0, 61)]
+			   for f in fits])
 
-	results: dict = {"grid": GRID, "seeds": SEEDS[:args.seeds], "sections": {}}
-	if args.only and OUT.exists():
-		# one section rerun: keep the others' results
-		results["sections"] = json.loads(OUT.read_text()).get("sections", {})
+	def averaged(families, kind=args.ref, **kw):
+		runs = [aggregate([f.texts(families, kind, s, **kw) for f in fits]) for s in SEEDS[:args.seeds]]
+		return {v: [sum(r[v][i] for r in runs) / len(runs) for i in range(len(RATES))] for v in splits}
+
+	results: dict = {"mode": args.mode, "ref": args.ref, "grid": GRID, "seeds": SEEDS[:args.seeds], "sections": {}}
+	if args.only and out_path.exists():
+		results["sections"] = json.loads(out_path.read_text()).get("sections", {})
 		for sec in sections:
 			results["sections"].pop(sec, None)
-			if sec == "rules":
-				results["sections"].pop("rules_ref", None)
-
-	def record(section, name, aggs, ref):
-		for k, sp in splits.items():
-			s = summarize(name, aggs[k], ref[k] if ref else None, blind[k], len(sp.changes))
-			results["sections"].setdefault(section, {}).setdefault(k, []).append(s)
-			if k == "test":
-				print(f"  {section:9s} {name:34s} gain {fmt(s['gain'])} {fmtci(s['gain_ci'])} "
-				      f"vs ref {fmt(s['diff'])} {fmtci(s['diff_ci'])}  @20 {fmt(s['at20'])} @25 {fmt(s['at25'])}",
-				      file=sys.stderr)
+			results["sections"].pop(f"{sec}_ref", None)
 
 	def save():
 		results["seconds"] = round(time.time() - t0)
-		OUT.write_text(json.dumps(results, indent=0) + "\n")
+		out_path.write_text(json.dumps(results, indent=0) + "\n")
 
-	full_set = set(FAMILIES)
-	ref = averaged(full_set)
+	def record(section, name, aggs, ref):
+		for v, sp in splits.items():
+			s = summarize(name, aggs[v], ref[v] if ref else None, blind[v], len(sp.changes))
+			results["sections"].setdefault(section, {}).setdefault(v, []).append(s)
+			if v == next(iter(splits)):
+				print(f"  {section:9s} {name:44s} gain {fmt(s['gain'])} {fmtci(s['gain_ci'])} "
+				      f"vs ref {fmt(s['diff'])} {fmtci(s['diff_ci'])}  @20 {fmt(s['at20'])} @25 {fmt(s['at25'])}",
+				      file=sys.stderr)
+
+	ref = averaged(REF_FAMILIES)
 	if "families" in sections:
-		record("families", "all families", ref, None)
-		for fam in sorted(FAMILIES):
-			record("families", f"without {fam}", averaged(full_set - {fam}), ref)
+		record("families", f"reference ({args.ref})", ref, None)
+		for fam in sorted(REF_FAMILIES):
+			record("families", f"without {fam}", averaged(REF_FAMILIES - {fam}), ref)
+		record("families", "with noise (negative control)", averaged(REF_FAMILIES | {"noise"}), ref)
 		base = averaged(BASE)
 		record("families", "base only (base rates, edited)", base, ref)
-		for fam in sorted(FAMILIES - BASE):
+		for fam in sorted((set(FAMILIES) | {"noise"}) - BASE):
 			record("families", f"base + {fam}", averaged(BASE | {fam}), base)
+		save()
+	if "spend" in sections:
+		record("spend", "same threshold for every patch", ref, None)
+		record("spend", f"small patches (<= {SMALL} lines) get nothing extra", averaged(REF_FAMILIES, gate=True), ref)
+		record("spend", "spend by risk (alpha 0.5)", averaged(REF_FAMILIES, alpha=0.5), ref)
+		record("spend", "spend by risk (alpha 1)", averaged(REF_FAMILIES, alpha=1.0), ref)
+		record("spend", "spend by risk (alpha 1) and the size gate", averaged(REF_FAMILIES, alpha=1.0, gate=True), ref)
 		save()
 	if "selector" in sections:
 		record("selector", "model alone", ref, None)
-		record("selector", "principles first (hybrid)", averaged(full_set, seed_principles=True), ref)
-		record("selector", "overlap discount", averaged(full_set, redundancy="max"), ref)
+		record("selector", "principles first (hybrid)", averaged(REF_FAMILIES, seed_principles=True), ref)
+		record("selector", "overlap discount", averaged(REF_FAMILIES, redundancy="max"), ref)
 		save()
 	if "models" in sections:
-		record("models", "boosted trees", ref, None)
-		record("models", "logistic", averaged(full_set, kind="linear"), ref)
-		record("models", "LambdaMART ranker", averaged(full_set, kind="lgbm-rank"), ref)
+		record("models", f"reference ({args.ref})", ref, None)
+		for kind, title in (("gbdt", "boosted trees"), ("linear", "logistic"), ("lgbm-rank", "LambdaMART ranker")):
+			if kind != args.ref:
+				record("models", title, averaged(REF_FAMILIES, kind=kind), ref)
 		save()
 	if "rules" in sections:
 		rules = load()
+
 		def principles_aggs(rs):
 			p = Principles(rs)
-			return {k: [sp.aggregate([p.predict(c["input"])["text"] for c in sp.cases])] for k, sp in splits.items()}
+			return aggregate([[[p.predict(c["input"])["text"] for c in f.evals]] for f in fits])
 		ref_p = principles_aggs(rules)
-		results["sections"]["rules_ref"] = {k: summarize("all rules", ref_p[k], None, blind[k], len(sp.changes))
-						     for k, sp in splits.items()}
+		for v, sp in splits.items():
+			results["sections"].setdefault("rules_ref", {})[v] = summarize("all rules", ref_p[v], None, blind[v],
+										      len(sp.changes))
 		for i, r in enumerate(rules):
 			aggs = principles_aggs(rules[:i] + rules[i + 1:])
-			for k, sp in splits.items():
-				# one operating point: the change in bugs caught and in cost, paired
-				a, b = ref_p[k][0], aggs[k][0]
+			for v, sp in splits.items():
+				a, b = ref_p[v][0], aggs[v][0]
 				rng = np.random.default_rng(7)
 				d = []
 				for _ in range(BOOT):
@@ -263,12 +322,13 @@ def main() -> None:
 					if ra[1] and rb[1]:
 						d.append(ra[0] / ra[1] - rb[0] / rb[1])
 				sa, sb = a.sum(0), b.sum(0)
-				results["sections"].setdefault("rules", {}).setdefault(k, []).append({
+				results["sections"].setdefault("rules", {}).setdefault(v, []).append({
 					"name": r["name"], "bugs_lost": sa[0] / sa[1] - sb[0] / sb[1],
-					"bugs_lost_ci": [float(np.percentile(d, 2.5)), float(np.percentile(d, 97.5))],
+					"bugs_lost_ci": [float(np.percentile(d, 2.5)), float(np.percentile(d, 97.5))] if d else None,
 					"cost_saved": sa[2] / sa[3] - sb[2] / sb[3]})
+		save()
 	save()
-	print(f"done in {results['seconds']} s: {OUT}", file=sys.stderr)
+	print(f"done in {results['seconds']} s: {out_path}", file=sys.stderr)
 
 
 def fmt(v):

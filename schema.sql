@@ -59,7 +59,8 @@ CREATE TABLE IF NOT EXISTS test_set (
 	sub_total      INTEGER,
 	sub_passed     INTEGER,
 	sub_failed     INTEGER,
-	sub_skipped    INTEGER
+	sub_skipped    INTEGER,
+	failed         TEXT        -- JSON: the subtests that failed, however each was triaged
 );
 CREATE INDEX IF NOT EXISTS test_set_session ON test_set(session_id);
 CREATE INDEX IF NOT EXISTS test_set_suite ON test_set(suite, status);

@@ -9,11 +9,13 @@ failures one bug causes are merged first (docs: test_selection_design.md 2.4).
    does not merge.
 3. A failure Rainshadow found following a patch fault in its session
    (patch-cascade) joins that fault's bug.
-4. Units that fail on exactly the same patchsets of the change, two or more of
+4. Units of one subtest are one bug whatever their messages say: the same test
+   failing in two words is not two faults.
+5. Units that fail on exactly the same patchsets of the change, two or more of
    them, are one bug: they arrived and left together.  (A label may use later
    patchsets; a predictor never sees them.)
-5. A cascade, faults over most of the scripts the build ran, is one bug.
-6. Everything else stays apart.
+6. A cascade, faults over most of the scripts the build ran, is one bug.
+7. Everything else stays apart.
 """
 from __future__ import annotations
 
@@ -96,6 +98,12 @@ def group(faults: list[dict], scripts_run: set[str],
 					lead = None
 			if lead and lead.get("id") in unit_of:
 				parent[find(k)] = find(unit_of[lead["id"]])
+	by_test: dict[tuple, list[tuple]] = defaultdict(list)
+	for k in units:
+		by_test[(k[0], k[1])].append(k)
+	for ks in by_test.values():
+		for k in ks[1:]:
+			parent[find(k)] = find(ks[0])
 	by_life: dict[frozenset, list[tuple]] = defaultdict(list)
 	for k in units:
 		life = (lifetime or {}).get(k)

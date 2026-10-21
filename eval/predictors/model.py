@@ -293,10 +293,12 @@ class Model:
 		return dict(zip(names, self.clf.predict_proba(X)[:, 1]))
 
 	def select(self, inp: dict, rate: float, scores: dict[str, float] | None = None,
-		   redundancy: str = "none", seed: bool = False) -> str:
+		   redundancy: str = "none", seed: bool = False, spend: float = 1.0) -> str:
 		"""Test sets added by predicted catches per session hour while worth `rate`;
 		a candidate counts only for what the chosen sets would not also catch."""
 		scores = scores if scores is not None else self.scores(inp)
+		# a riskier patch buys tests the threshold would refuse an ordinary one
+		rate = rate / spend if spend > 0 else float("inf")
 		picks: dict[str, set[str]] = defaultdict(set)
 		groups: set[str] = set()
 		running: set[str] = set()

@@ -91,9 +91,9 @@ class Client:
 				if e.code in (400, 401, 403, 404):
 					raise SystemExit(f"Rainshadow said {e.code} for {path}: {e.read()[:300]!r}")
 				err = e
-			except (urllib.error.URLError, ConnectionError) as e:
+			except (urllib.error.URLError, ConnectionError, TimeoutError) as e:
 				err = e
-			time.sleep(min(2 ** attempt, 30))
+			time.sleep(min(2 ** attempt * 5, 120))
 		raise SystemExit(f"Rainshadow did not answer {path}: {err}")
 
 
@@ -106,6 +106,8 @@ def connect(path: Path) -> sqlite3.Connection:
 	path.parent.mkdir(parents=True, exist_ok=True)
 	db = sqlite3.connect(path, timeout=60)
 	db.executescript((HERE / "schema.sql").read_text())
+	if "failed" not in {r[1] for r in db.execute("PRAGMA table_info(test_set)")}:
+		db.execute("ALTER TABLE test_set ADD COLUMN failed TEXT")
 	have = {r[1] for r in db.execute("PRAGMA table_info(failure)")}
 	for col in FAILURE_NEW:
 		if col not in have:
@@ -204,9 +206,11 @@ def sessions(args, db) -> None:
 				put_session(db, s)
 				db.execute("DELETE FROM test_set WHERE session_id = ?", (s["id"],))
 				for t in s["test_sets"]:
-					db.execute("INSERT OR REPLACE INTO test_set VALUES (?,?,?,?,?,?,?,?,?)",
+					db.execute("INSERT OR REPLACE INTO test_set (id, session_id, suite, status, duration, "
+						   "sub_total, sub_passed, sub_failed, sub_skipped, failed) VALUES (?,?,?,?,?,?,?,?,?,?)",
 						   (t["id"], s["id"], t["suite"], t["status"], t["duration"],
-						    t["sub_total"], t["sub_passed"], t["sub_failed"], t["sub_skipped"]))
+						    t["sub_total"], t["sub_passed"], t["sub_failed"], t["sub_skipped"],
+						    json.dumps(t["failed"]) if t.get("failed") else None))
 					n_sets += 1
 			n_sess += len(d["rows"])
 			after = d["next_after"]

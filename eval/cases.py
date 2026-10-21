@@ -114,9 +114,10 @@ def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float, every: int
 			sessions[(s["change"], s["patchset"])].append(dict(s))
 	sids = {s["id"] for k in keys for s in sessions.get(k, [])}
 	sets = defaultdict(list)
-	for t in db.execute("SELECT session_id, suite, status, duration FROM test_set"):
+	for t in db.execute("SELECT session_id, suite, status, duration, failed FROM test_set"):
 		if t[0] in sids:
-			sets[t[0]].append({"suite": t[1], "status": t[2], "duration": t[3]})
+			sets[t[0]].append({"suite": t[1], "status": t[2], "duration": t[3],
+					   "failed": set(json.loads(t[4])) if t[4] else set()})
 
 	first_day = {}
 	for (c, p), fs in faults.items():
@@ -205,6 +206,17 @@ def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float, every: int
 					afailed[(f["suite"], s["test_group"])].add(s["id"])
 				elif cls.get(s["id"]):
 					failed[(f["suite"], cls[s["id"]])].add(s["id"])
+			# A session where one of the bug's subtests failed reproduced it, however
+			# that failure was triaged (a cascade's later failures, a different message).
+			subtests = {(u[0], u[1]) for u in b["units"]}
+			for s in ss:
+				for x in sets.get(s["id"], []):
+					if not any((x["suite"], st) in subtests for st in x["failed"]):
+						continue
+					if always_run(s["test_group"]):
+						afailed[(x["suite"], s["test_group"])].add(s["id"])
+					elif cls.get(s["id"]):
+						failed[(x["suite"], cls[s["id"]])].add(s["id"])
 			ev = {f"{sc}|{c}": [len(evidence_ran[(sc, c)] | failed[(sc, c)]), len(failed[(sc, c)])]
 			      for (sc, c) in failed}
 			miss = 1.0
