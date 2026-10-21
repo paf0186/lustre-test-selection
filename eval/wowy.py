@@ -37,6 +37,7 @@ from predictors import ranked  # noqa: E402
 from predictors.model import FAMILIES, Model  # noqa: E402
 from predictors.principles import Principles, load  # noqa: E402
 from predictors.risk import Risk, changed_lines  # noqa: E402
+from predictors.simple import Simple  # noqa: E402
 
 ROOT = HERE.parent
 RATES = [1.0, 0.4, 0.25, 0.15, 0.1, 0.07, 0.05, 0.035, 0.025, 0.015, 0.01]
@@ -211,12 +212,13 @@ def main() -> None:
 	ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
 	ap.add_argument("--cases", default=str(ROOT / "data" / "cases.jsonl"))
 	ap.add_argument("--mode", choices=["cv", "lockbox"], default="cv")
-	ap.add_argument("--only", choices=["families", "selector", "spend", "rules", "models"], action="append")
+	ap.add_argument("--only", choices=["families", "selector", "spend", "rules", "models", "candidate", "risk"],
+			action="append")
 	ap.add_argument("--seeds", type=int, default=len(SEEDS))
 	ap.add_argument("--ref", default="lgbm-rank", choices=["gbdt", "lgbm-rank", "linear"])
 	args = ap.parse_args()
 	out_path = HERE / "results" / ("wowy.json" if args.mode == "cv" else "wowy-lockbox.json")
-	sections = set(args.only or ["families", "selector", "spend", "models", "rules"])
+	sections = set(args.only or ["families", "selector", "spend", "models", "rules", "candidate", "risk"])
 	t0 = time.time()
 	cases = [json.loads(x) for x in open(args.cases)]
 	costs = json.loads((HERE / "costs.json").read_text())
@@ -298,6 +300,59 @@ def main() -> None:
 		for kind, title in (("gbdt", "boosted trees"), ("linear", "logistic"), ("lgbm-rank", "LambdaMART ranker")):
 			if kind != args.ref:
 				record("models", title, averaged(REF_FAMILIES, kind=kind), ref)
+		save()
+	if "candidate" in sections:
+		# E4: a curve over the size of the blind base; matched to RATES' length by sampling n
+		ns = [0, 1, 2, 3, 4, 6, 8, 10, 13, 16, 20, 25, 30, 40]
+		aggs = aggregate([[[Simple(f.order, n).predict(c["input"])["text"] for c in f.evals] for n in ns]
+				  for f in fits])
+		record("candidate", "reference", ref, None)
+		for v, sp in splits.items():
+			s_ = summarize("simple candidate", aggs[v], ref[v], blind[v], len(sp.changes))
+			s_["vs_blind"] = s_["gain"]
+			results["sections"]["candidate"].setdefault(v, []).append(s_)
+			print(f"  candidate simple                               gain {fmt(s_['gain'])} {fmtci(s_['gain_ci'])} "
+			      f"vs ref {fmt(s_['diff'])} {fmtci(s_['diff_ci'])}  @20 {fmt(s_['at20'])} @25 {fmt(s_['at25'])}  [{v}]",
+			      file=sys.stderr)
+		save()
+	if "risk" in sections:
+		# E5: how well the patch risk ranks population patches
+		from sklearn.metrics import roc_auc_score
+		pts = [(c, f.risk(c["input"])) for f in fits for c in f.evals]
+		for v, sp in splits.items():
+			keep = {id(c) for c in sp.cases}
+			rows = [(c["change"], r, int(c["faulty"])) for c, r in pts if id(c) in keep and c["sampled"]]
+			changes = sorted({ch for ch, _, _ in rows})
+
+			def stats(sample):
+				ys = [y for _, _, y in sample]
+				rs = [r for _, r, _ in sample]
+				if not (0 < sum(ys) < len(ys)):
+					return None
+				order = sorted(range(len(rs)), key=lambda i: rs[i])
+				k = len(order) // 5
+				base = sum(ys) / len(ys)
+				low = sum(ys[i] for i in order[:k]) / k / base
+				high = sum(ys[i] for i in order[-k:]) / k / base
+				return roc_auc_score(ys, rs), high, low
+			by = defaultdict(list)
+			for row in rows:
+				by[row[0]].append(row)
+			rng = np.random.default_rng(7)
+			boots = []
+			for _ in range(BOOT):
+				sample = [r for ch in rng.choice(changes, len(changes)) for r in by[ch]]
+				st = stats(sample)
+				if st:
+					boots.append(st)
+			auc, high, low = stats(rows)
+			ci = lambda i: [float(np.percentile([b[i] for b in boots], 2.5)), float(np.percentile([b[i] for b in boots], 97.5))]  # noqa: E731
+			results["sections"].setdefault("risk", {})[v] = {
+				"patches": len(rows), "faulty": sum(y for _, _, y in rows), "auc": auc, "auc_ci": ci(0),
+				"riskiest_fifth_lift": high, "riskiest_ci": ci(1), "safest_fifth_lift": low, "safest_ci": ci(2)}
+			print(f"  risk [{v}] {len(rows)} patches, {sum(y for _, _, y in rows)} faulty: AUC {auc:.3f} "
+			      f"({ci(0)[0]:.3f} to {ci(0)[1]:.3f}); riskiest fifth {high:.2f}x ({ci(1)[0]:.2f} to {ci(1)[1]:.2f}); "
+			      f"safest fifth {low:.2f}x ({ci(2)[0]:.2f} to {ci(2)[1]:.2f})", file=sys.stderr)
 		save()
 	if "rules" in sections:
 		rules = load()
