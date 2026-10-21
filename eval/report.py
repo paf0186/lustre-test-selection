@@ -19,13 +19,17 @@ LOG = HERE / "results" / "log.jsonl"
 OUT = HERE / "results" / "index.html"
 MANIFEST = HERE / "manifest.json"
 TARGETS = [(0.90, 0.25), (0.90, 0.10), (0.95, 0.10)]
-CURVES = {"ranked": "blind", "oracle": "oracle", "principles-on-blind": "onblind"}
+CURVES = {"ranked": "blind", "oracle": "oracle", "principles-on-blind": "onblind", "model": "model",
+	  "model-llm": "modelllm"}
 CURVE_LABELS = {"ranked": "patch-blind, best value first", "oracle": "oracle (the ceiling)",
-		"principles-on-blind": "principles on a blind base"}
+		"principles-on-blind": "principles on a blind base", "model": "learned model",
+		"model-llm": "learned model with LLM reading"}
 CURVE_LABEL_AT = {
 	"ranked": lambda c: next(((a, b - 0.04) for a, b in c if a >= 0.62), c[-1]),
 	"oracle": lambda c: (max(c, key=lambda p: p[1])[0] + 0.005, 0.17),
 	"principles-on-blind": lambda c: (c[-1][0] + 0.01, c[-1][1] - 0.035),
+	"model": lambda c: next(((a + 0.01, b - 0.05) for a, b in c if a >= 0.15), c[-1]),
+	"model-llm": lambda c: next(((a - 0.02, b + 0.06) for a, b in c if a >= 0.3), c[-1]),
 }
 FAMILIES = {"full": "today", "trivial": "trivial", "edited": "edited", "table": "table"}
 
@@ -295,6 +299,12 @@ section { background: var(--panel); border: 1px solid var(--grid); border-radius
 .chart .oracle.train { stroke-dasharray: 2 4; stroke-width: 1.5; opacity: 0.8; }
 .chart .onblind { fill: none; stroke: var(--other); stroke-width: 2; }
 .chart .onblind.train { stroke-dasharray: 2 4; stroke-width: 1.5; opacity: 0.8; }
+.chart .model { fill: none; stroke: var(--table); stroke-width: 2.5; }
+.chart .model.train { stroke-dasharray: 2 4; stroke-width: 1.5; opacity: 0.8; }
+.chart .clabel.model { fill: var(--table); }
+.chart .modelllm { fill: none; stroke: var(--fg); stroke-width: 2.5; }
+.chart .modelllm.train { stroke-dasharray: 2 4; stroke-width: 1.5; opacity: 0.8; }
+.chart .clabel.modelllm { fill: var(--fg); }
 .chart .clabel { font: 11px var(--mono); paint-order: stroke; stroke: var(--panel); stroke-width: 4px; }
 .chart .clabel.blind { fill: var(--today); } .chart .clabel.oracle { fill: var(--edited); }
 .chart .clabel.onblind { fill: var(--other); }
@@ -361,6 +371,10 @@ def main() -> None:
 		  "<span><i class='line' style='background:var(--edited)'></i>oracle: each patch's own cheapest "
 		  "catches, the ceiling</span>"
 		  "<span><i class='line' style='background:var(--other)'></i>principles on a blind base</span>"
+		  "<span><i class='line' style='background:var(--table)'></i>learned model: principles and "
+		  "history as features</span>"
+		  "<span><i class='line' style='background:var(--fg)'></i>the same with an LLM's reading of each "
+		  "patch as features too</span>"
 		  "<span>whiskers: 95% interval</span>"
 		  "</div>")
 	seen = set()

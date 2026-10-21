@@ -98,13 +98,17 @@ CREATE TABLE IF NOT EXISTS failure (
 	session_id     TEXT,
 	test_set_id    TEXT,
 	enforcing      INTEGER,
-	kind           TEXT,               -- patch-changes-test | patch-suspect | unproven
+	kind           TEXT,               -- patch-changes-test | patch-suspect | patch-cascade | unproven
 	class          TEXT,               -- patch, single ... (never ambient or infra)
 	count          INTEGER,            -- times the test failed in the 30 days around it
 	other_changes  INTEGER,            -- other changes it failed on: the patch's own series
 	series_changes INTEGER,            -- of which other changes of this change's series
 	retest_status  TEXT,               -- PASS: the failure did not repeat on retest
-	patch_changes  TEXT                -- JSON: what of the test the patch touches
+	patch_changes  TEXT,               -- JSON: what of the test the patch touches
+	crash_sig      TEXT,               -- for a crash: its ASSERTION/LBUG line or oops frames
+	cascade_of     TEXT,               -- JSON: the patch fault this failure follows (kind patch-cascade)
+	series_origin  TEXT,               -- JSON: the lowest change of the series that failed the same way
+	renamed_from   TEXT                -- the test's old name, when the patch renamed it
 );
 CREATE INDEX IF NOT EXISTS failure_ps ON failure(change, patchset);
 CREATE INDEX IF NOT EXISTS failure_test ON failure(suite, subtest);

@@ -77,3 +77,17 @@ def test_sessions_map_to_classes():
 	assert class_of({"test_group": "review-ldiskfs", "server_fs": "ldiskfs", "mdts": 1, "osts": 7,
 			 "test_name": "lustre-reviews-el8.10-x86_64_lustre-reviews-sles15sp5-x86_64-review-ldiskfs"}) \
 		== "ldiskfs-sles"
+
+
+def test_crashes_group_by_what_crashed_and_cascades_join_their_fault():
+	f = lambda i, suite, sub, sig, st="FAIL", **kw: {"id": i, "suite": suite, "subtest": sub, "sig": sig,  # noqa: E731
+							  "status": st, **kw}
+	run = {"sanity", "sanityn", "conf-sanity", "a", "b", "c", "d", "e", "g", "h"}
+	bugs = group([f("1", "sanity", "test_1", "<NODE> crashed during sanity test_1", "CRASH",
+			crash_sig="ASSERTION( x ) failed"),
+		      f("2", "sanityn", "test_9", "<NODE> crashed during sanityn test_9", "CRASH",
+			crash_sig="ASSERTION( x ) failed"),
+		      f("3", "conf-sanity", "test_5", "mount failed"),
+		      f("4", "conf-sanity", "test_6", "other words", cascade_of='{"id": "3"}')], run)
+	assert sorted(b["scripts"] for b in bugs) == [["conf-sanity"], ["sanity", "sanityn"]]
+	assert generic("crash: Out of memory: Killed process", "CRASH")

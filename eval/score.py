@@ -148,6 +148,21 @@ def _points(rows_all, fulls, texts) -> dict:
 
 
 costs_g: dict = {}
+MODEL_RATES = [1e9, 2.0, 1.0, 0.6, 0.4, 0.3, 0.2, 0.15, 0.1, 0.07, 0.05, 0.035, 0.025, 0.015, 0.01, 0.005, 0.002]
+
+
+def pair_auc(model, rows_all, scored) -> float | None:
+	"""How well the model ranks the test sets that ran: AUC over (patch, test set) pairs."""
+	from sklearn.metrics import roc_auc_score
+	from predictors.model import label
+	ys, ps = [], []
+	for c, sc in zip(rows_all, scored):
+		ran = set(c.get("ran") or [])
+		for name, cand in model.cands.items():
+			if set(cand["keys"]) & ran or name in ran:
+				ys.append(label(c, cand))
+				ps.append(sc[name])
+	return round(roc_auc_score(ys, ps), 4) if 0 < sum(ys) < len(ys) else None
 
 
 def curve(cases, costs, label, when) -> list[dict]:
@@ -158,6 +173,7 @@ def curve(cases, costs, label, when) -> list[dict]:
 	from predictors import oracle, ranked
 	from predictors.principles import OnBlindBase
 	costs_g.update(costs)
+	models: dict = {}
 	train = [c for c in cases if c["split"] == "train"]
 	order = ranked.rank(train, costs, CLASSES)
 	out = []
@@ -184,6 +200,21 @@ def curve(cases, costs, label, when) -> list[dict]:
 			    "title": "oracle: each patch's own cheapest catches",
 			    "about": "knowing each patch's bugs, the tests that catch them for the least session time; "
 				     "no predictor can do better"})
+		for kind, llm in (("gbdt", False), ("gbdt", True)):
+			model = models.get((kind, llm))
+			if model is None:
+				from predictors.model import Model
+				model = models[(kind, llm)] = Model(costs, CLASSES, kind, llm).fit(train)
+			scored = [model.scores(c["input"]) for c in rows_all]
+			mpts = []
+			for rate in MODEL_RATES:
+				texts = [model.select(c["input"], rate, sc) for c, sc in zip(rows_all, scored)]
+				mpts.append({"rate": rate, **_points(rows_all, fulls, texts)})
+			auc = pair_auc(model, rows_all, scored)
+			out.append({"when": when, "label": label, "predictor": "model-llm" if llm else "model",
+				    "split": split, "curve": mpts,
+				    "title": model.title, "about": model.about, "auc": auc,
+				    "train_rows": model.n_rows, "train_positives": model.n_pos})
 		fam = []
 		for n in (0, 2, 4, 6, 8, 10, 13, 16, 20, 25):
 			p = OnBlindBase(order, n)

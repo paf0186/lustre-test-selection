@@ -74,7 +74,8 @@ name = "erasure-coding"
 paths = ["lustre/ec/"]
 contains = ["_ec.", "/ec_"]
 scripts = ["sanity-ec"]
-why = "erasure coded layouts"
+classes = ["ldiskfs-dne", "zfs-dne"]
+why = "erasure coded layouts: resync punches parity and finds data with SEEK_DATA/SEEK_HOLE, which the two backends do differently"
 
 [[rule]]
 name = "pools"
@@ -112,15 +113,16 @@ why = "changelogs are exercised by sanity's changelog tests and lustre_rsync"
 [[rule]]
 name = "lfsck"
 paths = ["lustre/lfsck/"]
-scripts = ["sanity-lfsck", "sanity-scrub"]
-why = "LFSCK and the OI scrub it drives"
+scripts = ["sanity-lfsck", "sanity-scrub", "sanity"]
+why = "LFSCK and the OI scrub it drives; sanity runs namespace LFSCK over striped and remote directories too"
 
 [[rule]]
 name = "quota"
 paths = ["lustre/quota/"]
 contains = ["quota", "lfs_project"]
 scripts = ["sanity-quota"]
-why = "quota master and slaves, project quota"
+classes = ["ldiskfs-dne", "zfs-dne"]
+why = "quota master and slaves, project quota; accounting is the backend's, so both backends"
 
 # -- object storage -----------------------------------------------------------
 
@@ -180,10 +182,11 @@ why = "Kerberos flavors of GSS"
 
 [[rule]]
 name = "config-mount"
-paths = ["lustre/mgs/", "lustre/obdclass/obd_mount", "lustre/obdclass/obd_config", "lustre/utils/mount_",
-         "lustre/utils/mkfs_lustre", "lustre/utils/lustre_cfg", "lustre/utils/lctl", "lustre/conf/"]
-scripts = ["conf-sanity"]
-why = "configuration logs, mount, format and parameters"
+paths = ["lustre/mgs/", "lustre/mgc/", "lustre/obdclass/obd_mount", "lustre/obdclass/obd_config",
+         "lustre/utils/mount_", "lustre/utils/mkfs_lustre", "lustre/utils/lustre_cfg", "lustre/utils/lctl",
+         "lustre/conf/"]
+scripts = ["conf-sanity", "ost-pools"]
+why = "configuration logs, mount, format and parameters; pool commands are the runtime config log updates every client must apply"
 
 [[rule]]
 name = "obdclass"
@@ -203,6 +206,25 @@ name = "libcfs"
 paths = ["libcfs/"]
 scripts = ["sanity", "sanity-lnet"]
 why = "portability and debug infrastructure under everything"
+
+[[rule]]
+name = "nodemap"
+contains = ["nodemap"]
+scripts = ["sanity-sec", "sanity-quota"]
+why = "nodemaps: sanity-quota's squash, tenant and admin nodemap tests wait for nodemap sync to the targets"
+
+[[rule]]
+name = "nrs"
+contains = ["nrs_", "/nrs"]
+scripts = ["sanityn"]
+why = "request scheduling policies (NRS, TBF): their tests are in sanityn"
+
+[[rule]]
+name = "direct-io"
+paths = ["lustre/llite/rw26", "lustre/llite/llite_dio"]
+contains = ["_dio", "dio_"]
+scripts = ["sanity", "sanity-flr", "sanity-pfl"]
+why = "client direct I/O: lfs migrate and mirror resync copy data with O_DIRECT"
 
 # -- user space ---------------------------------------------------------------
 

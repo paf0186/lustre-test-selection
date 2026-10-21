@@ -44,6 +44,7 @@ USER_AGENT = "lustre-test-selection/0.2 (+https://github.com/paf0186/lustre-test
 CHUNK_DAYS = 31
 GERRIT = "https://review.whamcloud.com"
 EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
+FAILURE_NEW = ("crash_sig", "cascade_of", "series_origin", "renamed_from")
 SESSION_COLS = ("id", "change", "patchset", "job", "build", "test_group", "status", "enforcing",
 		"client_distro", "server_fs", "duration", "submission", "test_name", "server_distro",
 		"arch", "reason", "day", "clients", "mds_nodes", "mdts", "oss_nodes", "osts")
@@ -105,6 +106,10 @@ def connect(path: Path) -> sqlite3.Connection:
 	path.parent.mkdir(parents=True, exist_ok=True)
 	db = sqlite3.connect(path, timeout=60)
 	db.executescript((HERE / "schema.sql").read_text())
+	have = {r[1] for r in db.execute("PRAGMA table_info(failure)")}
+	for col in FAILURE_NEW:
+		if col not in have:
+			db.execute(f"ALTER TABLE failure ADD COLUMN {col} TEXT")
 	have = {r[1] for r in db.execute("PRAGMA table_info(session)")}
 	for col in SESSION_COLS:
 		if col not in have:
@@ -139,13 +144,19 @@ def store(db: sqlite3.Connection, d: dict) -> dict:
 		put_session(db, s)
 	for f in d["faults"]:
 		el = f.get("elsewhere") or {}
-		db.execute("INSERT OR REPLACE INTO failure VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+		js = lambda v: json.dumps(v) if v else None  # noqa: E731
+		db.execute("INSERT OR REPLACE INTO failure (id, change, patchset, suite, subtest, status, error, sig, "
+			   "day, job, test_group, distro, fs, session_id, test_set_id, enforcing, kind, class, count, "
+			   "other_changes, series_changes, retest_status, patch_changes, crash_sig, cascade_of, "
+			   "series_origin, renamed_from) VALUES (" + ",".join("?" * 27) + ")",
 			   (f["id"], f["change"], f["patchset"], f["suite"], f["subtest"], f.get("status"),
 			    f.get("error"), f.get("sig"), f.get("day"), f.get("job"), f.get("test_group"),
 			    f.get("distro"), f.get("fs"), f.get("session_id"), f.get("test_set_id"),
 			    f.get("enforcing"), f["kind"], f.get("class"), f.get("count"),
 			    el.get("other_changes"), el.get("series_changes"), f.get("retest_status"),
-			    json.dumps(f["patch_changes"]) if f.get("patch_changes") else None))
+			    js(f.get("patch_changes")), f.get("crash_sig"), js(f.get("cascade_of")),
+			    js(f.get("series_origin")), f["renamed_from"] if isinstance(f.get("renamed_from"), str)
+			    else js(f.get("renamed_from"))))
 	db.commit()
 	return {"faults": len(d["faults"]), "patchsets": len(d.get("patchsets", [])),
 		"sessions": len(d.get("sessions", []))}
@@ -166,7 +177,7 @@ def fetch(args, db) -> None:
 				break
 	day = start
 	while day <= end:
-		stop = min(day + dt.timedelta(days=CHUNK_DAYS - 1), end)
+		stop = min(day + dt.timedelta(days=args.chunk_days - 1), end)
 		d = cl.call("/export/patch-faults", {"start": day.isoformat(), "end": stop.isoformat(),
 						      "sessions": 1, "weak": 1 if args.weak else None})
 		if args.replace:
@@ -322,7 +333,11 @@ def sample(args, db) -> None:
 
 
 def load(args, db) -> None:
-	print(store(db, json.load(open(args.file))), file=sys.stderr)
+	for path in args.file:
+		d = json.load(open(path))
+		if args.replace:
+			db.execute("DELETE FROM failure WHERE day BETWEEN ? AND ?", (d["start"], d["end"]))
+		print(f"  {path}: {store(db, d)}", file=sys.stderr)
 
 
 def stats(args, db) -> None:
@@ -350,10 +365,13 @@ def main() -> None:
 	f.add_argument("--end")
 	f.add_argument("--weak", action="store_true", help="also failures seen once, here only")
 	f.add_argument("--fill", action="store_true", help="have Rainshadow read missing patch contents from Gerrit")
+	f.add_argument("--chunk-days", type=int, default=CHUNK_DAYS,
+		       help="days per request (smaller if Rainshadow's front door times out)")
 	f.add_argument("--replace", action="store_true",
 		       help="drop the range's faults first: Rainshadow's judgement may have changed")
 	ld = sub.add_parser("load", help="load a saved `rainshadow patch-faults` answer")
-	ld.add_argument("file")
+	ld.add_argument("file", nargs="+")
+	ld.add_argument("--replace", action="store_true", help="drop each answer's range's faults first")
 	se = sub.add_parser("sessions", help="every session of the dataset's changes, with test sets")
 	se.add_argument("--change", type=int, action="append", help="only this change (repeatable)")
 	se.add_argument("--all", action="store_true", help="re-read changes already read")

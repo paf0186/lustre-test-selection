@@ -27,13 +27,15 @@ import argparse
 import json
 import sqlite3
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from bugs import group  # noqa: E402
-from classes import class_of  # noqa: E402
+from bugs import group, signature  # noqa: E402
+from classes import CLASSES, class_of  # noqa: E402
+
+CLASS_KEYS = {k: v[0] for k, v in CLASSES.items()}
 
 ROOT = HERE.parent
 INFRA = {"node-provisioning", "lustre-initialization"}
@@ -110,14 +112,50 @@ def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float):
 			if d and k[0] not in first_day:
 				first_day[k[0]] = d
 
+	# What CI already said about the change's earlier patchsets: known when the
+	# next one is uploaded, so the predictor may use it.
+	sess_class = {}
+	for kk, ss0 in sessions.items():
+		for s0 in ss0:
+			sess_class[s0["id"]] = class_of(s0)
+	caught_at = defaultdict(lambda: defaultdict(set))       # change -> patchset -> keys
+	for (c0, p0), fs in faults.items():
+		for f in fs:
+			c1 = sess_class.get(f["session_id"])
+			if c1:
+				caught_at[c0][p0].add(f"{f['suite']}|{c1}")
+	lifetimes: dict[int, dict[tuple, set]] = defaultdict(lambda: defaultdict(set))
+	for (c0, p0), fs in faults.items():
+		for f in fs:
+			lifetimes[c0][(f["suite"], f["subtest"], signature(f))].add(p0)
+	inherited = Counter()
 	for k in keys:
 		ss = sessions.get(k, [])
 		if not ss:
 			continue
+		earlier = {p0: v for p0, v in caught_at.get(k[0], {}).items() if p0 < k[1]}
+		history = {"caught": sorted(set().union(*earlier.values())) if earlier else [],
+			   "last_caught": sorted(earlier[max(earlier)]) if earlier else [],
+			   "faulty_patchsets": len(earlier)}
 		p = patch.get(k, {})
 		t = text.get(k, {})
 		scripts_run = {x["suite"] for s in ss for x in sets.get(s["id"], [])}
-		bugs = group(faults.get(k, []), scripts_run)
+		# A bug the series inherited from another change is that change's: it is
+		# counted on the change that introduced it, not on every one built on it.
+		mine = []
+		for f in faults.get(k, []):
+			origin = f.get("series_origin")
+			if isinstance(origin, str):
+				try:
+					origin = json.loads(origin)
+				except ValueError:
+					origin = None
+			if origin and origin.get("change") not in (None, k[0]):
+				inherited[k] += 1
+				continue
+			mine.append(f)
+		bugs = group(mine, scripts_run,
+			     {u: frozenset(v) for u, v in lifetimes.get(k[0], {}).items()})
 		evidence_ran = defaultdict(set)         # (script, class) -> sessions that ran it
 		always_ran = defaultdict(set)           # (script, group) -> always-run sessions
 		cls = {}
@@ -132,8 +170,8 @@ def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float):
 				elif c:
 					evidence_ran[(x["suite"], c)].add(s["id"])
 		by_unit = defaultdict(list)
-		for f in faults.get(k, []):
-			by_unit[(f["suite"], f["subtest"], f.get("sig") or "")].append(f)
+		for f in mine:
+			by_unit[(f["suite"], f["subtest"], signature(f))].append(f)
 		out_bugs = []
 		for i, b in enumerate(bugs):
 			failed = defaultdict(set)
@@ -153,7 +191,13 @@ def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float):
 			aev = {}
 			for (sc, g), fails in afailed.items():
 				r = len(always_ran[(sc, g)] | fails)
-				miss *= 1 - len(fails) / r
+				if g.endswith("subtest-change"):
+					# Each such session runs some of the edited subtests, and every one
+					# of them runs again on the next build: the bug is missed only if
+					# all of them miss it.
+					miss *= (1 - len(fails) / r) ** r
+				else:
+					miss *= 1 - len(fails) / r
 				aev[f"{sc}|{g}"] = [r, len(fails)]
 			out_bugs.append({
 				"id": i, "units": [list(u) for u in b["units"]], "scripts": b["scripts"],
@@ -177,21 +221,35 @@ def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float):
 			"subtest_change": sum(s["duration"] or 0 for s in main_build
 					      if (s["test_group"] or "").endswith("subtest-change")),
 			"sessions": len(main_build)}
+		# Every test set the build ran: a test set that ran and caught nothing is a
+		# negative example; one that never ran says nothing.
+		ran = set()
+		for s in main_build:
+			c = cls.get(s["id"])
+			if not c or always_run(s["test_group"]):
+				continue
+			if CLASS_KEYS.get(c) is None:
+				ran.add(f"group:{s['test_group']}")
+				continue
+			for x in sets.get(s["id"], []):
+				if x["suite"] not in INFRA:
+					ran.add(f"{x['suite']}|{c}")
 		day = first_day.get(k[0], "")
 		yield {
 			"key": f"{k[0]}/{k[1]}", "change": k[0], "patchset": k[1], "day": day,
 			"split": "test" if day >= cutoff else "train",
-			"faulty": bool(faults.get(k)), "sampled": k in sample,
+			"faulty": bool(out_bugs), "sampled": k in sample, "inherited": inherited[k],
 			"input": {
-				"subject": p.get("subject"), "message": t.get("message"), "diff": t.get("diff"),
+				"key": f"{k[0]}/{k[1]}", "subject": p.get("subject"), "message": t.get("message"), "diff": t.get("diff"),
 				"files": json.loads(p["files"]) if p.get("files") else None,
 				"scripts": json.loads(p["scripts"]) if p.get("scripts") else None,
 				"test_parameters": p.get("test_parameters"), "gerrit_kind": p.get("gerrit_kind"),
 				"series": p.get("series"), "series_size": p.get("series_size"),
-				"branch": branch.get(k),
+				"branch": branch.get(k), "history": history,
 			},
 			"bugs": out_bugs, "cost": cost,
 			"groups_run": sorted({s["test_group"] for s in main_build if s["test_group"]}),
+			"ran": sorted(ran),
 		}
 
 

@@ -54,6 +54,10 @@ def class_of(s: dict) -> str | None:
 	"""The class of one session (a dict of the dataset's session columns), or None
 	for one whose layout says it never got going."""
 	group = s.get("test_group") or ""
+	# An interop session runs another branch's build on some nodes (a release's
+	# clients or servers): a configuration of its own, which no class asks for.
+	if re.search(r"lustre-b\d+_\d+", s.get("test_name") or ""):
+		return None
 	fs = s.get("server_fs") or ("zfs" if "zfs" in group else "ldiskfs")
 	fam, arch = client_platform(s.get("test_name"), s.get("client_distro"))
 	if s.get("mdts"):
