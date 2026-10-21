@@ -29,7 +29,7 @@ CURVE_LABEL_AT = {
 	"oracle": lambda c: (max(c, key=lambda p: p[1])[0] + 0.005, 0.17),
 	"principles-on-blind": lambda c: (c[-1][0] + 0.01, c[-1][1] - 0.035),
 	"model": lambda c: next(((a + 0.01, b - 0.05) for a, b in c if a >= 0.15), c[-1]),
-	"model-llm": lambda c: next(((a - 0.02, b + 0.06) for a, b in c if a >= 0.3), c[-1]),
+	"model-llm": lambda c: next(((a + 0.01, b - 0.13) for a, b in c if a >= 0.42), c[-1]),
 }
 FAMILIES = {"full": "today", "trivial": "trivial", "edited": "edited", "table": "table"}
 
