@@ -86,7 +86,7 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <header style="display:grid;gap:8px">
 <div class="eyebrow">Lustre CI: trivial plus predicted Test-Parameters</div>
 <h1>How much testing does a patch need?</h1>
-<p class='lede'>Backtest on <b>561</b> faulty patchsets the predictors never saw (every 3rd month of the period held out; 48 of them after 2026-08-01), holding <b>923</b> bugs. Today every patch runs the whole review matrix, about <b>130</b> session hours per build. "Share of today's bugs" is what each selection would catch of what today's matrix catches, with every change counting once.</p><ul class='targets'><li><b>90% at 25%:</b> not met yet. Best within the cost: + principles, 78% of today's bugs at 22%.</li><li><b>90% at 10%:</b> not met yet. Best within the cost: trivial only, 57% of today's bugs at 9%.</li><li><b>95% at 10%:</b> not met yet. Best within the cost: trivial only, 57% of today's bugs at 9%.</li></ul>
+<p class='lede'>Backtest on <b>561</b> faulty patchsets the predictors never saw (every 3rd month of the period held out; 48 of them after 2026-08-01), holding <b>923</b> bugs. Today every patch runs the whole review matrix, about <b>113</b> session hours per build. "Share of today's bugs" is what each selection would catch of what today's matrix catches, with every change counting once.</p><ul class='targets'><li><b>90% at 25%:</b> not met yet. Best within the cost: + directory history, 20%, 68% of today's bugs at 24%.</li><li><b>90% at 10%:</b> not met yet.</li><li><b>95% at 10%:</b> not met yet.</li></ul>
 </header>
 <section><h2>Bugs caught against test cost</h2>
 <p class="muted">Cost up to 60% and bugs from 40% shown; today's matrix is 100% at 100%.</p>
@@ -130,49 +130,45 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <text x="159.7" y="46.7" class="tlabel" text-anchor="end">95/10</text>
 <text x="379.0" y="474" class="axis" text-anchor="middle">share of today's test cost</text>
 <text transform="translate(14 226.0) rotate(-90)" class="axis" text-anchor="middle">share of today's bugs caught</text>
-<polyline data-series="blind" class="blind" points="158.0,316.4 164.1,300.9 164.9,300.9 167.7,296.1 182.8,274.9 187.0,263.7 189.0,263.7 195.3,257.6 203.1,257.6 210.7,257.6 245.2,227.3 258.8,205.0 279.0,181.0 281.9,179.4 296.9,177.2 333.5,152.1 370.0,140.7 376.9,140.6 397.8,135.6 403.3,135.6 408.5,135.4 409.0,128.9 463.9,121.2 466.0,99.3 474.4,99.3 483.7,89.4 486.8,86.4 528.1,86.4 535.0,82.9 536.9,82.9 538.6,82.9 584.7,76.2 589.9,75.2 595.3,70.7 609.4,69.9 623.4,57.6 625.4,57.3 627.1,57.3 633.7,57.3 640.2,57.2 651.2,56.0 651.8,56.0 655.1,56.0 693.9,50.4"/>
-<polyline data-series="model" class="model" points="171.8,242.9 171.8,242.9 171.8,242.9 172.5,242.5 173.1,242.5 173.8,241.4 175.5,239.0 177.7,235.9 184.3,231.2 195.0,197.2 207.8,185.7 229.2,175.2 255.8,162.9 320.4,139.9 399.7,117.2 602.1,74.5"/>
-<polyline data-series="hybrid" class="hybrid" points="295.9,167.7 295.9,167.7 295.9,167.7 296.2,167.3 296.6,167.2 297.1,166.7 298.9,164.3 301.1,162.7 308.9,153.7 317.3,150.2 325.9,137.0 341.2,130.4 364.9,122.2 422.8,99.9 497.3,91.5 682.5,67.1"/>
-<polyline data-series="modelllm" class="modelllm" points="171.8,242.9 171.8,242.9 171.8,242.9 172.1,242.5 172.5,242.5 173.1,242.3 175.0,240.7 177.9,239.0 185.8,227.8 195.2,212.8 205.2,199.8 223.5,180.5 249.9,167.7 315.8,141.8 396.8,117.8 599.2,92.8"/>
-<polyline data-series="oracle" class="oracle" points="158.0,316.4 158.0,297.0 158.1,239.5 158.1,177.0 158.2,133.5 158.5,79.5 159.3,35.3 159.4,30.1 159.7,25.6 159.9,25.0 159.9,24.5 159.9,24.5 162.9,24.5"/>
-<polyline data-series="onblind" class="onblind" points="295.9,167.7 298.7,161.2 306.9,153.6 311.7,150.2 322.7,144.1 330.6,144.1 357.7,135.2 414.3,111.6 442.7,109.4 500.6,77.0"/>
-<polyline data-series="blind" class="blind train" points="145.8,363.4 151.9,337.2 152.7,332.5 155.4,323.1 170.1,274.5 174.3,265.5 176.2,261.4 182.4,249.0 190.1,240.9 197.5,227.9 231.3,192.5 244.5,180.2 264.3,162.0 267.2,160.0 281.8,149.4 317.7,129.9 353.4,112.4 360.2,108.3 380.7,98.7 386.1,96.2 391.1,94.0 391.6,93.7 445.3,70.4 447.5,69.6 455.7,67.0 464.8,64.3 467.8,63.6 508.2,53.8 515.0,52.2 516.8,51.8 518.5,51.5 563.6,43.9 568.7,43.1 574.0,42.3 587.9,40.4 601.5,38.6 603.5,38.4 605.2,38.2 611.6,37.6 618.0,37.0 628.7,36.1 629.3,36.0 632.6,35.8 670.5,32.9 693.1,31.3"/>
-<polyline data-series="oracle" class="oracle train" points="145.8,363.4 145.8,352.8 145.9,275.9 146.0,222.4 146.3,143.7 147.2,83.1 147.7,31.2 147.9,22.5 147.9,19.9 148.0,18.3 148.0,18.2 148.1,18.0 151.9,18.0"/>
-<polyline data-series="model" class="model train" points="162.0,276.0 162.1,276.0 162.1,275.5 162.2,273.5 162.7,266.4 163.1,264.9 164.2,247.7 165.7,241.3 172.5,214.3 180.9,200.9 194.0,179.9 213.4,155.1 239.6,136.5 306.8,92.0 385.8,66.6 594.2,42.5"/>
-<polyline data-series="hybrid" class="hybrid train" points="284.4,166.7 284.4,166.0 284.4,161.4 284.6,160.3 285.2,157.3 285.7,152.7 287.2,147.3 289.7,145.3 297.3,138.9 306.6,130.7 321.3,114.8 343.1,94.8 370.3,82.1 428.5,64.4 491.3,48.9 658.3,30.8"/>
-<polyline data-series="modelllm" class="modelllm train" points="162.0,276.0 162.0,276.0 162.0,275.5 162.2,269.9 162.7,263.8 163.1,255.1 165.1,244.6 168.0,232.1 176.3,213.8 187.0,190.4 204.2,160.6 228.4,135.6 259.5,109.9 325.3,78.9 396.6,57.9 582.2,36.5"/>
-<polyline data-series="onblind" class="onblind train" points="284.4,166.7 287.5,148.3 295.9,145.3 300.6,141.2 311.2,133.9 318.9,123.4 344.2,112.9 396.7,88.6 424.1,78.2 482.7,57.2"/>
+<polyline data-series="blind" class="blind" points="176.8,375.9 183.5,355.7 185.6,352.0 186.5,352.0 189.0,331.8 191.2,330.8 196.2,319.6 205.0,311.3 212.3,299.9 229.8,277.2 269.7,231.8 273.3,226.3 279.6,216.5 280.2,216.4 322.7,177.2 344.2,162.4 344.7,159.7 346.6,154.8 352.6,152.6 365.8,146.8 365.9,146.8 404.6,139.2 420.9,130.0 424.4,123.0 426.7,122.6 450.9,115.0 456.9,112.1 467.7,106.9 475.7,106.4 476.6,106.4 479.9,105.9 499.1,103.8 501.3,103.8 518.8,102.4 524.1,102.4 539.6,95.9 626.7,79.8 650.1,67.8 656.7,67.1 658.8,66.1 666.3,64.0 670.5,64.0 673.9,62.0"/>
+<polyline data-series="model" class="model" points="192.1,325.6 192.1,325.6 192.1,325.5 192.7,321.4 193.6,318.5 194.7,315.2 197.6,304.6 202.7,296.8 217.0,281.9 240.7,252.1 278.0,225.1 334.7,205.0 407.1,172.5 553.3,125.1 702.0,78.9"/>
+<polyline data-series="hybrid" class="hybrid" points="352.4,199.4 352.4,199.4 352.5,196.7 353.3,192.6 354.9,187.5 356.6,185.6 361.0,184.1 366.6,173.5 385.7,159.1 411.2,146.5 441.3,137.5 485.0,124.6 544.6,108.9 662.3,87.2"/>
+<polyline data-series="modelllm" class="modelllm" points="192.1,325.6 192.1,325.6 192.1,324.4 192.9,321.6 194.6,315.2 196.4,309.2 201.1,298.6 207.2,288.0 228.4,269.9 256.4,236.8 290.6,220.8 339.0,199.8 406.2,175.8 539.9,129.9 679.9,81.0"/>
+<polyline data-series="oracle" class="oracle" points="176.8,375.9 176.8,343.2 176.9,249.0 177.0,176.6 177.2,128.6 177.6,57.3 177.9,30.5 178.1,21.8 178.2,18.7 178.3,18.3 178.3,18.0 178.4,18.0 184.4,18.0"/>
+<polyline data-series="onblind" class="onblind" points="352.4,199.4 356.3,184.7 359.1,167.9 364.7,165.1 378.0,150.1 389.0,142.0 396.7,133.8 446.2,117.8 462.2,107.1 520.9,88.0"/>
+<polyline data-series="blind" class="blind train" points="164.9,366.1 171.2,336.0 173.1,330.3 174.0,328.3 176.4,323.7 178.5,320.4 183.0,313.5 191.2,301.8 198.1,292.6 214.4,271.3 251.6,225.6 255.0,221.7 260.9,215.4 261.4,214.8 301.1,179.0 321.2,163.3 321.7,161.0 323.5,159.7 329.0,156.7 341.4,150.1 341.4,150.1 377.5,130.7 392.8,122.8 396.0,121.4 398.1,120.5 420.7,111.4 426.3,109.3 436.4,105.5 443.9,103.0 444.7,102.7 447.8,101.7 465.7,96.5 467.7,95.9 484.1,91.2 489.0,89.8 503.5,86.3 584.8,66.8 606.6,62.1 612.7,60.8 614.7,60.5 621.7,59.2 625.6,58.5 628.8,58.0 673.4,51.0"/>
+<polyline data-series="oracle" class="oracle train" points="164.9,366.1 165.0,347.6 165.0,279.7 165.3,204.1 165.4,155.6 166.0,64.7 166.4,27.3 166.6,20.5 166.7,18.5 166.8,18.1 166.8,18.0 166.8,18.0 173.0,18.0"/>
+<polyline data-series="model" class="model train" points="181.5,325.1 181.5,324.2 181.6,322.4 182.0,321.5 182.7,315.3 183.6,305.1 185.6,288.5 189.2,273.4 201.4,254.0 223.8,233.9 256.4,196.6 305.4,165.9 369.3,143.8 499.1,97.4 638.9,65.3"/>
+<polyline data-series="hybrid" class="hybrid train" points="319.3,178.9 319.3,178.5 319.6,173.5 320.2,170.1 321.2,163.8 322.5,160.1 325.1,153.2 329.8,148.8 344.0,142.1 367.0,128.6 393.7,112.6 434.7,96.8 488.5,81.3 595.4,59.5 702.0,46.3"/>
+<polyline data-series="modelllm" class="modelllm train" points="181.5,325.1 181.5,325.1 181.8,322.7 182.2,313.0 183.3,304.3 184.7,296.3 187.2,277.6 192.5,265.8 208.5,245.5 234.2,222.9 264.0,195.1 310.4,162.0 371.0,130.0 491.3,89.3 619.9,65.3"/>
+<polyline data-series="onblind" class="onblind train" points="319.3,178.9 322.8,161.4 325.4,157.7 330.7,155.7 342.8,144.7 353.9,140.6 360.7,137.1 406.1,114.0 421.0,107.2 477.3,86.9"/>
 <line x1="702.0" y1="18.0" x2="702.0" y2="18.0" class="link train" data-series="points"/>
-<line x1="145.8" y1="363.4" x2="158.0" y2="316.4" class="link train" data-series="points"/>
-<line x1="162.0" y1="284.2" x2="171.8" y2="242.9" class="link train" data-series="points"/>
-<line x1="278.1" y1="168.2" x2="284.4" y2="172.2" class="link train" data-series="points"/>
-<line x1="648.5" y1="66.4" x2="644.2" y2="81.7" class="link train" data-series="points"/>
-<line x1="284.4" y1="166.7" x2="295.9" y2="167.7" class="link train" data-series="points"/>
-<line x1="151.2" y1="316.4" x2="165.5" y2="316.4" class="ci trivial" data-series="points"/>
-<line x1="158.0" y1="357.9" x2="158.0" y2="274.7" class="ci trivial" data-series="points"/>
-<circle data-series="points" cx="158.0" cy="316.4" r="5" class="pt trivial"><title>trivial only (test set): 57% of today's bugs at 9% of its cost</title></circle>
-<line x1="163.6" y1="242.9" x2="181.3" y2="242.9" class="ci edited" data-series="points"/>
-<line x1="171.8" y1="286.7" x2="171.8" y2="199.8" class="ci edited" data-series="points"/>
-<circle data-series="points" cx="171.8" cy="242.9" r="5" class="pt edited"><title>+ edited test scripts (test set): 68% of today's bugs at 11% of its cost</title></circle>
-<line x1="260.2" y1="172.2" x2="308.9" y2="172.2" class="ci table" data-series="points"/>
-<line x1="284.4" y1="208.9" x2="284.4" y2="132.3" class="ci table" data-series="points"/>
-<circle data-series="points" cx="284.4" cy="172.2" r="5" class="pt table"><title>+ directory history, 20% (test set): 78% of today's bugs at 21% of its cost</title></circle>
-<line x1="598.0" y1="81.7" x2="695.6" y2="81.7" class="ci table" data-series="points"/>
-<line x1="644.2" y1="105.7" x2="644.2" y2="54.0" class="ci table" data-series="points"/>
-<circle data-series="points" cx="644.2" cy="81.7" r="5" class="pt table"><title>+ directory history, 5% (test set): 91% of today's bugs at 55% of its cost</title></circle>
-<line x1="273.8" y1="167.7" x2="322.9" y2="167.7" class="ci other" data-series="points"/>
-<line x1="295.9" y1="203.4" x2="295.9" y2="131.7" class="ci other" data-series="points"/>
-<circle data-series="points" cx="295.9" cy="167.7" r="5" class="pt other"><title>+ principles (test set): 78% of today's bugs at 22% of its cost</title></circle>
-<circle data-series="points" cx="145.8" cy="363.4" r="5" class="pt trivial hollow train"><title>trivial only (training set): 50% of today's bugs at 8% of its cost</title></circle>
-<circle data-series="points" cx="162.0" cy="284.2" r="5" class="pt edited hollow train"><title>+ edited test scripts (training set): 62% of today's bugs at 10% of its cost</title></circle>
-<circle data-series="points" cx="278.1" cy="168.2" r="5" class="pt table hollow train"><title>+ directory history, 20% (training set): 78% of today's bugs at 21% of its cost</title></circle>
-<circle data-series="points" cx="648.5" cy="66.4" r="5" class="pt table hollow train"><title>+ directory history, 5% (training set): 93% of today's bugs at 55% of its cost</title></circle>
-<circle data-series="points" cx="284.4" cy="166.7" r="5" class="pt other hollow train"><title>+ principles (training set): 79% of today's bugs at 21% of its cost</title></circle>
-<text x="635.2" y="85.7" class="plabel" data-series="points" text-anchor="end">+ directory history, 5%</text>
-<text x="304.9" y="171.7" class="plabel" data-series="points" text-anchor="start">+ principles</text>
-<text x="275.4" y="176.2" class="plabel" data-series="points" text-anchor="end">+ directory history, 20%</text>
-<text x="180.8" y="246.9" class="plabel" data-series="points" text-anchor="start">+ edited test scripts</text>
-<text x="167.0" y="320.4" class="plabel" data-series="points" text-anchor="start">trivial only</text>
+<line x1="164.9" y1="366.1" x2="176.8" y2="375.9" class="link train" data-series="points"/>
+<line x1="181.5" y1="325.1" x2="192.1" y2="325.6" class="link train" data-series="points"/>
+<line x1="289.7" y1="231.7" x2="317.5" y2="238.1" class="link train" data-series="points"/>
+<line x1="701.8" y1="82.8" x2="702.0" y2="88.5" class="link train" data-series="points"/>
+<line x1="319.3" y1="178.9" x2="352.4" y2="199.4" class="link train" data-series="points"/>
+<line x1="170.8" y1="375.9" x2="183.0" y2="375.9" class="ci trivial" data-series="points"/>
+<line x1="176.8" y1="407.2" x2="176.8" y2="345.7" class="ci trivial" data-series="points"/>
+<circle data-series="points" cx="176.8" cy="375.9" r="5" class="pt trivial"><title>trivial only (test set): 48% of today's bugs at 11% of its cost</title></circle>
+<line x1="184.7" y1="325.6" x2="199.9" y2="325.6" class="ci edited" data-series="points"/>
+<line x1="192.1" y1="358.3" x2="192.1" y2="292.3" class="ci edited" data-series="points"/>
+<circle data-series="points" cx="192.1" cy="325.6" r="5" class="pt edited"><title>+ edited test scripts (test set): 56% of today's bugs at 13% of its cost</title></circle>
+<line x1="297.3" y1="238.1" x2="342.5" y2="238.1" class="ci table" data-series="points"/>
+<line x1="317.5" y1="268.6" x2="317.5" y2="205.9" class="ci table" data-series="points"/>
+<circle data-series="points" cx="317.5" cy="238.1" r="5" class="pt table"><title>+ directory history, 20% (test set): 68% of today's bugs at 24% of its cost</title></circle>
+<line x1="327.7" y1="199.4" x2="377.6" y2="199.4" class="ci other" data-series="points"/>
+<line x1="352.4" y1="226.5" x2="352.4" y2="172.0" class="ci other" data-series="points"/>
+<circle data-series="points" cx="352.4" cy="199.4" r="5" class="pt other"><title>+ principles (test set): 74% of today's bugs at 28% of its cost</title></circle>
+<circle data-series="points" cx="164.9" cy="366.1" r="5" class="pt trivial hollow train"><title>trivial only (training set): 50% of today's bugs at 10% of its cost</title></circle>
+<circle data-series="points" cx="181.5" cy="325.1" r="5" class="pt edited hollow train"><title>+ edited test scripts (training set): 56% of today's bugs at 12% of its cost</title></circle>
+<circle data-series="points" cx="289.7" cy="231.7" r="5" class="pt table hollow train"><title>+ directory history, 20% (training set): 69% of today's bugs at 22% of its cost</title></circle>
+<circle data-series="points" cx="701.8" cy="82.8" r="5" class="pt table hollow train"><title>+ directory history, 5% (training set): 91% of today's bugs at 60% of its cost</title></circle>
+<circle data-series="points" cx="319.3" cy="178.9" r="5" class="pt other hollow train"><title>+ principles (training set): 77% of today's bugs at 24% of its cost</title></circle>
+<text x="361.4" y="203.4" class="plabel" data-series="points" text-anchor="start">+ principles</text>
+<text x="326.5" y="242.1" class="plabel" data-series="points" text-anchor="start">+ directory history, 20%</text>
+<text x="201.1" y="329.6" class="plabel" data-series="points" text-anchor="start">+ edited test scripts</text>
+<text x="185.8" y="379.9" class="plabel" data-series="points" text-anchor="start">trivial only</text>
 </svg>
 <div class='legend'><span><i class='dot'></i><i class='line solid'></i>test set: filled points, solid lines (the results)</span><span class='train'><i class='ring'></i><i class='line dotted'></i>training set: hollow points, dotted lines (the data the rules were fitted to; the gap to the test set is overfitting and drift)</span><span>whiskers: 95% interval</span></div><div class='toggles'><label class='toggle'><input type='checkbox' id='show-train'> training set</label><label class='toggle'><input type='checkbox' data-toggle='blind' checked><i class='swatch' style='background:var(--today)'></i>patch-blind baseline: the same tests for every patch, best value first</label><label class='toggle'><input type='checkbox' data-toggle='oracle' checked><i class='swatch' style='background:var(--edited)'></i>oracle: each patch&#x27;s own cheapest catches, the ceiling</label><label class='toggle'><input type='checkbox' data-toggle='onblind' checked><i class='swatch' style='background:var(--other)'></i>principles on a blind base</label><label class='toggle'><input type='checkbox' data-toggle='model' checked><i class='swatch' style='background:var(--table)'></i>learned model: principles and history as features</label><label class='toggle'><input type='checkbox' data-toggle='modelllm' checked><i class='swatch' style='background:var(--fg)'></i>the same with an LLM&#x27;s reading of each patch as features too</label><label class='toggle'><input type='checkbox' data-toggle='hybrid' checked><i class='swatch' style='background:var(--accent)'></i>hybrid: principles first, then the model&#x27;s additions</label><label class='toggle'><input type='checkbox' data-toggle='points' checked><i class='swatch' style='background:var(--muted)'></i>single selections (trivial, edited scripts, principles, directory history)</label></div><dl class='key'><dt>today&#x27;s matrix</dt><dd>every review session Autotest runs today</dd><dt>trivial only</dt><dd>Test-Parameters: trivial and nothing else: review-ldiskfs (sanity, lnet-selftest)</dd><dt>+ edited test scripts</dt><dd>trivial, plus every test script the patch changes, run once in DNE ldiskfs</dd><dt>+ directory history, 20%</dt><dd>trivial and edited scripts, plus each script and configuration that caught a bug on at least 20% of the training set&#x27;s patches changing the same directory</dd><dt>+ directory history, 5%</dt><dd>trivial and edited scripts, plus each script and configuration that caught a bug on at least 5% of the training set&#x27;s patches changing the same directory</dd><dt>+ principles</dt><dd>trivial and edited scripts, plus the suites and configurations that exercise each part of Lustre the patch changes (eval/predictors/principles.toml); nothing learned</dd><dt>patch-blind, best value first</dt><dd>the same tests for every patch: scripts and configurations ranked on the training set by bugs caught per second, added in that order</dd><dt>learned model</dt><dd>one model scores every patch and test set pair, from the principles, co-failure history, shared path words, base rates and the patch&#x27;s shape; each patch gets the test sets worth their session time</dd><dt>hybrid: principles first, the model adds</dt><dd>the principles&#x27; selection for every patch, then test sets the learned model (with LLM reading) rates worth their session time</dd><dt>learned model with LLM reading</dt><dd>one model scores every patch and test set pair, from the principles, co-failure history, shared path words, base rates and the patch&#x27;s shape; each patch gets the test sets worth their session time</dd><dt>oracle: each patch&#x27;s own cheapest catches</dt><dd>knowing each patch&#x27;s bugs, the tests that catch them for the least session time; no predictor can do better</dd><dt>principles on a blind base</dt><dd>the first n sets of the patch-blind order (skipped for narrow patches: docs, tests, LNet, lfs), plus the principles&#x27; selection; n from 0 to 25</dd></dl></section>
 <section><h2>Gain over the patch-blind baseline</h2>
@@ -216,20 +212,18 @@ the same cost, on the test set. Above zero, reading the patch is paying for itse
 <text x="618.0" y="172.0" class="clabel blind" text-anchor="end">patch-blind</text>
 <text x="339.0" y="314" class="axis" text-anchor="middle">share of today's test cost</text>
 <text transform="translate(14 146.0) rotate(-90)" class="axis" text-anchor="middle">points above patch-blind</text>
-<circle data-series="points" cx="145.3" cy="178.0" r="5" class="pt trivial"><title>trivial only: +0 points at 9%</title></circle>
-<text data-series="points" x="153.3" y="182.0" class="plabel">trivial only</text>
-<circle data-series="points" cx="157.5" cy="134.2" r="5" class="pt edited"><title>+ edited test scripts: +7 points at 11%</title></circle>
-<text data-series="points" x="165.5" y="138.2" class="plabel">+ edited test scripts</text>
-<circle data-series="points" cx="256.1" cy="171.7" r="5" class="pt table"><title>+ directory history, 20%: +1 points at 21%</title></circle>
-<text data-series="points" x="264.1" y="175.7" class="plabel">+ directory history, 20%</text>
-<circle data-series="points" cx="571.3" cy="201.0" r="5" class="pt table"><title>+ directory history, 5%: -4 points at 55%</title></circle>
-<text data-series="points" x="579.3" y="205.0" class="plabel">+ directory history, 5%</text>
-<circle data-series="points" cx="266.2" cy="169.1" r="5" class="pt other"><title>+ principles: +1 points at 22%</title></circle>
-<text data-series="points" x="274.2" y="173.1" class="plabel">+ principles</text>
-<polyline data-series="model" class="model" points="157.5,134.3 157.5,134.3 157.5,134.3 158.1,134.7 158.6,135.5 159.2,135.4 160.7,135.4 162.7,135.4 168.4,141.2 177.8,121.9 189.0,111.7 207.7,116.9 231.1,134.6 287.7,158.5 357.2,161.0 534.5,181.8"/>
-<polyline data-series="hybrid" class="hybrid" points="266.2,169.1 266.2,169.1 266.2,169.1 266.5,168.8 266.8,168.8 267.3,168.5 268.8,167.4 270.8,167.3 277.6,164.0 285.0,166.1 292.4,159.3 305.9,160.2 326.7,159.5 377.3,153.0 442.6,182.7 604.9,191.9"/>
-<polyline data-series="modelllm" class="modelllm" points="157.5,134.3 157.5,134.3 157.5,134.3 157.7,134.3 158.1,134.8 158.6,135.3 160.3,136.3 162.8,138.5 169.8,141.9 178.0,136.5 186.7,124.7 202.7,117.2 225.9,130.1 283.6,157.3 354.6,161.4 532.0,198.6"/>
-<polyline data-series="onblind" class="onblind" points="266.2,169.1 268.7,164.4 275.8,162.5 280.0,162.4 289.7,163.8 296.6,168.8 320.4,169.4 369.9,162.7 394.8,164.3 445.5,169.3"/>
+<circle data-series="points" cx="161.8" cy="178.0" r="5" class="pt trivial"><title>trivial only: +0 points at 11%</title></circle>
+<text data-series="points" x="169.8" y="182.0" class="plabel">trivial only</text>
+<circle data-series="points" cx="175.2" cy="175.0" r="5" class="pt edited"><title>+ edited test scripts: +0 points at 13%</title></circle>
+<text data-series="points" x="183.2" y="179.0" class="plabel">+ edited test scripts</text>
+<circle data-series="points" cx="285.2" cy="229.8" r="5" class="pt table"><title>+ directory history, 20%: -8 points at 24%</title></circle>
+<text data-series="points" x="293.2" y="233.8" class="plabel">+ directory history, 20%</text>
+<circle data-series="points" cx="315.7" cy="221.1" r="5" class="pt other"><title>+ principles: -7 points at 28%</title></circle>
+<text data-series="points" x="323.7" y="225.1" class="plabel">+ principles</text>
+<polyline data-series="model" class="model" points="175.3,175.0 175.3,175.0 175.3,175.0 175.7,172.3 176.5,171.6 177.6,170.9 180.0,165.4 184.6,162.7 197.1,167.1 217.8,166.3 250.5,183.7 300.2,211.3 363.6,210.0 491.7,207.3"/>
+<polyline data-series="hybrid" class="hybrid" points="315.7,221.1 315.7,221.1 315.8,218.7 316.5,215.3 317.9,211.2 319.4,210.1 323.2,210.5 328.1,202.8 344.9,193.0 367.3,188.2 393.6,196.0 431.9,195.8 484.1,190.9 587.2,198.4"/>
+<polyline data-series="modelllm" class="modelllm" points="175.3,175.0 175.3,175.0 175.3,174.0 175.9,172.9 177.4,170.7 179.0,168.6 183.1,162.9 188.5,159.6 207.0,169.6 231.5,168.7 261.5,190.9 304.0,209.2 362.8,212.6 479.9,209.5 602.6,196.5"/>
+<polyline data-series="onblind" class="onblind" points="315.7,221.1 319.1,209.2 321.5,194.7 326.4,194.4 338.1,183.2 347.8,177.8 354.5,171.6 397.9,179.2 411.9,175.7 463.4,164.7"/>
 </svg>
 <h2>Going forward: the test months after 2026-08-01</h2>
 <p class="muted">The same, on the held-out months after the cutoff only: predicting later patches from earlier
@@ -272,20 +266,20 @@ ones, and after the LLM's training data.</p>
 <text x="618.0" y="172.0" class="clabel blind" text-anchor="end">patch-blind</text>
 <text x="339.0" y="314" class="axis" text-anchor="middle">share of today's test cost</text>
 <text transform="translate(14 146.0) rotate(-90)" class="axis" text-anchor="middle">points above patch-blind</text>
-<circle data-series="points" cx="160.2" cy="178.0" r="5" class="pt trivial"><title>trivial only: +0 points at 11%</title></circle>
-<text data-series="points" x="168.2" y="182.0" class="plabel">trivial only</text>
-<circle data-series="points" cx="175.0" cy="176.6" r="5" class="pt edited"><title>+ edited test scripts: +0 points at 13%</title></circle>
-<text data-series="points" x="183.0" y="180.6" class="plabel">+ edited test scripts</text>
-<circle data-series="points" cx="251.0" cy="172.4" r="5" class="pt table"><title>+ directory history, 20%: +1 points at 21%</title></circle>
-<text data-series="points" x="259.0" y="176.4" class="plabel">+ directory history, 20%</text>
-<circle data-series="points" cx="576.6" cy="177.8" r="5" class="pt table"><title>+ directory history, 5%: +0 points at 55%</title></circle>
-<text data-series="points" x="584.6" y="181.8" class="plabel">+ directory history, 5%</text>
-<circle data-series="points" cx="261.6" cy="197.9" r="5" class="pt other"><title>+ principles: -3 points at 22%</title></circle>
-<text data-series="points" x="269.6" y="201.9" class="plabel">+ principles</text>
-<polyline data-series="model" class="model" points="175.0,176.6 175.0,176.6 175.0,176.6 175.0,176.6 175.1,176.7 175.3,177.1 176.7,179.4 179.6,184.4 184.6,205.0 197.6,183.8 210.6,170.6 230.5,180.5 257.8,188.4 313.3,186.6 375.0,190.7 549.8,204.9"/>
-<polyline data-series="hybrid" class="hybrid" points="261.6,197.9 261.6,197.9 261.6,197.9 261.6,197.9 261.6,197.9 262.0,197.9 263.7,197.9 266.2,197.9 273.7,197.9 282.1,202.7 287.9,182.9 300.3,191.5 321.8,197.6 365.7,167.8 422.7,209.8 592.4,202.9"/>
-<polyline data-series="modelllm" class="modelllm" points="175.0,176.6 175.0,176.6 175.0,176.6 175.0,176.6 175.0,176.6 175.4,177.2 177.2,180.4 179.5,184.3 187.1,207.6 195.9,172.3 202.9,148.4 216.9,164.1 240.0,183.1 290.1,177.3 352.6,187.3 534.2,219.0"/>
-<polyline data-series="onblind" class="onblind" points="261.6,197.9 264.1,176.7 271.0,176.7 275.0,176.7 284.4,183.1 290.8,187.5 314.0,199.1 361.0,176.7 384.1,184.6 433.6,178.0"/>
+<circle data-series="points" cx="160.3" cy="178.0" r="5" class="pt trivial"><title>trivial only: +0 points at 11%</title></circle>
+<text data-series="points" x="168.3" y="182.0" class="plabel">trivial only</text>
+<circle data-series="points" cx="174.8" cy="209.5" r="5" class="pt edited"><title>+ edited test scripts: -5 points at 13%</title></circle>
+<text data-series="points" x="182.8" y="213.5" class="plabel">+ edited test scripts</text>
+<circle data-series="points" cx="237.1" cy="221.2" r="5" class="pt table"><title>+ directory history, 20%: -7 points at 19%</title></circle>
+<text data-series="points" x="245.1" y="225.2" class="plabel">+ directory history, 20%</text>
+<circle data-series="points" cx="549.1" cy="222.4" r="5" class="pt table"><title>+ directory history, 5%: -7 points at 52%</title></circle>
+<text data-series="points" x="557.1" y="226.4" class="plabel">+ directory history, 5%</text>
+<circle data-series="points" cx="260.6" cy="238.9" r="5" class="pt other"><title>+ principles: -10 points at 22%</title></circle>
+<text data-series="points" x="268.6" y="242.9" class="plabel">+ principles</text>
+<polyline data-series="model" class="model" points="174.8,209.5 174.8,209.5 174.8,209.5 174.9,209.5 176.0,209.5 176.8,209.5 178.6,209.5 181.5,209.5 189.1,209.5 202.4,192.9 222.0,196.2 260.1,266.3 310.5,243.2 399.7,209.9 509.8,200.2"/>
+<polyline data-series="hybrid" class="hybrid" points="260.6,238.9 260.6,238.9 260.6,239.0 260.9,239.1 261.2,239.4 262.0,240.0 264.7,241.9 267.6,242.1 279.8,221.0 295.0,221.0 318.4,221.0 347.8,221.0 388.1,221.0 476.6,198.3 578.3,200.2"/>
+<polyline data-series="modelllm" class="modelllm" points="174.8,209.5 174.8,209.5 174.8,209.5 175.1,209.5 175.4,209.5 176.1,209.5 178.8,187.3 181.5,187.3 194.4,187.3 210.4,181.1 235.5,247.7 267.2,247.6 311.8,248.8 408.5,198.8 517.0,200.2"/>
+<polyline data-series="onblind" class="onblind" points="260.6,238.9 262.9,240.7 264.9,219.7 268.8,220.0 277.8,220.8 285.0,221.0 289.5,176.6 326.4,154.4 337.7,154.4 378.4,154.4"/>
 </svg></section>
 <section><h2>What each part is worth</h2><p class='lede'>Each part switched off from the reference (lgbm-rank, "without"), or added alone to a base of base rates and edited scripts ("base +"). Gain is the mean, over 15 to 40% cost, of the share of today's bugs caught minus the patch-blind line's, in points; the difference is paired against the reference and bootstrapped over changes; 3 training seeds each. Decided by cross-validation on the training months; the lockbox column is the held-out test months, for confirmation only. A family of pure noise is the negative control: it must come out unclear.</p>
 <h2>Signals</h2><div class='scroll'><table><thead><tr><th>Variant</th><th>Gain over blind</th><th>Against the reference</th><th>Verdict</th><th>at 20%</th><th>at 25%</th><th>Lockbox: against the reference</th></tr></thead><tbody>
@@ -393,36 +387,36 @@ ones, and after the LLM's training data.</p>
 <text x="40.0" y="37.0" class="tick" text-anchor="end">90%</text>
 <line x1="46.0" y1="14.0" x2="306.0" y2="14.0" class="grid"/>
 <text x="40.0" y="18.0" class="tick" text-anchor="end">100%</text>
-<polyline data-series="blind" class="blind" points="70.6,56.5 72.1,52.2 72.3,52.2 73.0,52.2 76.6,50.4 77.6,50.4 78.1,50.4 79.6,50.4 81.5,50.4 83.4,50.4 91.7,45.4 95.0,45.0 99.8,42.8 100.5,42.8 104.2,42.8 113.0,39.2 121.8,38.3 123.5,38.3 128.5,38.3 129.9,38.3 131.1,38.3 131.2,38.3 144.5,38.2 145.0,38.2 147.0,38.2 149.3,38.2 150.0,36.5 160.0,36.5 161.7,36.5 162.1,36.5 162.5,36.5 173.7,36.2 174.9,36.2 176.2,36.2 179.6,35.6 183.0,33.5 183.5,33.5 183.9,33.5 185.5,33.5 187.1,33.5 189.7,33.5 189.9,33.5 190.7,33.5 200.0,29.3 205.6,29.0 223.8,14.7 227.0,14.6 236.9,14.6 238.9,14.6 244.2,14.6 247.9,14.6 248.4,14.6 249.9,14.6 251.4,14.6 259.1,14.6 259.8,14.6 260.1,14.6 261.4,14.6 262.5,14.6 265.8,14.6 266.2,14.6 267.6,14.6 268.0,14.6 268.4,14.6 268.8,14.6 270.9,14.6 274.7,14.6 275.8,14.0 276.7,14.0"/>
-<polyline data-series="model" class="model" points="74.0,28.6 74.0,28.6 74.0,28.6 74.1,27.9 74.3,27.9 74.4,26.6 74.9,26.2 75.4,26.2 77.0,25.6 79.6,24.3 82.7,22.8 87.8,21.3 94.3,18.0 109.9,16.2 129.0,15.2 177.9,14.0 263.6,14.0"/>
-<polyline data-series="hybrid" class="hybrid" points="103.9,25.6 103.9,25.6 103.9,25.6 104.0,25.0 104.1,25.0 104.2,24.9 104.7,23.6 105.2,23.3 107.1,22.1 109.1,20.9 111.2,20.0 114.9,18.8 120.6,17.5 134.6,15.2 152.6,15.2 197.3,15.2 269.5,14.0"/>
-<polyline data-series="modelllm" class="modelllm" points="74.0,28.6 74.0,28.6 74.0,28.6 74.0,27.9 74.1,27.9 74.3,27.8 74.7,26.6 75.4,26.2 77.4,25.0 79.6,23.7 82.0,22.8 86.4,21.6 92.8,19.1 108.7,16.4 128.3,15.2 177.2,15.2 256.1,14.0"/>
-<polyline data-series="oracle" class="oracle" points="70.6,56.5 70.6,56.5 70.6,52.8 70.7,49.2 70.7,45.2 70.7,34.2 71.0,17.7 71.0,15.2 71.0,14.3 71.1,14.1 71.1,14.0 71.1,14.0 71.8,14.0"/>
-<polyline data-series="onblind" class="onblind" points="103.9,25.6 104.6,25.6 106.6,25.6 107.7,25.6 110.4,25.6 112.3,25.6 118.9,25.6 132.5,23.5 139.4,23.5 153.4,23.5"/>
-<polyline data-series="blind" class="blind train" points="67.7,74.1 69.2,67.7 69.3,67.7 70.0,67.7 73.6,66.1 74.6,66.0 75.0,66.0 76.5,66.0 78.4,62.1 80.2,58.0 88.3,56.9 91.5,52.4 96.3,52.4 97.0,52.4 100.5,50.8 109.2,38.8 117.8,38.4 119.5,38.4 124.4,38.1 125.7,38.1 126.9,37.9 127.0,37.9 140.0,35.8 140.5,35.8 142.5,35.8 144.7,35.8 145.4,35.6 155.2,34.2 156.8,34.1 157.3,34.1 157.7,34.1 168.6,33.1 169.8,33.1 171.1,33.1 174.4,28.1 177.7,24.4 178.2,24.4 178.6,24.4 180.2,24.4 181.7,24.4 184.3,23.8 184.4,23.8 185.2,23.8 194.4,23.8 199.8,23.8 217.6,23.0 220.8,23.0 230.5,22.7 232.4,22.7 237.6,22.5 241.2,20.3 241.7,20.3 243.3,20.3 244.7,20.1 252.2,18.6 252.9,18.6 253.2,18.6 254.5,18.6 255.6,18.6 258.8,14.0 259.2,14.0 260.6,14.0 261.0,14.0 261.3,14.0 261.7,14.0 263.8,14.0 267.5,14.0 268.6,14.0 269.4,14.0"/>
-<polyline data-series="oracle" class="oracle train" points="67.7,74.1 67.7,74.1 67.7,63.8 67.7,51.8 67.8,41.5 68.0,24.8 68.1,17.4 68.2,15.5 68.2,14.7 68.2,14.2 68.2,14.1 68.2,14.0 69.1,14.0"/>
-<polyline data-series="model" class="model train" points="71.6,48.8 71.6,48.8 71.6,48.8 71.6,48.6 71.8,48.6 71.9,48.6 72.1,48.6 72.5,44.8 74.1,36.1 76.2,34.8 79.3,32.3 84.0,29.5 90.3,28.0 106.6,24.4 125.7,22.2 176.0,14.9 260.2,14.0"/>
-<polyline data-series="hybrid" class="hybrid train" points="101.2,37.9 101.2,37.9 101.2,37.9 101.2,37.8 101.4,37.8 101.5,37.8 101.8,30.2 102.4,26.5 104.3,24.7 106.5,23.8 110.1,22.0 115.3,20.5 121.9,16.4 136.0,15.5 151.1,15.5 191.5,14.4 264.9,14.0"/>
-<polyline data-series="modelllm" class="modelllm train" points="71.6,48.8 71.6,48.8 71.6,48.8 71.7,48.6 71.8,48.6 71.9,48.6 72.3,40.3 73.0,36.0 75.0,34.0 77.6,33.0 81.8,30.2 87.6,26.6 95.1,20.5 111.0,19.1 128.2,19.1 173.1,14.4 252.9,14.0"/>
-<polyline data-series="onblind" class="onblind train" points="101.2,37.9 101.9,37.9 103.9,37.9 105.1,37.9 107.6,37.9 109.5,37.9 115.6,37.9 128.3,36.4 134.9,36.1 149.0,34.5"/>
+<polyline data-series="blind" class="blind" points="75.2,30.0 76.8,30.0 77.3,30.0 77.5,30.0 78.1,30.0 78.7,30.0 79.8,30.0 82.0,30.0 83.7,30.0 88.0,29.8 97.6,29.0 98.5,27.2 100.0,27.2 100.1,27.2 110.4,22.0 115.6,21.8 115.7,21.8 116.2,21.8 117.6,21.8 120.8,21.8 120.8,21.8 130.2,21.8 134.1,21.8 135.0,21.8 135.5,21.8 141.4,21.8 142.8,21.8 145.4,21.8 147.3,21.8 147.6,21.8 148.4,21.8 153.0,21.8 153.5,21.8 157.8,21.8 159.0,21.8 162.8,21.7 183.8,20.7 189.5,20.7 191.1,20.7 191.6,20.7 193.4,20.7 194.4,20.7 195.2,20.7 206.7,20.7 222.1,20.7 231.9,19.1 234.9,15.7 236.9,15.7 238.8,15.7 239.8,15.7 241.3,15.7 254.2,15.7 254.7,15.7 257.7,15.7 258.6,14.0 259.1,14.0 259.2,14.0 269.2,14.0 273.0,14.0 275.3,14.0 276.2,14.0 277.3,14.0 281.7,14.0 285.9,14.0 296.5,14.0 296.9,14.0 299.4,14.0 305.8,14.0"/>
+<polyline data-series="model" class="model" points="78.9,25.5 78.9,25.5 78.9,25.5 79.0,25.5 79.2,23.8 79.5,23.8 80.2,23.8 81.4,23.8 84.9,23.8 90.6,22.2 99.6,17.4 113.3,17.4 130.8,17.4 166.1,17.4 204.0,15.7 277.6,14.0"/>
+<polyline data-series="hybrid" class="hybrid" points="117.6,22.0 117.6,22.0 117.6,22.0 117.8,22.0 118.2,20.3 118.6,20.3 119.6,20.3 121.0,18.6 125.6,18.6 131.8,17.4 139.1,15.7 149.6,15.7 164.0,15.7 192.4,15.7 222.4,15.7 281.9,14.0"/>
+<polyline data-series="modelllm" class="modelllm" points="78.9,25.5 78.9,25.5 78.9,25.5 79.1,25.5 79.5,23.8 79.9,23.8 81.0,23.8 82.5,22.2 87.6,22.2 94.4,20.9 102.6,19.2 114.3,19.1 130.6,17.4 162.8,17.4 196.7,15.7 263.1,14.0"/>
+<polyline data-series="oracle" class="oracle" points="75.2,30.0 75.2,30.0 75.2,26.5 75.2,23.2 75.3,23.2 75.4,16.4 75.4,16.4 75.5,15.4 75.5,14.4 75.5,14.1 75.5,14.0 75.5,14.0 77.0,14.0"/>
+<polyline data-series="onblind" class="onblind" points="117.6,22.0 118.5,22.0 119.2,22.0 120.5,22.0 123.7,22.0 126.4,22.0 128.3,22.0 140.2,20.3 144.1,20.3 158.3,20.3"/>
+<polyline data-series="blind" class="blind train" points="72.3,50.5 73.8,50.1 74.3,50.1 74.5,50.1 75.1,50.1 75.6,50.1 76.7,49.9 78.7,46.8 80.3,46.8 84.3,46.3 93.2,45.3 94.1,45.1 95.5,45.1 95.6,45.1 105.2,37.0 110.0,36.9 110.2,36.9 110.6,36.9 111.9,36.9 114.9,36.9 114.9,36.9 123.6,36.6 127.3,31.4 128.1,31.4 128.6,31.4 134.1,31.1 135.4,31.1 137.9,31.1 139.7,31.1 139.9,31.1 140.6,31.1 144.9,27.4 145.4,27.4 149.4,25.1 150.6,25.1 154.1,25.1 173.7,24.1 179.0,23.0 180.4,23.0 180.9,23.0 182.6,23.0 183.6,23.0 184.3,23.0 195.1,22.1 209.4,20.9 218.5,19.4 221.4,18.6 223.2,18.6 225.0,18.6 225.9,18.6 227.3,18.6 239.4,18.1 239.8,18.1 242.7,17.4 243.5,17.4 243.9,17.4 244.1,17.4 253.4,15.9 256.9,15.2 259.0,15.2 259.9,15.2 260.9,15.2 265.0,15.2 268.9,14.2 278.9,14.2 279.2,14.2 281.5,14.2 287.5,14.2 293.3,14.0 293.8,14.0 295.1,14.0 296.5,14.0 298.2,14.0 300.3,14.0 301.5,14.0 301.8,14.0"/>
+<polyline data-series="oracle" class="oracle train" points="72.3,50.5 72.3,50.5 72.3,45.5 72.4,37.9 72.4,31.3 72.6,23.0 72.7,16.9 72.7,14.9 72.7,14.4 72.8,14.2 72.8,14.0 72.8,14.0 74.2,14.0"/>
+<polyline data-series="model" class="model train" points="76.3,38.6 76.3,38.6 76.3,38.6 76.4,38.6 76.6,38.6 76.8,38.6 77.3,38.6 78.2,36.3 81.1,32.9 86.5,27.3 94.4,21.3 106.2,18.9 121.6,16.1 153.0,14.8 186.8,14.4 256.2,14.3"/>
+<polyline data-series="hybrid" class="hybrid train" points="109.6,33.0 109.6,33.0 109.7,33.0 109.8,33.0 110.0,33.0 110.4,33.0 111.0,33.0 112.1,33.0 115.5,28.0 121.1,21.9 127.6,18.8 137.4,17.3 150.5,15.1 176.3,14.2 204.2,14.0 260.3,14.0"/>
+<polyline data-series="modelllm" class="modelllm train" points="76.3,38.6 76.3,38.6 76.4,38.6 76.5,38.6 76.7,38.6 77.1,38.6 77.7,38.6 79.0,38.5 82.8,32.2 89.0,25.5 96.2,21.8 107.4,19.8 122.1,17.1 151.1,14.5 182.2,14.1 244.2,14.0"/>
+<polyline data-series="onblind" class="onblind train" points="109.6,33.0 110.4,33.0 111.1,33.0 112.3,33.0 115.3,33.0 117.9,33.0 119.6,33.0 130.5,31.4 134.1,31.4 147.7,26.5"/>
 <line x1="306.0" y1="14.0" x2="306.0" y2="14.0" class="link train" data-series="points"/>
-<line x1="67.7" y1="74.1" x2="70.6" y2="56.5" class="link train" data-series="points"/>
-<line x1="71.6" y1="52.6" x2="74.0" y2="28.6" class="link train" data-series="points"/>
-<line x1="99.6" y1="32.0" x2="101.1" y2="21.8" class="link train" data-series="points"/>
-<line x1="189.1" y1="27.3" x2="188.0" y2="18.0" class="link train" data-series="points"/>
-<line x1="101.2" y1="37.9" x2="103.9" y2="25.6" class="link train" data-series="points"/>
+<line x1="72.3" y1="50.5" x2="75.2" y2="30.0" class="link train" data-series="points"/>
+<line x1="76.3" y1="38.6" x2="78.9" y2="25.5" class="link train" data-series="points"/>
+<line x1="102.4" y1="29.5" x2="109.2" y2="22.2" class="link train" data-series="points"/>
+<line x1="201.9" y1="20.3" x2="212.4" y2="19.1" class="link train" data-series="points"/>
+<line x1="109.6" y1="33.0" x2="117.6" y2="22.0" class="link train" data-series="points"/>
 <circle data-series="points" cx="306.0" cy="14.0" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 100% of today's bugs at 100% of its cost</title></circle>
-<circle data-series="points" cx="70.6" cy="56.5" r="3.5" class="pt trivial"><title>trivial only (test set): 78% of today's bugs at 9% of its cost</title></circle>
-<circle data-series="points" cx="74.0" cy="28.6" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 92% of today's bugs at 11% of its cost</title></circle>
-<circle data-series="points" cx="101.1" cy="21.8" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 96% of today's bugs at 21% of its cost</title></circle>
-<circle data-series="points" cx="188.0" cy="18.0" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 98% of today's bugs at 55% of its cost</title></circle>
-<circle data-series="points" cx="103.9" cy="25.6" r="3.5" class="pt other"><title>+ principles (test set): 94% of today's bugs at 22% of its cost</title></circle>
+<circle data-series="points" cx="75.2" cy="30.0" r="3.5" class="pt trivial"><title>trivial only (test set): 92% of today's bugs at 11% of its cost</title></circle>
+<circle data-series="points" cx="78.9" cy="25.5" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 94% of today's bugs at 13% of its cost</title></circle>
+<circle data-series="points" cx="109.2" cy="22.2" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 96% of today's bugs at 24% of its cost</title></circle>
+<circle data-series="points" cx="212.4" cy="19.1" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 97% of today's bugs at 64% of its cost</title></circle>
+<circle data-series="points" cx="117.6" cy="22.0" r="3.5" class="pt other"><title>+ principles (test set): 96% of today's bugs at 28% of its cost</title></circle>
 <circle data-series="points" cx="306.0" cy="14.0" r="3.5" class="pt today hollow train"><title>today&#x27;s matrix (training set): 100% of today's bugs at 100% of its cost</title></circle>
-<circle data-series="points" cx="67.7" cy="74.1" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 68% of today's bugs at 8% of its cost</title></circle>
-<circle data-series="points" cx="71.6" cy="52.6" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 80% of today's bugs at 10% of its cost</title></circle>
-<circle data-series="points" cx="99.6" cy="32.0" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 91% of today's bugs at 21% of its cost</title></circle>
-<circle data-series="points" cx="189.1" cy="27.3" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 93% of today's bugs at 55% of its cost</title></circle>
-<circle data-series="points" cx="101.2" cy="37.9" r="3.5" class="pt other hollow train"><title>+ principles (training set): 87% of today's bugs at 21% of its cost</title></circle>
+<circle data-series="points" cx="72.3" cy="50.5" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 81% of today's bugs at 10% of its cost</title></circle>
+<circle data-series="points" cx="76.3" cy="38.6" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 87% of today's bugs at 12% of its cost</title></circle>
+<circle data-series="points" cx="102.4" cy="29.5" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 92% of today's bugs at 22% of its cost</title></circle>
+<circle data-series="points" cx="201.9" cy="20.3" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 97% of today's bugs at 60% of its cost</title></circle>
+<circle data-series="points" cx="109.6" cy="33.0" r="3.5" class="pt other hollow train"><title>+ principles (training set): 90% of today's bugs at 24% of its cost</title></circle>
 </svg></figure><figure><figcaption>Hard bugs</figcaption><svg viewBox="0 0 320 240" role="img" aria-label="Hard bugs" class="chart">
 <line x1="46.0" y1="204.0" x2="46.0" y2="14.0" class="grid"/>
 <text x="46.0" y="220.0" class="tick" text-anchor="middle">0%</text>
@@ -448,36 +442,36 @@ ones, and after the LLM's training data.</p>
 <text x="40.0" y="37.0" class="tick" text-anchor="end">90%</text>
 <line x1="46.0" y1="14.0" x2="306.0" y2="14.0" class="grid"/>
 <text x="40.0" y="18.0" class="tick" text-anchor="end">100%</text>
-<polyline data-series="blind" class="blind" points="70.6,161.5 72.1,153.9 72.3,153.9 73.0,150.9 76.6,142.1 77.6,135.0 78.1,135.0 79.6,131.2 81.5,131.2 83.4,131.2 91.7,118.1 95.0,104.6 99.8,93.3 100.5,92.3 104.2,90.9 113.0,83.3 121.8,77.0 123.5,76.9 128.5,73.8 129.9,73.8 131.1,73.6 131.2,69.5 144.5,65.0 145.0,51.2 147.0,51.2 149.3,44.9 150.0,44.9 160.0,44.9 161.7,42.7 162.1,42.7 162.5,42.7 173.7,38.6 174.9,37.9 176.2,35.1 179.6,35.1 183.0,31.0 183.5,30.7 183.9,30.7 185.5,30.7 187.1,30.7 189.7,30.0 189.9,30.0 190.7,30.0 200.0,29.4 205.6,27.8 223.8,27.2 227.0,27.2 236.9,26.2 238.9,26.2 244.2,24.8 247.9,24.8 248.4,24.8 249.9,22.8 251.4,22.8 259.1,22.7 259.8,22.7 260.1,22.7 261.4,20.6 262.5,20.4 265.8,20.4 266.2,20.4 267.6,20.4 268.0,20.2 268.4,20.2 268.8,20.2 270.9,18.8 274.7,18.8 275.8,18.8 276.7,18.8"/>
-<polyline data-series="model" class="model" points="74.0,136.7 74.0,136.7 74.0,136.7 74.1,136.7 74.3,136.7 74.4,136.7 74.9,136.4 75.4,134.4 77.0,131.9 79.6,112.6 82.7,107.8 87.8,103.6 94.3,98.2 109.9,86.1 129.0,72.4 177.9,49.6 263.6,31.3"/>
-<polyline data-series="hybrid" class="hybrid" points="103.9,94.0 103.9,94.0 103.9,94.0 104.0,94.0 104.1,94.0 104.2,93.8 104.7,93.0 105.2,93.0 107.1,89.4 109.1,89.1 111.2,81.6 114.9,77.9 120.6,73.2 134.6,61.5 152.6,56.2 197.3,40.8 269.5,31.9"/>
-<polyline data-series="modelllm" class="modelllm" points="74.0,136.7 74.0,136.7 74.0,136.7 74.0,136.7 74.1,136.7 74.3,136.7 74.7,136.4 75.4,136.4 77.4,131.3 79.6,123.8 82.0,116.5 86.4,104.8 92.8,99.2 108.7,85.9 128.3,72.8 177.2,57.0 256.1,37.4"/>
-<polyline data-series="oracle" class="oracle" points="70.6,161.5 70.6,149.2 70.6,114.6 70.7,79.9 70.7,61.7 70.7,42.1 71.0,19.9 71.0,19.2 71.0,18.2 71.1,18.1 71.1,18.1 71.1,18.1 71.8,18.1"/>
-<polyline data-series="onblind" class="onblind" points="103.9,94.0 104.6,89.9 106.6,85.1 107.7,82.9 110.4,79.2 112.3,79.1 118.9,73.5 132.5,63.6 139.4,62.2 153.4,41.8"/>
-<polyline data-series="blind" class="blind train" points="67.7,180.1 69.2,168.1 69.3,165.4 70.0,160.2 73.6,134.1 74.6,129.4 75.0,127.1 76.5,120.1 78.4,120.1 80.2,114.2 88.3,95.7 91.5,89.0 96.3,78.7 97.0,77.5 100.5,71.5 109.2,63.0 117.8,53.3 119.5,51.0 124.4,45.5 125.7,44.1 126.9,43.6 127.0,43.5 140.0,35.4 140.5,34.9 142.5,33.4 144.7,31.9 145.4,31.6 155.2,30.5 156.8,29.8 157.3,29.6 157.7,29.4 168.6,25.9 169.8,25.5 171.1,25.1 174.4,24.3 177.7,23.9 178.2,23.7 178.6,23.6 180.2,23.3 181.7,23.0 184.3,22.4 184.4,22.4 185.2,22.3 194.4,20.6 199.8,19.7 217.6,17.6 220.8,17.1 230.5,15.9 232.4,15.7 237.6,15.0 241.2,14.8 241.7,14.8 243.3,14.6 244.7,14.6 252.2,14.3 252.9,14.3 253.2,14.2 254.5,14.2 255.6,14.1 258.8,14.1 259.2,14.1 260.6,14.0 261.0,14.0 261.3,14.0 261.7,14.0 263.8,14.0 267.5,14.0 268.6,14.0 269.4,14.0"/>
-<polyline data-series="oracle" class="oracle train" points="67.7,180.1 67.7,174.1 67.7,135.2 67.7,109.4 67.8,66.6 68.0,38.4 68.1,18.6 68.2,15.0 68.2,14.2 68.2,14.0 68.2,14.0 68.2,14.0 69.1,14.0"/>
-<polyline data-series="model" class="model train" points="71.6,145.7 71.6,145.7 71.6,145.4 71.6,144.3 71.8,140.3 71.9,139.4 72.1,129.7 72.5,126.1 74.1,111.5 76.2,104.0 79.3,92.5 84.0,81.7 90.3,71.7 106.6,52.4 125.7,38.9 176.0,26.2 260.2,16.5"/>
-<polyline data-series="hybrid" class="hybrid train" points="101.2,84.1 101.2,83.7 101.2,81.1 101.2,80.5 101.4,78.8 101.5,76.2 101.8,73.3 102.4,72.5 104.3,69.3 106.5,64.8 110.1,56.6 115.3,47.7 121.9,44.7 136.0,37.1 151.1,28.2 191.5,19.5 264.9,16.1"/>
-<polyline data-series="modelllm" class="modelllm train" points="71.6,145.7 71.6,145.7 71.6,145.4 71.7,142.3 71.8,138.8 71.9,133.8 72.3,128.1 73.0,121.4 75.0,111.6 77.6,98.5 81.8,82.4 87.6,70.8 95.1,60.4 111.0,45.2 128.2,33.2 173.1,22.8 252.9,17.3"/>
-<polyline data-series="onblind" class="onblind train" points="101.2,84.1 101.9,73.6 103.9,71.9 105.1,69.6 107.6,65.4 109.5,59.4 115.6,53.5 128.3,42.0 134.9,36.1 149.0,29.1"/>
+<polyline data-series="blind" class="blind" points="75.2,141.3 76.8,133.8 77.3,132.4 77.5,132.4 78.1,124.9 78.7,124.6 79.8,120.4 82.0,117.4 83.7,113.1 88.0,104.8 97.6,88.4 98.5,86.5 100.0,82.9 100.1,82.9 110.4,71.0 115.6,65.6 115.7,64.5 116.2,62.7 117.6,61.9 120.8,59.8 120.8,59.8 130.2,57.0 134.1,53.5 135.0,51.0 135.5,50.8 141.4,48.0 142.8,46.9 145.4,45.0 147.3,44.8 147.6,44.8 148.4,44.6 153.0,43.9 153.5,43.9 157.8,43.3 159.0,43.3 162.8,40.9 183.8,35.4 189.5,30.9 191.1,30.7 191.6,30.3 193.4,29.5 194.4,29.5 195.2,28.8 206.7,25.8 222.1,25.4 231.9,25.0 234.9,23.7 236.9,23.7 238.8,22.0 239.8,22.0 241.3,22.0 254.2,20.7 254.7,20.7 257.7,20.6 258.6,20.6 259.1,20.3 259.2,19.0 269.2,18.7 273.0,18.6 275.3,18.6 276.2,18.6 277.3,18.6 281.7,18.0 285.9,18.0 296.5,17.6 296.9,17.6 299.4,17.2 305.8,16.9"/>
+<polyline data-series="model" class="model" points="78.9,124.0 78.9,124.0 78.9,124.0 79.0,122.5 79.2,121.6 79.5,120.3 80.2,116.4 81.4,113.5 84.9,108.0 90.6,97.6 99.6,88.8 113.3,81.4 130.8,69.3 166.1,51.7 204.0,35.9 277.6,25.8"/>
+<polyline data-series="hybrid" class="hybrid" points="117.6,78.6 117.6,78.6 117.6,77.6 117.8,76.1 118.2,74.4 118.6,73.6 119.6,73.1 121.0,69.8 125.6,64.5 131.8,60.3 139.1,57.0 149.6,52.2 164.0,46.4 192.4,38.3 222.4,27.2 281.9,19.1"/>
+<polyline data-series="modelllm" class="modelllm" points="78.9,124.0 78.9,124.0 78.9,123.6 79.1,122.5 79.5,120.4 79.9,118.1 81.0,114.2 82.5,110.9 87.6,104.2 94.4,92.4 102.6,86.5 114.3,78.8 130.6,70.6 162.8,53.5 196.7,36.1 263.1,24.7"/>
+<polyline data-series="oracle" class="oracle" points="75.2,141.3 75.2,129.2 75.2,94.6 75.2,69.1 75.3,51.3 75.4,27.5 75.4,17.6 75.5,14.7 75.5,14.0 75.5,14.0 75.5,14.0 75.5,14.0 77.0,14.0"/>
+<polyline data-series="onblind" class="onblind" points="117.6,78.6 118.5,73.1 119.2,66.9 120.5,65.8 123.7,60.3 126.4,57.3 128.3,54.3 140.2,49.6 144.1,45.7 158.3,38.6"/>
+<polyline data-series="blind" class="blind train" points="72.3,134.5 73.8,123.8 74.3,121.7 74.5,121.0 75.1,119.3 75.6,118.1 76.7,115.8 78.7,111.8 80.3,108.5 84.3,100.9 93.2,84.8 94.1,83.4 95.5,81.2 95.6,80.9 105.2,68.8 110.0,63.2 110.2,62.3 110.6,61.9 111.9,60.8 114.9,58.4 114.9,58.4 123.6,51.4 127.3,48.7 128.1,48.2 128.6,47.9 134.1,44.6 135.4,43.8 137.9,42.4 139.7,41.5 139.9,41.4 140.6,41.1 144.9,39.5 145.4,39.3 149.4,37.7 150.6,37.2 154.1,35.9 173.7,29.2 179.0,27.7 180.4,27.2 180.9,27.1 182.6,26.6 183.6,26.4 184.3,26.2 195.1,24.3 209.4,22.5 218.5,20.7 221.4,20.1 223.2,19.8 225.0,19.5 225.9,19.4 227.3,19.1 239.4,17.8 239.8,17.7 242.7,17.4 243.5,17.3 243.9,17.2 244.1,17.2 253.4,16.4 256.9,16.2 259.0,16.0 259.9,15.9 260.9,15.8 265.0,15.5 268.9,15.2 278.9,14.7 279.2,14.7 281.5,14.6 287.5,14.4 293.3,14.1 293.8,14.1 295.1,14.1 296.5,14.0 298.2,14.0 300.3,14.0 301.5,14.0 301.8,14.0"/>
+<polyline data-series="oracle" class="oracle train" points="72.3,134.5 72.3,127.8 72.3,103.4 72.4,76.5 72.4,59.3 72.6,27.6 72.7,16.7 72.7,14.8 72.7,14.1 72.8,14.0 72.8,14.0 72.8,14.0 74.2,14.0"/>
+<polyline data-series="model" class="model train" points="76.3,121.6 76.3,121.3 76.3,120.7 76.4,120.3 76.6,118.1 76.8,114.4 77.3,108.4 78.2,103.0 81.1,96.1 86.5,89.7 94.4,77.1 106.2,66.0 121.6,58.7 153.0,42.2 186.8,31.1 256.2,23.1"/>
+<polyline data-series="hybrid" class="hybrid train" points="109.6,69.0 109.6,68.9 109.7,67.1 109.8,65.8 110.0,63.6 110.4,62.2 111.0,59.7 112.1,58.1 115.5,55.8 121.1,51.2 127.6,46.6 137.4,41.1 150.5,36.2 176.3,29.0 204.2,24.2 260.3,18.0"/>
+<polyline data-series="modelllm" class="modelllm train" points="76.3,121.6 76.3,121.6 76.4,120.8 76.5,117.3 76.7,114.1 77.1,111.3 77.7,104.5 79.0,100.2 82.8,93.0 89.0,85.1 96.2,76.2 107.4,64.6 122.1,53.8 151.1,39.7 182.2,31.1 244.2,19.9"/>
+<polyline data-series="onblind" class="onblind train" points="109.6,69.0 110.4,62.7 111.1,61.4 112.3,60.6 115.3,56.6 117.9,55.2 119.6,53.9 130.5,46.2 134.1,43.7 147.7,36.5"/>
 <line x1="306.0" y1="14.0" x2="306.0" y2="14.0" class="link train" data-series="points"/>
-<line x1="67.7" y1="180.1" x2="70.6" y2="161.5" class="link train" data-series="points"/>
-<line x1="71.6" y1="145.7" x2="74.0" y2="136.7" class="link train" data-series="points"/>
-<line x1="99.6" y1="88.4" x2="101.1" y2="96.5" class="link train" data-series="points"/>
-<line x1="189.1" y1="33.5" x2="188.0" y2="44.8" class="link train" data-series="points"/>
-<line x1="101.2" y1="84.1" x2="103.9" y2="94.0" class="link train" data-series="points"/>
+<line x1="72.3" y1="134.5" x2="75.2" y2="141.3" class="link train" data-series="points"/>
+<line x1="76.3" y1="121.6" x2="78.9" y2="124.0" class="link train" data-series="points"/>
+<line x1="102.4" y1="88.3" x2="109.2" y2="91.8" class="link train" data-series="points"/>
+<line x1="201.9" y1="36.0" x2="212.4" y2="37.5" class="link train" data-series="points"/>
+<line x1="109.6" y1="69.0" x2="117.6" y2="78.6" class="link train" data-series="points"/>
 <circle data-series="points" cx="306.0" cy="14.0" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 100% of today's bugs at 100% of its cost</title></circle>
-<circle data-series="points" cx="70.6" cy="161.5" r="3.5" class="pt trivial"><title>trivial only (test set): 22% of today's bugs at 9% of its cost</title></circle>
-<circle data-series="points" cx="74.0" cy="136.7" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 35% of today's bugs at 11% of its cost</title></circle>
-<circle data-series="points" cx="101.1" cy="96.5" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 57% of today's bugs at 21% of its cost</title></circle>
-<circle data-series="points" cx="188.0" cy="44.8" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 84% of today's bugs at 55% of its cost</title></circle>
-<circle data-series="points" cx="103.9" cy="94.0" r="3.5" class="pt other"><title>+ principles (test set): 58% of today's bugs at 22% of its cost</title></circle>
+<circle data-series="points" cx="75.2" cy="141.3" r="3.5" class="pt trivial"><title>trivial only (test set): 33% of today's bugs at 11% of its cost</title></circle>
+<circle data-series="points" cx="78.9" cy="124.0" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 42% of today's bugs at 13% of its cost</title></circle>
+<circle data-series="points" cx="109.2" cy="91.8" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 59% of today's bugs at 24% of its cost</title></circle>
+<circle data-series="points" cx="212.4" cy="37.5" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 88% of today's bugs at 64% of its cost</title></circle>
+<circle data-series="points" cx="117.6" cy="78.6" r="3.5" class="pt other"><title>+ principles (test set): 66% of today's bugs at 28% of its cost</title></circle>
 <circle data-series="points" cx="306.0" cy="14.0" r="3.5" class="pt today hollow train"><title>today&#x27;s matrix (training set): 100% of today's bugs at 100% of its cost</title></circle>
-<circle data-series="points" cx="67.7" cy="180.1" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 13% of today's bugs at 8% of its cost</title></circle>
-<circle data-series="points" cx="71.6" cy="145.7" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 31% of today's bugs at 10% of its cost</title></circle>
-<circle data-series="points" cx="99.6" cy="88.4" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 61% of today's bugs at 21% of its cost</title></circle>
-<circle data-series="points" cx="189.1" cy="33.5" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 90% of today's bugs at 55% of its cost</title></circle>
-<circle data-series="points" cx="101.2" cy="84.1" r="3.5" class="pt other hollow train"><title>+ principles (training set): 63% of today's bugs at 21% of its cost</title></circle>
+<circle data-series="points" cx="72.3" cy="134.5" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 37% of today's bugs at 10% of its cost</title></circle>
+<circle data-series="points" cx="76.3" cy="121.6" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 43% of today's bugs at 12% of its cost</title></circle>
+<circle data-series="points" cx="102.4" cy="88.3" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 61% of today's bugs at 22% of its cost</title></circle>
+<circle data-series="points" cx="201.9" cy="36.0" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 88% of today's bugs at 60% of its cost</title></circle>
+<circle data-series="points" cx="109.6" cy="69.0" r="3.5" class="pt other hollow train"><title>+ principles (training set): 71% of today's bugs at 24% of its cost</title></circle>
 </svg></figure><figure><figcaption>Bugs also on the series</figcaption><svg viewBox="0 0 320 240" role="img" aria-label="Bugs also on the series" class="chart">
 <line x1="46.0" y1="204.0" x2="46.0" y2="14.0" class="grid"/>
 <text x="46.0" y="220.0" class="tick" text-anchor="middle">0%</text>
@@ -503,36 +497,36 @@ ones, and after the LLM's training data.</p>
 <text x="40.0" y="37.0" class="tick" text-anchor="end">90%</text>
 <line x1="46.0" y1="14.0" x2="306.0" y2="14.0" class="grid"/>
 <text x="40.0" y="18.0" class="tick" text-anchor="end">100%</text>
-<polyline data-series="blind" class="blind" points="70.6,131.3 72.1,131.3 72.3,131.3 73.0,131.3 76.6,127.4 77.6,127.4 78.1,127.4 79.6,118.5 81.5,118.5 83.4,118.5 91.7,108.1 95.0,108.1 99.8,108.1 100.5,108.1 104.2,99.3 113.0,99.3 121.8,89.2 123.5,89.2 128.5,71.4 129.9,71.4 131.1,71.4 131.2,71.4 144.5,62.5 145.0,62.5 147.0,62.5 149.3,62.5 150.0,62.5 160.0,62.5 161.7,50.7 162.1,50.7 162.5,50.7 173.7,50.7 174.9,41.8 176.2,37.4 179.6,37.4 183.0,32.9 183.5,32.9 183.9,32.9 185.5,32.9 187.1,32.9 189.7,24.1 189.9,24.1 190.7,24.1 200.0,19.6 205.6,19.6 223.8,15.1 227.0,15.1 236.9,15.1 238.9,15.1 244.2,15.1 247.9,15.1 248.4,15.1 249.9,15.1 251.4,15.1 259.1,15.1 259.8,15.1 260.1,15.1 261.4,15.1 262.5,15.1 265.8,15.1 266.2,15.1 267.6,15.1 268.0,15.1 268.4,15.1 268.8,15.1 270.9,15.1 274.7,15.1 275.8,15.1 276.7,15.1"/>
-<polyline data-series="model" class="model" points="74.0,122.9 74.0,122.9 74.0,122.9 74.1,122.9 74.3,122.9 74.4,122.9 74.9,122.9 75.4,105.2 77.0,94.8 79.6,81.5 82.7,80.3 87.8,79.1 94.3,74.3 109.9,65.4 129.0,61.0 177.9,38.8 263.6,24.0"/>
-<polyline data-series="hybrid" class="hybrid" points="103.9,87.4 103.9,87.4 103.9,87.4 104.0,87.4 104.1,87.4 104.2,87.4 104.7,87.4 105.2,87.4 107.1,87.4 109.1,86.2 111.2,85.0 114.9,85.0 120.6,85.0 134.6,70.6 152.6,61.0 197.3,38.8 269.5,24.0"/>
-<polyline data-series="modelllm" class="modelllm" points="74.0,122.9 74.0,122.9 74.0,122.9 74.0,122.9 74.1,122.9 74.3,122.9 74.7,122.9 75.4,122.9 77.4,122.9 79.6,121.7 82.0,120.6 86.4,120.6 92.8,120.6 108.7,101.7 128.3,71.4 177.2,44.7 256.1,28.4"/>
-<polyline data-series="oracle" class="oracle" points="70.6,131.3 70.6,126.9 70.6,75.1 70.7,61.8 70.7,51.8 70.7,40.7 71.0,18.1 71.0,14.9 71.0,14.0 71.1,14.0 71.1,14.0 71.1,14.0 71.8,14.0"/>
-<polyline data-series="onblind" class="onblind" points="103.9,87.4 104.6,87.4 106.6,87.4 107.7,87.4 110.4,78.5 112.3,78.5 118.9,78.5 132.5,69.9 139.4,61.1 153.4,52.2"/>
-<polyline data-series="blind" class="blind train" points="67.7,132.2 69.2,116.5 69.3,116.5 70.0,112.8 73.6,97.5 74.6,97.3 75.0,97.3 76.5,95.2 78.4,95.2 80.2,92.5 88.3,84.0 91.5,79.1 96.3,72.6 97.0,72.6 100.5,68.3 109.2,58.8 117.8,55.1 119.5,54.4 124.4,48.3 125.7,48.3 126.9,47.2 127.0,47.2 140.0,42.9 140.5,41.5 142.5,40.7 144.7,37.8 145.4,36.5 155.2,29.5 156.8,29.5 157.3,29.5 157.7,29.2 168.6,27.9 169.8,27.9 171.1,27.0 174.4,26.1 177.7,25.3 178.2,25.3 178.6,25.3 180.2,24.4 181.7,24.4 184.3,22.7 184.4,22.7 185.2,22.7 194.4,21.9 199.8,21.1 217.6,19.3 220.8,19.3 230.5,18.4 232.4,18.4 237.6,17.3 241.2,15.7 241.7,15.3 243.3,15.3 244.7,15.3 252.2,15.3 252.9,14.9 253.2,14.9 254.5,14.9 255.6,14.9 258.8,14.0 259.2,14.0 260.6,14.0 261.0,14.0 261.3,14.0 261.7,14.0 263.8,14.0 267.5,14.0 268.6,14.0 269.4,14.0"/>
-<polyline data-series="oracle" class="oracle train" points="67.7,132.2 67.7,126.6 67.7,102.7 67.7,84.4 67.8,57.3 68.0,32.8 68.1,17.2 68.2,14.6 68.2,14.2 68.2,14.1 68.2,14.0 68.2,14.0 69.1,14.0"/>
-<polyline data-series="model" class="model train" points="71.6,96.9 71.6,96.9 71.6,94.7 71.6,93.6 71.8,88.6 71.9,88.0 72.1,85.8 72.5,81.5 74.1,63.2 76.2,58.0 79.3,51.0 84.0,45.2 90.3,37.9 106.6,26.5 125.7,22.5 176.0,16.9 260.2,14.0"/>
-<polyline data-series="hybrid" class="hybrid train" points="101.2,59.9 101.2,59.9 101.2,56.6 101.2,55.0 101.4,54.1 101.5,52.8 101.8,51.3 102.4,49.8 104.3,41.8 106.5,40.8 110.1,36.9 115.3,31.6 121.9,25.8 136.0,21.7 151.1,18.0 191.5,16.8 264.9,16.2"/>
-<polyline data-series="modelllm" class="modelllm train" points="71.6,96.9 71.6,96.9 71.6,96.9 71.7,89.6 71.8,87.0 71.9,85.7 72.3,82.0 73.0,76.2 75.0,61.5 77.6,53.8 81.8,46.0 87.6,38.6 95.1,30.3 111.0,24.1 128.2,19.4 173.1,16.9 252.9,16.2"/>
-<polyline data-series="onblind" class="onblind train" points="101.2,59.9 101.9,54.6 103.9,54.4 105.1,54.4 107.6,53.6 109.5,52.0 115.6,50.2 128.3,44.3 134.9,42.0 149.0,35.1"/>
+<polyline data-series="blind" class="blind" points="75.2,135.7 76.8,135.7 77.3,135.7 77.5,135.7 78.1,135.7 78.7,135.7 79.8,135.7 82.0,131.4 83.7,122.7 88.0,105.9 97.6,96.2 98.5,96.2 100.0,91.8 100.1,91.8 110.4,83.2 115.6,78.9 115.7,78.9 116.2,78.9 117.6,78.9 120.8,78.9 120.8,78.9 130.2,77.4 134.1,77.4 135.0,77.4 135.5,77.4 141.4,60.1 142.8,51.5 145.4,47.2 147.3,47.2 147.6,47.2 148.4,47.2 153.0,47.2 153.5,47.2 157.8,47.2 159.0,47.2 162.8,47.2 183.8,34.2 189.5,34.2 191.1,34.2 191.6,34.2 193.4,34.2 194.4,34.2 195.2,34.2 206.7,34.2 222.1,34.2 231.9,34.2 234.9,29.9 236.9,29.9 238.8,18.3 239.8,18.3 241.3,18.3 254.2,18.3 254.7,18.3 257.7,18.3 258.6,18.3 259.1,18.3 259.2,18.3 269.2,18.3 273.0,18.3 275.3,18.3 276.2,18.3 277.3,18.3 281.7,18.3 285.9,18.3 296.5,18.3 296.9,18.3 299.4,18.3 305.8,18.3"/>
+<polyline data-series="model" class="model" points="78.9,114.6 78.9,114.6 78.9,114.6 79.0,114.6 79.2,114.6 79.5,114.6 80.2,112.4 81.4,108.1 84.9,108.1 90.6,103.7 99.6,103.7 113.3,103.7 130.8,89.7 166.1,64.5 204.0,41.4 277.6,24.1"/>
+<polyline data-series="hybrid" class="hybrid" points="117.6,76.0 117.6,76.0 117.6,76.0 117.8,76.0 118.2,76.0 118.6,73.8 119.6,73.8 121.0,73.8 125.6,73.8 131.8,73.8 139.1,73.8 149.6,73.8 164.0,73.8 192.4,58.7 222.4,37.1 281.9,18.3"/>
+<polyline data-series="modelllm" class="modelllm" points="78.9,114.6 78.9,114.6 78.9,114.6 79.1,114.6 79.5,114.6 79.9,114.6 81.0,112.4 82.5,112.4 87.6,108.1 94.4,103.7 102.6,103.7 114.3,103.7 130.6,99.4 162.8,83.2 196.7,51.5 263.1,24.1"/>
+<polyline data-series="oracle" class="oracle" points="75.2,135.7 75.2,127.1 75.2,89.6 75.2,50.7 75.3,42.0 75.4,31.2 75.4,16.8 75.5,14.3 75.5,14.0 75.5,14.0 75.5,14.0 75.5,14.0 77.0,14.0"/>
+<polyline data-series="onblind" class="onblind" points="117.6,76.0 118.5,76.0 119.2,76.0 120.5,76.0 123.7,67.3 126.4,67.3 128.3,63.0 140.2,58.7 144.1,58.7 158.3,50.0"/>
+<polyline data-series="blind" class="blind train" points="72.3,117.8 73.8,107.7 74.3,107.0 74.5,107.0 75.1,104.6 75.6,104.6 76.7,104.3 78.7,99.1 80.3,97.9 84.3,95.0 93.2,86.0 94.1,82.4 95.5,80.0 95.6,80.0 105.2,66.1 110.0,58.7 110.2,57.8 110.6,57.5 111.9,56.5 114.9,55.6 114.9,55.6 123.6,51.6 127.3,49.4 128.1,49.4 128.6,49.4 134.1,43.3 135.4,43.3 137.9,40.2 139.7,39.5 139.9,38.6 140.6,38.6 144.9,36.1 145.4,36.1 149.4,34.0 150.6,34.0 154.1,33.7 173.7,29.1 179.0,28.7 180.4,28.2 180.9,28.2 182.6,28.2 183.6,28.2 184.3,28.2 195.1,27.5 209.4,25.7 218.5,24.7 221.4,24.1 223.2,24.1 225.0,24.1 225.9,23.2 227.3,23.2 239.4,22.4 239.8,22.4 242.7,20.6 243.5,19.6 243.9,19.3 244.1,19.3 253.4,18.8 256.9,18.0 259.0,18.0 259.9,18.0 260.9,18.0 265.0,18.0 268.9,16.5 278.9,15.6 279.2,15.6 281.5,15.6 287.5,15.6 293.3,14.4 293.8,14.0 295.1,14.0 296.5,14.0 298.2,14.0 300.3,14.0 301.5,14.0 301.8,14.0"/>
+<polyline data-series="oracle" class="oracle train" points="72.3,117.8 72.3,109.2 72.3,89.2 72.4,67.2 72.4,48.9 72.6,30.2 72.7,16.6 72.7,14.3 72.7,14.1 72.8,14.0 72.8,14.0 72.8,14.0 74.2,14.0"/>
+<polyline data-series="model" class="model train" points="76.3,100.4 76.3,100.4 76.3,99.9 76.4,95.7 76.6,95.7 76.8,93.0 77.3,87.4 78.2,83.8 81.1,75.7 86.5,64.6 94.4,53.2 106.2,44.1 121.6,38.5 153.0,27.7 186.8,20.1 256.2,18.1"/>
+<polyline data-series="hybrid" class="hybrid train" points="109.6,59.1 109.6,59.1 109.7,57.7 109.8,56.6 110.0,54.8 110.4,54.3 111.0,50.7 112.1,49.7 115.5,48.4 121.1,41.7 127.6,35.9 137.4,32.8 150.5,28.0 176.3,22.2 204.2,19.6 260.3,17.2"/>
+<polyline data-series="modelllm" class="modelllm train" points="76.3,100.4 76.3,100.4 76.4,99.6 76.5,95.7 76.7,92.0 77.1,89.9 77.7,86.4 79.0,83.8 82.8,77.2 89.0,64.9 96.2,56.1 107.4,46.6 122.1,38.9 151.1,27.5 182.2,22.9 244.2,17.2"/>
+<polyline data-series="onblind" class="onblind train" points="109.6,59.1 110.4,53.4 111.1,52.0 112.3,52.0 115.3,49.4 117.9,49.4 119.6,45.3 130.5,40.5 134.1,39.5 147.7,34.7"/>
 <line x1="306.0" y1="14.0" x2="306.0" y2="14.0" class="link train" data-series="points"/>
-<line x1="67.7" y1="132.2" x2="70.6" y2="131.3" class="link train" data-series="points"/>
-<line x1="71.6" y1="96.9" x2="74.0" y2="122.9" class="link train" data-series="points"/>
-<line x1="99.6" y1="48.6" x2="101.1" y2="86.9" class="link train" data-series="points"/>
-<line x1="189.1" y1="28.3" x2="188.0" y2="29.9" class="link train" data-series="points"/>
-<line x1="101.2" y1="59.9" x2="103.9" y2="87.4" class="link train" data-series="points"/>
+<line x1="72.3" y1="117.8" x2="75.2" y2="135.7" class="link train" data-series="points"/>
+<line x1="76.3" y1="100.4" x2="78.9" y2="114.6" class="link train" data-series="points"/>
+<line x1="102.4" y1="77.4" x2="109.2" y2="99.1" class="link train" data-series="points"/>
+<line x1="201.9" y1="31.7" x2="212.4" y2="31.3" class="link train" data-series="points"/>
+<line x1="109.6" y1="59.1" x2="117.6" y2="76.0" class="link train" data-series="points"/>
 <circle data-series="points" cx="306.0" cy="14.0" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 100% of today's bugs at 100% of its cost</title></circle>
-<circle data-series="points" cx="70.6" cy="131.3" r="3.5" class="pt trivial"><title>trivial only (test set): 38% of today's bugs at 9% of its cost</title></circle>
-<circle data-series="points" cx="74.0" cy="122.9" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 43% of today's bugs at 11% of its cost</title></circle>
-<circle data-series="points" cx="101.1" cy="86.9" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 62% of today's bugs at 21% of its cost</title></circle>
-<circle data-series="points" cx="188.0" cy="29.9" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 92% of today's bugs at 55% of its cost</title></circle>
-<circle data-series="points" cx="103.9" cy="87.4" r="3.5" class="pt other"><title>+ principles (test set): 61% of today's bugs at 22% of its cost</title></circle>
+<circle data-series="points" cx="75.2" cy="135.7" r="3.5" class="pt trivial"><title>trivial only (test set): 36% of today's bugs at 11% of its cost</title></circle>
+<circle data-series="points" cx="78.9" cy="114.6" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 47% of today's bugs at 13% of its cost</title></circle>
+<circle data-series="points" cx="109.2" cy="99.1" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 55% of today's bugs at 24% of its cost</title></circle>
+<circle data-series="points" cx="212.4" cy="31.3" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 91% of today's bugs at 64% of its cost</title></circle>
+<circle data-series="points" cx="117.6" cy="76.0" r="3.5" class="pt other"><title>+ principles (test set): 67% of today's bugs at 28% of its cost</title></circle>
 <circle data-series="points" cx="306.0" cy="14.0" r="3.5" class="pt today hollow train"><title>today&#x27;s matrix (training set): 100% of today's bugs at 100% of its cost</title></circle>
-<circle data-series="points" cx="67.7" cy="132.2" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 38% of today's bugs at 8% of its cost</title></circle>
-<circle data-series="points" cx="71.6" cy="96.9" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 56% of today's bugs at 10% of its cost</title></circle>
-<circle data-series="points" cx="99.6" cy="48.6" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 82% of today's bugs at 21% of its cost</title></circle>
-<circle data-series="points" cx="189.1" cy="28.3" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 92% of today's bugs at 55% of its cost</title></circle>
-<circle data-series="points" cx="101.2" cy="59.9" r="3.5" class="pt other hollow train"><title>+ principles (training set): 76% of today's bugs at 21% of its cost</title></circle>
+<circle data-series="points" cx="72.3" cy="117.8" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 45% of today's bugs at 10% of its cost</title></circle>
+<circle data-series="points" cx="76.3" cy="100.4" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 55% of today's bugs at 12% of its cost</title></circle>
+<circle data-series="points" cx="102.4" cy="77.4" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 67% of today's bugs at 22% of its cost</title></circle>
+<circle data-series="points" cx="201.9" cy="31.7" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 91% of today's bugs at 60% of its cost</title></circle>
+<circle data-series="points" cx="109.6" cy="59.1" r="3.5" class="pt other hollow train"><title>+ principles (training set): 76% of today's bugs at 24% of its cost</title></circle>
 </svg></figure><figure><figcaption>Patchsets with every bug caught</figcaption><svg viewBox="0 0 320 240" role="img" aria-label="Patchsets with every bug caught" class="chart">
 <line x1="46.0" y1="204.0" x2="46.0" y2="14.0" class="grid"/>
 <text x="46.0" y="220.0" class="tick" text-anchor="middle">0%</text>
@@ -558,192 +552,192 @@ ones, and after the LLM's training data.</p>
 <text x="40.0" y="37.0" class="tick" text-anchor="end">90%</text>
 <line x1="46.0" y1="14.0" x2="306.0" y2="14.0" class="grid"/>
 <text x="40.0" y="18.0" class="tick" text-anchor="end">100%</text>
-<polyline data-series="blind" class="blind" points="70.6,116.5 72.1,110.3 72.3,110.3 73.0,108.8 76.6,105.3 77.6,103.0 78.1,103.0 79.6,102.2 81.5,102.2 83.4,102.2 91.7,97.2 95.0,94.0 99.8,89.4 100.5,88.6 104.2,88.6 113.0,85.3 121.8,81.9 123.5,81.5 128.5,79.3 129.9,79.3 131.1,79.3 131.2,78.5 144.5,76.6 145.0,71.9 147.0,71.9 149.3,70.4 150.0,69.3 160.0,69.3 161.7,69.0 162.1,69.0 162.5,69.0 173.7,68.0 174.9,68.0 176.2,66.9 179.6,66.5 183.0,64.5 183.5,64.0 183.9,64.0 185.5,64.0 187.1,63.9 189.7,63.9 189.9,63.9 190.7,63.9 200.0,60.9 205.6,59.2 223.8,50.2 227.0,50.0 236.9,49.8 238.9,49.8 244.2,49.6 247.9,49.6 248.4,49.6 249.9,48.8 251.4,48.8 259.1,48.7 259.8,48.7 260.1,48.7 261.4,48.3 262.5,48.2 265.8,48.2 266.2,48.2 267.6,48.2 268.0,46.4 268.4,46.4 268.8,46.4 270.9,46.1 274.7,46.1 275.8,45.7 276.7,45.7"/>
-<polyline data-series="model" class="model" points="74.0,91.3 74.0,91.3 74.0,91.3 74.1,90.9 74.3,90.9 74.4,90.1 74.9,89.1 75.4,88.4 77.0,87.9 79.6,82.6 82.7,80.0 87.8,76.9 94.3,71.7 109.9,66.2 129.0,60.4 177.9,53.4 263.6,48.4"/>
-<polyline data-series="hybrid" class="hybrid" points="103.9,78.9 103.9,78.9 103.9,78.9 104.0,78.6 104.1,78.5 104.2,78.0 104.7,77.0 105.2,76.8 107.1,73.7 109.1,72.9 111.2,70.3 114.9,66.6 120.6,64.1 134.6,59.2 152.6,56.9 197.3,50.3 269.5,48.0"/>
-<polyline data-series="modelllm" class="modelllm" points="74.0,91.3 74.0,91.3 74.0,91.3 74.0,90.9 74.1,90.9 74.3,90.9 74.7,89.3 75.4,89.1 77.4,85.4 79.6,83.3 82.0,80.1 86.4,74.9 92.8,71.3 108.7,65.9 128.3,60.7 177.2,53.8 256.1,48.9"/>
-<polyline data-series="oracle" class="oracle" points="70.6,116.5 70.6,113.5 70.6,98.5 70.7,86.9 70.7,77.2 70.7,65.3 71.0,49.5 71.0,46.6 71.0,45.4 71.1,45.2 71.1,45.0 71.1,45.0 71.8,45.0"/>
-<polyline data-series="onblind" class="onblind" points="103.9,78.9 104.6,78.2 106.6,76.7 107.7,75.9 110.4,75.1 112.3,75.1 118.9,72.5 132.5,67.9 139.4,67.5 153.4,60.5"/>
-<polyline data-series="blind" class="blind train" points="67.7,142.0 69.2,134.1 69.3,133.7 70.0,131.6 73.6,123.6 74.6,122.4 75.0,121.6 76.5,119.3 78.4,116.6 80.2,112.9 88.3,106.0 91.5,103.6 96.3,99.4 97.0,99.0 100.5,97.3 109.2,89.6 117.8,85.4 119.5,82.7 124.4,80.9 125.7,80.9 126.9,80.2 127.0,80.1 140.0,75.5 140.5,75.3 142.5,74.3 144.7,73.5 145.4,73.3 155.2,69.1 156.8,68.9 157.3,68.5 157.7,68.5 168.6,66.7 169.8,66.4 171.1,66.3 174.4,64.8 177.7,63.2 178.2,63.2 178.6,63.2 180.2,63.2 181.7,63.2 184.3,62.3 184.4,62.3 185.2,61.9 194.4,60.7 199.8,60.2 217.6,58.5 220.8,58.0 230.5,57.4 232.4,57.1 237.6,56.4 241.2,55.5 241.7,55.5 243.3,55.5 244.7,55.4 252.2,53.5 252.9,53.5 253.2,53.5 254.5,53.4 255.6,53.3 258.8,51.4 259.2,51.3 260.6,51.2 261.0,51.2 261.3,51.2 261.7,51.2 263.8,51.2 267.5,51.2 268.6,51.2 269.4,51.2"/>
-<polyline data-series="oracle" class="oracle train" points="67.7,142.0 67.7,141.2 67.7,126.8 67.7,113.8 67.8,97.1 68.0,69.8 68.1,55.9 68.2,52.9 68.2,51.8 68.2,51.4 68.2,51.2 68.2,51.2 69.1,51.2"/>
-<polyline data-series="model" class="model train" points="71.6,114.6 71.6,114.6 71.6,114.5 71.6,114.2 71.8,112.7 71.9,112.6 72.1,111.2 72.5,109.5 74.1,98.5 76.2,94.9 79.3,89.8 84.0,85.0 90.3,80.8 106.6,70.3 125.7,64.2 176.0,55.0 260.2,51.6"/>
-<polyline data-series="hybrid" class="hybrid train" points="101.2,94.6 101.2,94.4 101.2,93.3 101.2,93.0 101.4,91.9 101.5,90.6 101.8,87.3 102.4,86.1 104.3,82.4 106.5,79.7 110.1,75.4 115.3,70.2 121.9,65.3 136.0,61.7 151.1,58.5 191.5,54.2 264.9,52.0"/>
-<polyline data-series="modelllm" class="modelllm train" points="71.6,114.6 71.6,114.6 71.6,114.5 71.7,113.2 71.8,112.3 71.9,112.1 72.3,110.1 73.0,107.8 75.0,100.8 77.6,95.5 81.8,89.0 87.6,79.2 95.1,71.5 111.0,65.1 128.2,60.8 173.1,55.0 252.9,52.2"/>
-<polyline data-series="onblind" class="onblind train" points="101.2,94.6 101.9,92.1 103.9,91.5 105.1,90.8 107.6,88.9 109.5,87.9 115.6,85.0 128.3,79.4 134.9,75.5 149.0,70.9"/>
-<line x1="306.0" y1="51.2" x2="306.0" y2="44.3" class="link train" data-series="points"/>
-<line x1="67.7" y1="142.0" x2="70.6" y2="116.5" class="link train" data-series="points"/>
-<line x1="71.6" y1="117.3" x2="74.0" y2="91.3" class="link train" data-series="points"/>
-<line x1="99.6" y1="87.7" x2="101.1" y2="75.3" class="link train" data-series="points"/>
-<line x1="189.1" y1="70.3" x2="188.0" y2="53.7" class="link train" data-series="points"/>
-<line x1="101.2" y1="94.6" x2="103.9" y2="78.9" class="link train" data-series="points"/>
-<circle data-series="points" cx="306.0" cy="44.3" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 84% of today's bugs at 100% of its cost</title></circle>
-<circle data-series="points" cx="70.6" cy="116.5" r="3.5" class="pt trivial"><title>trivial only (test set): 46% of today's bugs at 9% of its cost</title></circle>
-<circle data-series="points" cx="74.0" cy="91.3" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 59% of today's bugs at 11% of its cost</title></circle>
-<circle data-series="points" cx="101.1" cy="75.3" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 68% of today's bugs at 21% of its cost</title></circle>
-<circle data-series="points" cx="188.0" cy="53.7" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 79% of today's bugs at 55% of its cost</title></circle>
-<circle data-series="points" cx="103.9" cy="78.9" r="3.5" class="pt other"><title>+ principles (test set): 66% of today's bugs at 22% of its cost</title></circle>
-<circle data-series="points" cx="306.0" cy="51.2" r="3.5" class="pt today hollow train"><title>today&#x27;s matrix (training set): 80% of today's bugs at 100% of its cost</title></circle>
-<circle data-series="points" cx="67.7" cy="142.0" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 33% of today's bugs at 8% of its cost</title></circle>
-<circle data-series="points" cx="71.6" cy="117.3" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 46% of today's bugs at 10% of its cost</title></circle>
-<circle data-series="points" cx="99.6" cy="87.7" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 61% of today's bugs at 21% of its cost</title></circle>
-<circle data-series="points" cx="189.1" cy="70.3" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 70% of today's bugs at 55% of its cost</title></circle>
-<circle data-series="points" cx="101.2" cy="94.6" r="3.5" class="pt other hollow train"><title>+ principles (training set): 58% of today's bugs at 21% of its cost</title></circle>
+<polyline data-series="blind" class="blind" points="75.2,138.1 76.8,135.7 77.3,135.2 77.5,135.2 78.1,132.1 78.7,131.8 79.8,130.1 82.0,129.3 83.7,128.0 88.0,122.9 97.6,115.9 98.5,114.2 100.0,113.2 100.1,113.1 110.4,105.2 115.6,103.5 115.7,103.0 116.2,100.8 117.6,100.6 120.8,99.1 120.8,99.1 130.2,96.7 134.1,94.6 135.0,92.9 135.5,92.9 141.4,91.0 142.8,89.9 145.4,88.9 147.3,88.4 147.6,88.4 148.4,88.3 153.0,87.7 153.5,87.7 157.8,87.7 159.0,87.7 162.8,86.4 183.8,83.1 189.5,76.8 191.1,76.5 191.6,76.0 193.4,75.7 194.4,75.7 195.2,73.8 206.7,72.9 222.1,72.6 231.9,70.6 234.9,69.6 236.9,69.6 238.8,68.6 239.8,68.6 241.3,68.6 254.2,68.3 254.7,68.3 257.7,68.0 258.6,67.7 259.1,67.4 259.2,67.1 269.2,66.7 273.0,66.3 275.3,66.3 276.2,66.3 277.3,66.3 281.7,65.7 285.9,65.5 296.5,65.3 296.9,65.3 299.4,65.3 305.8,64.6"/>
+<polyline data-series="model" class="model" points="78.9,126.9 78.9,126.9 78.9,126.9 79.0,126.9 79.2,126.6 79.5,125.5 80.2,122.3 81.4,120.8 84.9,115.4 90.6,108.6 99.6,101.6 113.3,97.4 130.8,92.6 166.1,84.5 204.0,76.1 277.6,70.0"/>
+<polyline data-series="hybrid" class="hybrid" points="117.6,104.5 117.6,104.5 117.6,104.2 117.8,103.4 118.2,100.9 118.6,100.1 119.6,99.1 121.0,97.7 125.6,93.4 131.8,89.5 139.1,86.7 149.6,83.7 164.0,80.6 192.4,75.9 222.4,71.2 281.9,66.0"/>
+<polyline data-series="modelllm" class="modelllm" points="78.9,126.9 78.9,126.9 78.9,126.9 79.1,126.9 79.5,126.2 79.9,124.6 81.0,121.0 82.5,119.7 87.6,115.2 94.4,107.3 102.6,101.9 114.3,95.9 130.6,91.3 162.8,83.9 196.7,76.2 263.1,68.4"/>
+<polyline data-series="oracle" class="oracle" points="75.2,138.1 75.2,134.3 75.2,119.2 75.2,104.7 75.3,89.5 75.4,72.3 75.4,64.9 75.5,62.7 75.5,62.0 75.5,61.9 75.5,61.8 75.5,61.8 77.0,61.8"/>
+<polyline data-series="onblind" class="onblind" points="117.6,104.5 118.5,102.3 119.2,99.6 120.5,99.0 123.7,97.1 126.4,95.5 128.3,94.7 140.2,92.0 144.1,88.4 158.3,83.4"/>
+<polyline data-series="blind" class="blind train" points="72.3,139.2 73.8,134.7 74.3,134.2 74.5,134.1 75.1,133.6 75.6,133.2 76.7,132.4 78.7,130.1 80.3,128.7 84.3,126.1 93.2,119.0 94.1,118.5 95.5,117.6 95.6,117.4 105.2,106.5 110.0,102.6 110.2,102.2 110.6,101.7 111.9,100.6 114.9,98.7 114.9,98.5 123.6,95.6 127.3,93.8 128.1,93.7 128.6,93.6 134.1,91.8 135.4,91.7 137.9,90.4 139.7,89.2 139.9,89.0 140.6,88.6 144.9,87.7 145.4,87.5 149.4,86.5 150.6,86.2 154.1,85.0 173.7,80.8 179.0,78.1 180.4,77.8 180.9,77.4 182.6,76.9 183.6,76.8 184.3,76.3 195.1,73.5 209.4,71.8 218.5,70.5 221.4,69.7 223.2,69.6 225.0,69.3 225.9,69.1 227.3,68.5 239.4,67.7 239.8,67.6 242.7,66.6 243.5,66.5 243.9,66.4 244.1,66.3 253.4,65.4 256.9,65.1 259.0,64.8 259.9,64.1 260.9,64.0 265.0,63.7 268.9,63.0 278.9,62.7 279.2,62.6 281.5,62.5 287.5,61.6 293.3,61.1 293.8,61.1 295.1,61.1 296.5,60.9 298.2,60.8 300.3,60.8 301.5,60.8 301.8,60.8"/>
+<polyline data-series="oracle" class="oracle train" points="72.3,139.2 72.3,137.7 72.3,127.7 72.4,111.3 72.4,98.1 72.6,73.5 72.7,63.9 72.7,61.7 72.7,61.0 72.8,60.9 72.8,60.8 72.8,60.8 74.2,60.8"/>
+<polyline data-series="model" class="model train" points="76.3,128.4 76.3,128.3 76.3,128.1 76.4,128.1 76.6,126.5 76.8,124.7 77.3,121.9 78.2,118.4 81.1,112.5 86.5,105.9 94.4,97.4 106.2,91.1 121.6,87.2 153.0,78.5 186.8,72.2 256.2,66.7"/>
+<polyline data-series="hybrid" class="hybrid train" points="109.6,102.2 109.6,101.9 109.7,101.2 109.8,100.0 110.0,98.8 110.4,97.7 111.0,96.1 112.1,94.9 115.5,92.3 121.1,87.4 127.6,82.1 137.4,78.2 150.5,75.3 176.3,69.1 204.2,67.0 260.3,63.6"/>
+<polyline data-series="modelllm" class="modelllm train" points="76.3,128.4 76.3,128.4 76.4,128.1 76.5,127.6 76.7,126.3 77.1,123.8 77.7,120.7 79.0,117.7 82.8,112.6 89.0,105.2 96.2,96.6 107.4,89.3 122.1,83.6 151.1,74.8 182.2,70.9 244.2,65.0"/>
+<polyline data-series="onblind" class="onblind train" points="109.6,102.2 110.4,99.5 111.1,99.0 112.3,98.8 115.3,96.9 117.9,96.5 119.6,96.0 130.5,90.9 134.1,88.8 147.7,85.2"/>
+<line x1="306.0" y1="60.8" x2="306.0" y2="61.8" class="link train" data-series="points"/>
+<line x1="72.3" y1="139.2" x2="75.2" y2="138.1" class="link train" data-series="points"/>
+<line x1="76.3" y1="128.4" x2="78.9" y2="126.9" class="link train" data-series="points"/>
+<line x1="102.4" y1="110.7" x2="109.2" y2="111.3" class="link train" data-series="points"/>
+<line x1="201.9" y1="81.2" x2="212.4" y2="78.3" class="link train" data-series="points"/>
+<line x1="109.6" y1="102.2" x2="117.6" y2="104.5" class="link train" data-series="points"/>
+<circle data-series="points" cx="306.0" cy="61.8" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 75% of today's bugs at 100% of its cost</title></circle>
+<circle data-series="points" cx="75.2" cy="138.1" r="3.5" class="pt trivial"><title>trivial only (test set): 35% of today's bugs at 11% of its cost</title></circle>
+<circle data-series="points" cx="78.9" cy="126.9" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 41% of today's bugs at 13% of its cost</title></circle>
+<circle data-series="points" cx="109.2" cy="111.3" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 49% of today's bugs at 24% of its cost</title></circle>
+<circle data-series="points" cx="212.4" cy="78.3" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 66% of today's bugs at 64% of its cost</title></circle>
+<circle data-series="points" cx="117.6" cy="104.5" r="3.5" class="pt other"><title>+ principles (test set): 52% of today's bugs at 28% of its cost</title></circle>
+<circle data-series="points" cx="306.0" cy="60.8" r="3.5" class="pt today hollow train"><title>today&#x27;s matrix (training set): 75% of today's bugs at 100% of its cost</title></circle>
+<circle data-series="points" cx="72.3" cy="139.2" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 34% of today's bugs at 10% of its cost</title></circle>
+<circle data-series="points" cx="76.3" cy="128.4" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 40% of today's bugs at 12% of its cost</title></circle>
+<circle data-series="points" cx="102.4" cy="110.7" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 49% of today's bugs at 22% of its cost</title></circle>
+<circle data-series="points" cx="201.9" cy="81.2" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 65% of today's bugs at 60% of its cost</title></circle>
+<circle data-series="points" cx="109.6" cy="102.2" r="3.5" class="pt other hollow train"><title>+ principles (training set): 54% of today's bugs at 24% of its cost</title></circle>
 </svg></figure></div></section>
 <section><h2>Every predictor</h2><div class='scroll'><table><thead><tr><th>Predictor</th><th>Split</th><th>Bugs vs today, per change</th><th>Per bug</th><th>Hard bugs</th><th>All bugs caught</th><th>Test cost</th><th>Session h / build</th><th>LLM $ / patch</th></tr></thead><tbody>
-<tr class='test'><td>today&#x27;s matrix</td><td>test set</td><td class='n'>100% <span class='ci'>(100% to 100%)</span></td><td class='n'>100%</td><td class='n'>100%</td><td class='n'>84%</td><td class='n'>100%</td><td class='n'>130</td><td class='n'></td></tr>
-<tr class='test'><td>trivial only</td><td>test set</td><td class='n'>57% <span class='ci'>(51% to 63%)</span></td><td class='n'>49%</td><td class='n'>22%</td><td class='n'>46%</td><td class='n'>9%</td><td class='n'>12</td><td class='n'></td></tr>
-<tr class='test'><td>+ edited test scripts</td><td>test set</td><td class='n'>68% <span class='ci'>(61% to 74%)</span></td><td class='n'>62%</td><td class='n'>35%</td><td class='n'>59%</td><td class='n'>11%</td><td class='n'>14</td><td class='n'></td></tr>
-<tr class='test'><td>+ directory history, 20%</td><td>test set</td><td class='n'>78% <span class='ci'>(72% to 84%)</span></td><td class='n'>79%</td><td class='n'>57%</td><td class='n'>68%</td><td class='n'>21%</td><td class='n'>28</td><td class='n'></td></tr>
-<tr class='test'><td>+ directory history, 5%</td><td>test set</td><td class='n'>91% <span class='ci'>(87% to 95%)</span></td><td class='n'>94%</td><td class='n'>84%</td><td class='n'>79%</td><td class='n'>55%</td><td class='n'>71</td><td class='n'></td></tr>
-<tr class='test'><td>+ principles</td><td>test set</td><td class='n'>78% <span class='ci'>(73% to 84%)</span></td><td class='n'>75%</td><td class='n'>58%</td><td class='n'>66%</td><td class='n'>22%</td><td class='n'>29</td><td class='n'></td></tr>
-<tr class='train'><td>today&#x27;s matrix</td><td>training set</td><td class='n'>100% <span class='ci'>(100% to 100%)</span></td><td class='n'>100%</td><td class='n'>100%</td><td class='n'>80%</td><td class='n'>100%</td><td class='n'>133</td><td class='n'></td></tr>
-<tr class='train'><td>trivial only</td><td>training set</td><td class='n'>50% <span class='ci'>(45% to 55%)</span></td><td class='n'>38%</td><td class='n'>13%</td><td class='n'>33%</td><td class='n'>8%</td><td class='n'>11</td><td class='n'></td></tr>
-<tr class='train'><td>+ edited test scripts</td><td>training set</td><td class='n'>62% <span class='ci'>(56% to 66%)</span></td><td class='n'>51%</td><td class='n'>31%</td><td class='n'>46%</td><td class='n'>10%</td><td class='n'>13</td><td class='n'></td></tr>
-<tr class='train'><td>+ directory history, 20%</td><td>training set</td><td class='n'>78% <span class='ci'>(74% to 82%)</span></td><td class='n'>76%</td><td class='n'>61%</td><td class='n'>61%</td><td class='n'>21%</td><td class='n'>27</td><td class='n'></td></tr>
-<tr class='train'><td>+ directory history, 5%</td><td>training set</td><td class='n'>93% <span class='ci'>(91% to 95%)</span></td><td class='n'>91%</td><td class='n'>90%</td><td class='n'>70%</td><td class='n'>55%</td><td class='n'>73</td><td class='n'></td></tr>
-<tr class='train'><td>+ principles</td><td>training set</td><td class='n'>79% <span class='ci'>(75% to 82%)</span></td><td class='n'>71%</td><td class='n'>63%</td><td class='n'>58%</td><td class='n'>21%</td><td class='n'>28</td><td class='n'></td></tr>
+<tr class='test'><td>today&#x27;s matrix</td><td>test set</td><td class='n'>100% <span class='ci'>(100% to 100%)</span></td><td class='n'>100%</td><td class='n'>100%</td><td class='n'>75%</td><td class='n'>100%</td><td class='n'>113</td><td class='n'></td></tr>
+<tr class='test'><td>trivial only</td><td>test set</td><td class='n'>48% <span class='ci'>(44% to 53%)</span></td><td class='n'>36%</td><td class='n'>33%</td><td class='n'>35%</td><td class='n'>11%</td><td class='n'>13</td><td class='n'></td></tr>
+<tr class='test'><td>+ edited test scripts</td><td>test set</td><td class='n'>56% <span class='ci'>(51% to 60%)</span></td><td class='n'>41%</td><td class='n'>42%</td><td class='n'>41%</td><td class='n'>13%</td><td class='n'>14</td><td class='n'></td></tr>
+<tr class='test'><td>+ directory history, 20%</td><td>test set</td><td class='n'>68% <span class='ci'>(64% to 73%)</span></td><td class='n'>55%</td><td class='n'>59%</td><td class='n'>49%</td><td class='n'>24%</td><td class='n'>27</td><td class='n'></td></tr>
+<tr class='test'><td>+ directory history, 5%</td><td>test set</td><td class='n'>90% <span class='ci'>(87% to 93%)</span></td><td class='n'>89%</td><td class='n'>88%</td><td class='n'>66%</td><td class='n'>64%</td><td class='n'>72</td><td class='n'></td></tr>
+<tr class='test'><td>+ principles</td><td>test set</td><td class='n'>74% <span class='ci'>(70% to 78%)</span></td><td class='n'>63%</td><td class='n'>66%</td><td class='n'>52%</td><td class='n'>28%</td><td class='n'>31</td><td class='n'></td></tr>
+<tr class='train'><td>today&#x27;s matrix</td><td>training set</td><td class='n'>100% <span class='ci'>(100% to 100%)</span></td><td class='n'>100%</td><td class='n'>100%</td><td class='n'>75%</td><td class='n'>100%</td><td class='n'>121</td><td class='n'></td></tr>
+<tr class='train'><td>trivial only</td><td>training set</td><td class='n'>50% <span class='ci'>(46% to 53%)</span></td><td class='n'>38%</td><td class='n'>37%</td><td class='n'>34%</td><td class='n'>10%</td><td class='n'>12</td><td class='n'></td></tr>
+<tr class='train'><td>+ edited test scripts</td><td>training set</td><td class='n'>56% <span class='ci'>(52% to 59%)</span></td><td class='n'>45%</td><td class='n'>43%</td><td class='n'>40%</td><td class='n'>12%</td><td class='n'>14</td><td class='n'></td></tr>
+<tr class='train'><td>+ directory history, 20%</td><td>training set</td><td class='n'>69% <span class='ci'>(66% to 72%)</span></td><td class='n'>60%</td><td class='n'>61%</td><td class='n'>49%</td><td class='n'>22%</td><td class='n'>26</td><td class='n'></td></tr>
+<tr class='train'><td>+ directory history, 5%</td><td>training set</td><td class='n'>91% <span class='ci'>(89% to 92%)</span></td><td class='n'>88%</td><td class='n'>88%</td><td class='n'>65%</td><td class='n'>60%</td><td class='n'>72</td><td class='n'></td></tr>
+<tr class='train'><td>+ principles</td><td>training set</td><td class='n'>77% <span class='ci'>(74% to 80%)</span></td><td class='n'>67%</td><td class='n'>71%</td><td class='n'>54%</td><td class='n'>24%</td><td class='n'>29</td><td class='n'></td></tr>
 </tbody></table></div></section>
 <section><h2>Bugs per session hour, by test set</h2><p class='lede'>Bugs each test set caught over the 8,197 review builds of the window, per 1,000 session hours it ran. Sets under 0.25 session hours per build are left out: too rare to judge.</p><div class='scroll'><table><thead><tr><th>Test set</th><th>Configuration</th><th>Session h / build</th><th>Bugs caught</th><th>Bugs per 1,000 h</th></tr></thead><tbody>
-<tr><td>sanity-ec</td><td>review-dne-zfs-subtest-change (edited subtests)</td><td class='n'>0.3</td><td class='n'>62</td><td class='n'><b>24.53</b></td></tr>
-<tr><td>sanity-ec</td><td>review-dne-subtest-change (edited subtests)</td><td class='n'>0.3</td><td class='n'>49</td><td class='n'><b>18.01</b></td></tr>
-<tr><td>sanity-dom</td><td>zfs-dne</td><td class='n'>0.3</td><td class='n'>29</td><td class='n'><b>10.16</b></td></tr>
-<tr><td>sanity-dom</td><td>ldiskfs-dne</td><td class='n'>0.4</td><td class='n'>33</td><td class='n'><b>9.31</b></td></tr>
-<tr><td>sanity-flr</td><td>zfs-dne</td><td class='n'>0.5</td><td class='n'>37</td><td class='n'><b>9.23</b></td></tr>
-<tr><td>sanity-flr</td><td>ldiskfs-dne</td><td class='n'>0.6</td><td class='n'>40</td><td class='n'><b>8.70</b></td></tr>
-<tr><td>sanity-sec</td><td>ldiskfs-arm</td><td class='n'>0.8</td><td class='n'>37</td><td class='n'><b>5.68</b></td></tr>
-<tr><td>replay-ost-single</td><td>ldiskfs-dne</td><td class='n'>0.3</td><td class='n'>15</td><td class='n'><b>5.24</b></td></tr>
-<tr><td>replay-single</td><td>zfs</td><td class='n'>0.9</td><td class='n'>39</td><td class='n'><b>5.23</b></td></tr>
-<tr><td>lustre-rsync-test</td><td>zfs-dne</td><td class='n'>0.3</td><td class='n'>11</td><td class='n'><b>5.14</b></td></tr>
-<tr><td>replay-ost-single</td><td>zfs-dne</td><td class='n'>0.4</td><td class='n'>15</td><td class='n'><b>4.94</b></td></tr>
-<tr><td>sanity-sec</td><td>ldiskfs-ubuntu</td><td class='n'>1.4</td><td class='n'>54</td><td class='n'><b>4.64</b></td></tr>
-<tr><td>sanity-sec</td><td>ldiskfs-dne-selinux-ssk</td><td class='n'>1.6</td><td class='n'>62</td><td class='n'><b>4.61</b></td></tr>
-<tr><td>sanity-lfsck</td><td>ldiskfs-dne</td><td class='n'>1.2</td><td class='n'>45</td><td class='n'><b>4.44</b></td></tr>
-<tr><td>ost-pools</td><td>zfs-dne</td><td class='n'>0.8</td><td class='n'>30</td><td class='n'><b>4.37</b></td></tr>
+<tr><td>sanity-ec</td><td>review-dne-zfs-subtest-change (edited subtests)</td><td class='n'>0.3</td><td class='n'>25</td><td class='n'><b>9.95</b></td></tr>
+<tr><td>sanity-flr</td><td>zfs-dne</td><td class='n'>0.5</td><td class='n'>29</td><td class='n'><b>7.22</b></td></tr>
+<tr><td>sanity-dom</td><td>zfs-dne</td><td class='n'>0.3</td><td class='n'>20</td><td class='n'><b>6.99</b></td></tr>
+<tr><td>sanity-ec</td><td>review-dne-subtest-change (edited subtests)</td><td class='n'>0.3</td><td class='n'>18</td><td class='n'><b>6.65</b></td></tr>
+<tr><td>sanity-flr</td><td>ldiskfs-dne</td><td class='n'>0.6</td><td class='n'>30</td><td class='n'><b>6.51</b></td></tr>
+<tr><td>sanity-dom</td><td>ldiskfs-dne</td><td class='n'>0.4</td><td class='n'>21</td><td class='n'><b>5.92</b></td></tr>
+<tr><td>sanity-sec</td><td>ldiskfs-arm</td><td class='n'>0.8</td><td class='n'>32</td><td class='n'><b>4.91</b></td></tr>
+<tr><td>sanity-sec</td><td>ldiskfs-ubuntu</td><td class='n'>1.4</td><td class='n'>54</td><td class='n'><b>4.63</b></td></tr>
 <tr><td>sanity-lnet</td><td>ldiskfs-arm</td><td class='n'>0.3</td><td class='n'>10</td><td class='n'><b>4.37</b></td></tr>
-<tr><td>sanity</td><td>ldiskfs-dne-selinux-ssk</td><td class='n'>3.5</td><td class='n'>125</td><td class='n'><b>4.31</b></td></tr>
-<tr><td>sanity-hsm</td><td>zfs-dne</td><td class='n'>1.1</td><td class='n'>39</td><td class='n'><b>4.24</b></td></tr>
-<tr><td>sanity-lfsck</td><td>zfs-dne</td><td class='n'>1.2</td><td class='n'>41</td><td class='n'><b>4.15</b></td></tr>
-<tr><td>recovery-small</td><td>ldiskfs-dne-selinux-ssk</td><td class='n'>1.4</td><td class='n'>49</td><td class='n'><b>4.11</b></td></tr>
-<tr><td>sanity-sec</td><td>ldiskfs-dne</td><td class='n'>2.4</td><td class='n'>76</td><td class='n'><b>3.86</b></td></tr>
-<tr><td>mmp</td><td>ldiskfs-dne</td><td class='n'>0.3</td><td class='n'>9</td><td class='n'><b>3.83</b></td></tr>
-<tr><td>lustre-rsync-test</td><td>ldiskfs-dne</td><td class='n'>0.3</td><td class='n'>10</td><td class='n'><b>3.74</b></td></tr>
-<tr><td>sanityn</td><td>ldiskfs-dne</td><td class='n'>2.8</td><td class='n'>83</td><td class='n'><b>3.66</b></td></tr>
-<tr><td>sanity-lnet</td><td>ldiskfs-dne</td><td class='n'>1.0</td><td class='n'>30</td><td class='n'><b>3.65</b></td></tr>
-<tr><td>sanity-sec</td><td>zfs-dne</td><td class='n'>2.6</td><td class='n'>77</td><td class='n'><b>3.58</b></td></tr>
-<tr><td>sanity</td><td>ldiskfs-arm</td><td class='n'>2.3</td><td class='n'>66</td><td class='n'><b>3.48</b></td></tr>
-<tr><td>sanity</td><td>ldiskfs-ubuntu</td><td class='n'>3.8</td><td class='n'>107</td><td class='n'><b>3.48</b></td></tr>
-<tr><td>sanityn</td><td>zfs-dne</td><td class='n'>1.9</td><td class='n'>54</td><td class='n'><b>3.44</b></td></tr>
-<tr><td>insanity</td><td>zfs</td><td class='n'>0.3</td><td class='n'>8</td><td class='n'><b>3.37</b></td></tr>
-<tr><td>sanity-lnet</td><td>ldiskfs-ubuntu</td><td class='n'>0.5</td><td class='n'>13</td><td class='n'><b>3.32</b></td></tr>
-<tr><td>sanity-pcc</td><td>zfs-dne</td><td class='n'>1.1</td><td class='n'>30</td><td class='n'><b>3.24</b></td></tr>
-<tr><td>ost-pools</td><td>ldiskfs-dne</td><td class='n'>1.0</td><td class='n'>27</td><td class='n'><b>3.16</b></td></tr>
-<tr><td>sanity-quota</td><td>zfs</td><td class='n'>1.3</td><td class='n'>33</td><td class='n'><b>3.13</b></td></tr>
-<tr><td>sanity</td><td>zfs-dne</td><td class='n'>6.8</td><td class='n'>172</td><td class='n'><b>3.06</b></td></tr>
-<tr><td>sanity</td><td>ldiskfs-dne-ipv6</td><td class='n'>3.9</td><td class='n'>94</td><td class='n'><b>2.95</b></td></tr>
-<tr><td>sanity-hsm</td><td>ldiskfs-dne</td><td class='n'>1.3</td><td class='n'>31</td><td class='n'><b>2.94</b></td></tr>
-<tr><td>sanity-pfl</td><td>zfs-dne</td><td class='n'>0.9</td><td class='n'>22</td><td class='n'><b>2.85</b></td></tr>
-<tr><td>recovery-small</td><td>zfs-dne</td><td class='n'>2.1</td><td class='n'>50</td><td class='n'><b>2.84</b></td></tr>
-<tr><td>sanity-scrub</td><td>zfs-dne</td><td class='n'>0.7</td><td class='n'>17</td><td class='n'><b>2.79</b></td></tr>
-<tr><td>sanity-lnet</td><td>zfs-dne</td><td class='n'>0.8</td><td class='n'>17</td><td class='n'><b>2.70</b></td></tr>
-<tr><td>replay-dual</td><td>zfs-dne</td><td class='n'>1.1</td><td class='n'>25</td><td class='n'><b>2.69</b></td></tr>
-<tr><td>sanity-pfl</td><td>ldiskfs-dne</td><td class='n'>0.9</td><td class='n'>19</td><td class='n'><b>2.63</b></td></tr>
-<tr><td>recovery-small</td><td>ldiskfs-dne</td><td class='n'>2.6</td><td class='n'>53</td><td class='n'><b>2.49</b></td></tr>
-<tr><td>sanity</td><td>ldiskfs-dne-arm</td><td class='n'>1.2</td><td class='n'>24</td><td class='n'><b>2.47</b></td></tr>
-<tr><td>sanity</td><td>ldiskfs-dne</td><td class='n'>10.7</td><td class='n'>211</td><td class='n'><b>2.40</b></td></tr>
-<tr><td>replay-single</td><td>zfs-dne</td><td class='n'>3.6</td><td class='n'>70</td><td class='n'><b>2.34</b></td></tr>
-<tr><td>sanity-lnet</td><td>ldiskfs-dne-ipv6</td><td class='n'>0.4</td><td class='n'>8</td><td class='n'><b>2.28</b></td></tr>
-<tr><td>pjdfstest</td><td>ldiskfs-dne</td><td class='n'>0.5</td><td class='n'>9</td><td class='n'><b>2.27</b></td></tr>
-<tr><td>sanity</td><td>review-ldiskfs (trivial)</td><td class='n'>7.9</td><td class='n'>146</td><td class='n'><b>2.26</b></td></tr>
-<tr><td>replay-single</td><td>ldiskfs-dne</td><td class='n'>4.5</td><td class='n'>73</td><td class='n'><b>1.97</b></td></tr>
-<tr><td>parallel-scale-nfsv4</td><td>ldiskfs-dne</td><td class='n'>0.2</td><td class='n'>4</td><td class='n'><b>1.96</b></td></tr>
-<tr><td>large-scale</td><td>zfs-dne</td><td class='n'>0.5</td><td class='n'>7</td><td class='n'><b>1.81</b></td></tr>
-<tr><td>pjdfstest</td><td>zfs-dne</td><td class='n'>0.5</td><td class='n'>8</td><td class='n'><b>1.79</b></td></tr>
-<tr><td>large-scale</td><td>ldiskfs-dne</td><td class='n'>0.6</td><td class='n'>8</td><td class='n'><b>1.78</b></td></tr>
-<tr><td>sanity-lnet</td><td>review-ldiskfs (trivial)</td><td class='n'>1.0</td><td class='n'>15</td><td class='n'><b>1.77</b></td></tr>
-<tr><td>sanity-scrub</td><td>ldiskfs-dne</td><td class='n'>1.5</td><td class='n'>22</td><td class='n'><b>1.77</b></td></tr>
-<tr><td>replay-dual</td><td>ldiskfs-dne</td><td class='n'>2.5</td><td class='n'>36</td><td class='n'><b>1.74</b></td></tr>
-<tr><td>sanity-quota</td><td>zfs-dne</td><td class='n'>4.1</td><td class='n'>58</td><td class='n'><b>1.74</b></td></tr>
-<tr><td>sanity-quota</td><td>ldiskfs-dne</td><td class='n'>4.1</td><td class='n'>58</td><td class='n'><b>1.71</b></td></tr>
-<tr><td>sanity-pcc</td><td>ldiskfs-dne</td><td class='n'>1.4</td><td class='n'>18</td><td class='n'><b>1.53</b></td></tr>
-<tr><td>parallel-scale</td><td>ldiskfs-dne</td><td class='n'>0.4</td><td class='n'>5</td><td class='n'><b>1.52</b></td></tr>
-<tr><td>insanity</td><td>zfs-dne</td><td class='n'>1.4</td><td class='n'>13</td><td class='n'><b>1.14</b></td></tr>
-<tr><td>replay-vbr</td><td>ldiskfs-dne</td><td class='n'>1.1</td><td class='n'>10</td><td class='n'><b>1.14</b></td></tr>
-<tr><td>insanity</td><td>ldiskfs-dne</td><td class='n'>1.6</td><td class='n'>13</td><td class='n'><b>0.97</b></td></tr>
-<tr><td>conf-sanity</td><td>zfs-dne</td><td class='n'>9.9</td><td class='n'>59</td><td class='n'><b>0.72</b></td></tr>
-<tr><td>conf-sanity</td><td>ldiskfs-dne</td><td class='n'>13.0</td><td class='n'>74</td><td class='n'><b>0.69</b></td></tr>
-<tr><td>performance-sanity</td><td>ldiskfs-dne</td><td class='n'>1.1</td><td class='n'>5</td><td class='n'><b>0.56</b></td></tr>
-<tr><td>racer</td><td>ldiskfs-dne</td><td class='n'>0.8</td><td class='n'>3</td><td class='n'><b>0.44</b></td></tr>
+<tr><td>replay-single</td><td>zfs</td><td class='n'>0.9</td><td class='n'>29</td><td class='n'><b>3.87</b></td></tr>
+<tr><td>sanity-sec</td><td>ldiskfs-dne-selinux-ssk</td><td class='n'>1.6</td><td class='n'>52</td><td class='n'><b>3.86</b></td></tr>
+<tr><td>lustre-rsync-test</td><td>zfs-dne</td><td class='n'>0.3</td><td class='n'>8</td><td class='n'><b>3.73</b></td></tr>
+<tr><td>sanity-lfsck</td><td>zfs-dne</td><td class='n'>1.2</td><td class='n'>36</td><td class='n'><b>3.64</b></td></tr>
+<tr><td>sanity</td><td>ldiskfs-dne-selinux-ssk</td><td class='n'>3.5</td><td class='n'>103</td><td class='n'><b>3.55</b></td></tr>
+<tr><td>replay-ost-single</td><td>zfs-dne</td><td class='n'>0.4</td><td class='n'>10</td><td class='n'><b>3.29</b></td></tr>
+<tr><td>sanity-lnet</td><td>ldiskfs-dne</td><td class='n'>1.0</td><td class='n'>27</td><td class='n'><b>3.28</b></td></tr>
+<tr><td>sanity-lfsck</td><td>ldiskfs-dne</td><td class='n'>1.2</td><td class='n'>33</td><td class='n'><b>3.25</b></td></tr>
+<tr><td>ost-pools</td><td>zfs-dne</td><td class='n'>0.8</td><td class='n'>22</td><td class='n'><b>3.20</b></td></tr>
+<tr><td>sanity-sec</td><td>zfs-dne</td><td class='n'>2.6</td><td class='n'>68</td><td class='n'><b>3.15</b></td></tr>
+<tr><td>replay-ost-single</td><td>ldiskfs-dne</td><td class='n'>0.3</td><td class='n'>9</td><td class='n'><b>3.14</b></td></tr>
+<tr><td>recovery-small</td><td>ldiskfs-dne-selinux-ssk</td><td class='n'>1.5</td><td class='n'>37</td><td class='n'><b>3.10</b></td></tr>
+<tr><td>sanity-lnet</td><td>ldiskfs-ubuntu</td><td class='n'>0.5</td><td class='n'>12</td><td class='n'><b>3.06</b></td></tr>
+<tr><td>sanity-quota</td><td>zfs</td><td class='n'>1.3</td><td class='n'>30</td><td class='n'><b>2.84</b></td></tr>
+<tr><td>sanity-sec</td><td>ldiskfs-dne</td><td class='n'>2.4</td><td class='n'>56</td><td class='n'><b>2.84</b></td></tr>
+<tr><td>sanity</td><td>ldiskfs-ubuntu</td><td class='n'>3.8</td><td class='n'>85</td><td class='n'><b>2.75</b></td></tr>
+<tr><td>sanity</td><td>ldiskfs-arm</td><td class='n'>2.3</td><td class='n'>51</td><td class='n'><b>2.68</b></td></tr>
+<tr><td>lustre-rsync-test</td><td>ldiskfs-dne</td><td class='n'>0.3</td><td class='n'>7</td><td class='n'><b>2.62</b></td></tr>
+<tr><td>mmp</td><td>ldiskfs-dne</td><td class='n'>0.3</td><td class='n'>6</td><td class='n'><b>2.55</b></td></tr>
+<tr><td>sanity-hsm</td><td>zfs-dne</td><td class='n'>1.1</td><td class='n'>23</td><td class='n'><b>2.50</b></td></tr>
+<tr><td>sanity-lnet</td><td>zfs-dne</td><td class='n'>0.8</td><td class='n'>15</td><td class='n'><b>2.38</b></td></tr>
+<tr><td>sanity</td><td>zfs-dne</td><td class='n'>6.9</td><td class='n'>133</td><td class='n'><b>2.37</b></td></tr>
+<tr><td>recovery-small</td><td>zfs-dne</td><td class='n'>2.1</td><td class='n'>40</td><td class='n'><b>2.27</b></td></tr>
+<tr><td>sanityn</td><td>zfs-dne</td><td class='n'>1.9</td><td class='n'>35</td><td class='n'><b>2.23</b></td></tr>
+<tr><td>sanity</td><td>ldiskfs-dne-ipv6</td><td class='n'>3.9</td><td class='n'>71</td><td class='n'><b>2.23</b></td></tr>
+<tr><td>sanity</td><td>ldiskfs-dne-arm</td><td class='n'>1.2</td><td class='n'>20</td><td class='n'><b>2.05</b></td></tr>
+<tr><td>recovery-small</td><td>ldiskfs-dne</td><td class='n'>2.6</td><td class='n'>41</td><td class='n'><b>1.92</b></td></tr>
+<tr><td>ost-pools</td><td>ldiskfs-dne</td><td class='n'>1.0</td><td class='n'>16</td><td class='n'><b>1.87</b></td></tr>
+<tr><td>sanity-pfl</td><td>zfs-dne</td><td class='n'>0.9</td><td class='n'>14</td><td class='n'><b>1.81</b></td></tr>
+<tr><td>sanity-hsm</td><td>ldiskfs-dne</td><td class='n'>1.3</td><td class='n'>19</td><td class='n'><b>1.80</b></td></tr>
+<tr><td>sanity-scrub</td><td>zfs-dne</td><td class='n'>0.7</td><td class='n'>11</td><td class='n'><b>1.80</b></td></tr>
+<tr><td>replay-dual</td><td>zfs-dne</td><td class='n'>1.1</td><td class='n'>16</td><td class='n'><b>1.72</b></td></tr>
+<tr><td>sanityn</td><td>ldiskfs-dne</td><td class='n'>2.8</td><td class='n'>39</td><td class='n'><b>1.72</b></td></tr>
+<tr><td>insanity</td><td>zfs</td><td class='n'>0.3</td><td class='n'>4</td><td class='n'><b>1.68</b></td></tr>
+<tr><td>sanity</td><td>ldiskfs-dne</td><td class='n'>10.7</td><td class='n'>141</td><td class='n'><b>1.60</b></td></tr>
+<tr><td>sanity</td><td>review-ldiskfs (trivial)</td><td class='n'>7.9</td><td class='n'>103</td><td class='n'><b>1.59</b></td></tr>
+<tr><td>replay-single</td><td>zfs-dne</td><td class='n'>3.6</td><td class='n'>47</td><td class='n'><b>1.57</b></td></tr>
+<tr><td>sanity-pfl</td><td>ldiskfs-dne</td><td class='n'>0.9</td><td class='n'>11</td><td class='n'><b>1.52</b></td></tr>
+<tr><td>pjdfstest</td><td>ldiskfs-dne</td><td class='n'>0.5</td><td class='n'>6</td><td class='n'><b>1.51</b></td></tr>
+<tr><td>sanity-pcc</td><td>zfs-dne</td><td class='n'>1.1</td><td class='n'>14</td><td class='n'><b>1.51</b></td></tr>
+<tr><td>parallel-scale-nfsv4</td><td>ldiskfs-dne</td><td class='n'>0.2</td><td class='n'>3</td><td class='n'><b>1.47</b></td></tr>
+<tr><td>sanity-lnet</td><td>review-ldiskfs (trivial)</td><td class='n'>1.0</td><td class='n'>12</td><td class='n'><b>1.41</b></td></tr>
+<tr><td>sanity-quota</td><td>zfs-dne</td><td class='n'>4.1</td><td class='n'>46</td><td class='n'><b>1.38</b></td></tr>
+<tr><td>pjdfstest</td><td>zfs-dne</td><td class='n'>0.5</td><td class='n'>6</td><td class='n'><b>1.34</b></td></tr>
+<tr><td>sanity-quota</td><td>ldiskfs-dne</td><td class='n'>4.1</td><td class='n'>44</td><td class='n'><b>1.30</b></td></tr>
+<tr><td>replay-single</td><td>ldiskfs-dne</td><td class='n'>4.5</td><td class='n'>43</td><td class='n'><b>1.16</b></td></tr>
+<tr><td>sanity-lnet</td><td>ldiskfs-dne-ipv6</td><td class='n'>0.4</td><td class='n'>4</td><td class='n'><b>1.14</b></td></tr>
+<tr><td>sanity-scrub</td><td>ldiskfs-dne</td><td class='n'>1.5</td><td class='n'>14</td><td class='n'><b>1.13</b></td></tr>
+<tr><td>replay-dual</td><td>ldiskfs-dne</td><td class='n'>2.5</td><td class='n'>23</td><td class='n'><b>1.11</b></td></tr>
+<tr><td>sanity-pcc</td><td>ldiskfs-dne</td><td class='n'>1.4</td><td class='n'>11</td><td class='n'><b>0.93</b></td></tr>
+<tr><td>parallel-scale</td><td>ldiskfs-dne</td><td class='n'>0.4</td><td class='n'>3</td><td class='n'><b>0.91</b></td></tr>
+<tr><td>large-scale</td><td>zfs-dne</td><td class='n'>0.5</td><td class='n'>3</td><td class='n'><b>0.77</b></td></tr>
+<tr><td>insanity</td><td>zfs-dne</td><td class='n'>1.4</td><td class='n'>8</td><td class='n'><b>0.70</b></td></tr>
+<tr><td>conf-sanity</td><td>zfs-dne</td><td class='n'>9.9</td><td class='n'>46</td><td class='n'><b>0.56</b></td></tr>
+<tr><td>insanity</td><td>ldiskfs-dne</td><td class='n'>1.6</td><td class='n'>6</td><td class='n'><b>0.45</b></td></tr>
+<tr><td>large-scale</td><td>ldiskfs-dne</td><td class='n'>0.6</td><td class='n'>2</td><td class='n'><b>0.45</b></td></tr>
+<tr><td>replay-vbr</td><td>ldiskfs-dne</td><td class='n'>1.1</td><td class='n'>4</td><td class='n'><b>0.45</b></td></tr>
+<tr><td>conf-sanity</td><td>ldiskfs-dne</td><td class='n'>13.1</td><td class='n'>43</td><td class='n'><b>0.40</b></td></tr>
+<tr><td>performance-sanity</td><td>ldiskfs-dne</td><td class='n'>1.1</td><td class='n'>2</td><td class='n'><b>0.22</b></td></tr>
+<tr><td>racer</td><td>ldiskfs-dne</td><td class='n'>0.8</td><td class='n'>1</td><td class='n'><b>0.15</b></td></tr>
 </tbody></table></div></section>
 <section><h2>The patch-blind baseline</h2><p class='lede'>What every patch would run if the tests were chosen without reading it: scripts and configurations ranked on the training set by bugs caught per second of session time, scored here on the test set. A patch-aware selection is worth having only to the left of this line.</p><div class='scroll'><table><thead><tr><th>Step</th><th>Adds</th><th>Configuration</th><th>Test cost</th><th>Today's bugs caught</th><th>Hard bugs</th></tr></thead><tbody>
-<tr><td class='n'>0</td><td>trivial</td><td>ldiskfs (review-ldiskfs)</td><td class='n'>9%</td><td class='n'>57%</td><td class='n'>22%</td></tr>
-<tr><td class='n'>1</td><td>sanity-ec</td><td>ldiskfs-dne</td><td class='n'>10%</td><td class='n'>59%</td><td class='n'>26%</td></tr>
-<tr><td class='n'>2</td><td>lnet-selftest</td><td>ldiskfs-dne</td><td class='n'>10%</td><td class='n'>59%</td><td class='n'>26%</td></tr>
-<tr><td class='n'>3</td><td>sanity-flr</td><td>ldiskfs-dne</td><td class='n'>10%</td><td class='n'>60%</td><td class='n'>28%</td></tr>
-<tr><td class='n'>4</td><td>sanityn</td><td>ldiskfs-dne</td><td class='n'>12%</td><td class='n'>63%</td><td class='n'>33%</td></tr>
-<tr><td class='n'>5</td><td>sanity-lnet</td><td>ldiskfs-dne</td><td class='n'>12%</td><td class='n'>65%</td><td class='n'>36%</td></tr>
-<tr><td class='n'>6</td><td>lustre-rsync-test</td><td>ldiskfs-dne</td><td class='n'>12%</td><td class='n'>65%</td><td class='n'>36%</td></tr>
-<tr><td class='n'>7</td><td>sanity-hsm</td><td>ldiskfs-dne</td><td class='n'>13%</td><td class='n'>65%</td><td class='n'>38%</td></tr>
-<tr><td class='n'>8</td><td>sanity-krb5</td><td>ldiskfs-dne</td><td class='n'>14%</td><td class='n'>65%</td><td class='n'>38%</td></tr>
-<tr><td class='n'>9</td><td>sanity-lfsck</td><td>ldiskfs-dne</td><td class='n'>14%</td><td class='n'>65%</td><td class='n'>38%</td></tr>
-<tr><td class='n'>10</td><td>sanity</td><td>ldiskfs-dne</td><td class='n'>18%</td><td class='n'>70%</td><td class='n'>45%</td></tr>
-<tr><td class='n'>11</td><td>sanity-sec</td><td>ldiskfs-dne</td><td class='n'>19%</td><td class='n'>73%</td><td class='n'>52%</td></tr>
-<tr><td class='n'>12</td><td>sanity-quota</td><td>ldiskfs-dne</td><td class='n'>21%</td><td class='n'>76%</td><td class='n'>58%</td></tr>
-<tr><td class='n'>13</td><td>pjdfstest</td><td>ldiskfs-dne</td><td class='n'>21%</td><td class='n'>77%</td><td class='n'>59%</td></tr>
-<tr><td class='n'>14</td><td>recovery-small</td><td>ldiskfs-dne</td><td class='n'>22%</td><td class='n'>77%</td><td class='n'>60%</td></tr>
-<tr><td class='n'>15</td><td>review-dne-selinux-ssk-part-2</td><td>its own group</td><td class='n'>26%</td><td class='n'>81%</td><td class='n'>64%</td></tr>
-<tr><td class='n'>16</td><td>sanity</td><td>zfs-dne</td><td class='n'>29%</td><td class='n'>82%</td><td class='n'>67%</td></tr>
-<tr><td class='n'>17</td><td>sanity-lfsck</td><td>zfs-dne</td><td class='n'>30%</td><td class='n'>82%</td><td class='n'>67%</td></tr>
-<tr><td class='n'>18</td><td>replay-single</td><td>zfs-dne</td><td class='n'>32%</td><td class='n'>83%</td><td class='n'>69%</td></tr>
-<tr><td class='n'>19</td><td>sanity-scrub</td><td>zfs-dne</td><td class='n'>32%</td><td class='n'>83%</td><td class='n'>69%</td></tr>
-<tr><td class='n'>20</td><td>ost-pools</td><td>ldiskfs-dne</td><td class='n'>33%</td><td class='n'>83%</td><td class='n'>69%</td></tr>
-<tr><td class='n'>21</td><td>obdfilter-survey</td><td>ldiskfs-dne</td><td class='n'>33%</td><td class='n'>84%</td><td class='n'>71%</td></tr>
-<tr><td class='n'>22</td><td>conf-sanity</td><td>zfs-dne</td><td class='n'>38%</td><td class='n'>85%</td><td class='n'>73%</td></tr>
-<tr><td class='n'>23</td><td>sanity-dom</td><td>ldiskfs-dne</td><td class='n'>38%</td><td class='n'>88%</td><td class='n'>80%</td></tr>
-<tr><td class='n'>24</td><td>sanity-pcc</td><td>zfs-dne</td><td class='n'>39%</td><td class='n'>88%</td><td class='n'>80%</td></tr>
-<tr><td class='n'>25</td><td>sanity-scrub</td><td>ldiskfs-dne</td><td class='n'>40%</td><td class='n'>90%</td><td class='n'>84%</td></tr>
-<tr><td class='n'>26</td><td>sanity-ec</td><td>zfs-dne</td><td class='n'>40%</td><td class='n'>90%</td><td class='n'>84%</td></tr>
-<tr><td class='n'>27</td><td>review-dne-selinux-ssk-part-1</td><td>its own group</td><td class='n'>44%</td><td class='n'>90%</td><td class='n'>84%</td></tr>
-<tr><td class='n'>28</td><td>replay-dual</td><td>ldiskfs-dne</td><td class='n'>44%</td><td class='n'>91%</td><td class='n'>85%</td></tr>
-<tr><td class='n'>29</td><td>lustre-rsync-test</td><td>zfs-dne</td><td class='n'>45%</td><td class='n'>91%</td><td class='n'>85%</td></tr>
-<tr><td class='n'>30</td><td>replay-ost-single</td><td>ldiskfs-dne</td><td class='n'>45%</td><td class='n'>91%</td><td class='n'>85%</td></tr>
-<tr><td class='n'>31</td><td>review-dne-ipv6</td><td>its own group</td><td class='n'>49%</td><td class='n'>92%</td><td class='n'>87%</td></tr>
-<tr><td class='n'>32</td><td>replay-vbr</td><td>ldiskfs-dne</td><td class='n'>50%</td><td class='n'>92%</td><td class='n'>87%</td></tr>
-<tr><td class='n'>33</td><td>sanity-pfl</td><td>zfs-dne</td><td class='n'>50%</td><td class='n'>92%</td><td class='n'>89%</td></tr>
-<tr><td class='n'>34</td><td>sanity-sec</td><td>zfs-dne</td><td class='n'>51%</td><td class='n'>93%</td><td class='n'>89%</td></tr>
-<tr><td class='n'>35</td><td>sanity-sec</td><td>ldiskfs-arm</td><td class='n'>53%</td><td class='n'>94%</td><td class='n'>91%</td></tr>
-<tr><td class='n'>36</td><td>sanity-dom</td><td>zfs-dne</td><td class='n'>53%</td><td class='n'>94%</td><td class='n'>91%</td></tr>
-<tr><td class='n'>37</td><td>racer</td><td>ldiskfs-dne</td><td class='n'>53%</td><td class='n'>94%</td><td class='n'>91%</td></tr>
-<tr><td class='n'>38</td><td>insanity</td><td>zfs</td><td class='n'>54%</td><td class='n'>94%</td><td class='n'>91%</td></tr>
-<tr><td class='n'>39</td><td>replay-dual</td><td>zfs-dne</td><td class='n'>54%</td><td class='n'>94%</td><td class='n'>91%</td></tr>
-<tr><td class='n'>40</td><td>replay-single</td><td>zfs</td><td class='n'>55%</td><td class='n'>95%</td><td class='n'>92%</td></tr>
-<tr><td class='n'>41</td><td>mds-survey</td><td>ldiskfs-dne</td><td class='n'>55%</td><td class='n'>95%</td><td class='n'>92%</td></tr>
-<tr><td class='n'>42</td><td>large-scale</td><td>ldiskfs-dne</td><td class='n'>56%</td><td class='n'>95%</td><td class='n'>92%</td></tr>
-<tr><td class='n'>43</td><td>sanity</td><td>ldiskfs-ubuntu</td><td class='n'>59%</td><td class='n'>95%</td><td class='n'>92%</td></tr>
-<tr><td class='n'>44</td><td>sanity-quota</td><td>zfs-dne</td><td class='n'>61%</td><td class='n'>96%</td><td class='n'>93%</td></tr>
-<tr><td class='n'>45</td><td>conf-sanity</td><td>ldiskfs-dne</td><td class='n'>68%</td><td class='n'>97%</td><td class='n'>93%</td></tr>
-<tr><td class='n'>46</td><td>sanityn</td><td>zfs-dne</td><td class='n'>70%</td><td class='n'>97%</td><td class='n'>93%</td></tr>
-<tr><td class='n'>47</td><td>sanity</td><td>ldiskfs-dne-arm</td><td class='n'>73%</td><td class='n'>97%</td><td class='n'>94%</td></tr>
-<tr><td class='n'>48</td><td>insanity</td><td>ldiskfs-dne</td><td class='n'>74%</td><td class='n'>97%</td><td class='n'>94%</td></tr>
-<tr><td class='n'>49</td><td>replay-single</td><td>ldiskfs-dne</td><td class='n'>76%</td><td class='n'>97%</td><td class='n'>94%</td></tr>
-<tr><td class='n'>50</td><td>recovery-small</td><td>zfs-dne</td><td class='n'>78%</td><td class='n'>97%</td><td class='n'>94%</td></tr>
-<tr><td class='n'>51</td><td>replay-ost-single</td><td>zfs-dne</td><td class='n'>78%</td><td class='n'>97%</td><td class='n'>94%</td></tr>
-<tr><td class='n'>52</td><td>sanity-hsm</td><td>zfs-dne</td><td class='n'>78%</td><td class='n'>98%</td><td class='n'>95%</td></tr>
-<tr><td class='n'>53</td><td>sanity-compr</td><td>ldiskfs-dne</td><td class='n'>79%</td><td class='n'>98%</td><td class='n'>95%</td></tr>
-<tr><td class='n'>54</td><td>sanity</td><td>ldiskfs-arm</td><td class='n'>82%</td><td class='n'>98%</td><td class='n'>95%</td></tr>
-<tr><td class='n'>55</td><td>sanity-flr</td><td>zfs-dne</td><td class='n'>82%</td><td class='n'>98%</td><td class='n'>95%</td></tr>
-<tr><td class='n'>56</td><td>runtests</td><td>ldiskfs-dne</td><td class='n'>82%</td><td class='n'>98%</td><td class='n'>95%</td></tr>
-<tr><td class='n'>57</td><td>sanity-pfl</td><td>ldiskfs-dne</td><td class='n'>83%</td><td class='n'>98%</td><td class='n'>97%</td></tr>
-<tr><td class='n'>58</td><td>ost-pools</td><td>zfs-dne</td><td class='n'>83%</td><td class='n'>98%</td><td class='n'>97%</td></tr>
-<tr><td class='n'>59</td><td>sanity-sec</td><td>ldiskfs-ubuntu</td><td class='n'>85%</td><td class='n'>98%</td><td class='n'>97%</td></tr>
-<tr><td class='n'>60</td><td>replay-ost-single</td><td>zfs</td><td class='n'>85%</td><td class='n'>98%</td><td class='n'>97%</td></tr>
-<tr><td class='n'>61</td><td>parallel-scale</td><td>ldiskfs-dne</td><td class='n'>85%</td><td class='n'>98%</td><td class='n'>97%</td></tr>
-<tr><td class='n'>62</td><td>sanity-flr</td><td>zfs</td><td class='n'>85%</td><td class='n'>99%</td><td class='n'>97%</td></tr>
-<tr><td class='n'>63</td><td>mmp</td><td>ldiskfs-dne</td><td class='n'>86%</td><td class='n'>99%</td><td class='n'>97%</td></tr>
-<tr><td class='n'>64</td><td>sanity-benchmark</td><td>ldiskfs-dne</td><td class='n'>86%</td><td class='n'>99%</td><td class='n'>97%</td></tr>
-<tr><td class='n'>65</td><td>sanity-pcc</td><td>ldiskfs-dne</td><td class='n'>87%</td><td class='n'>99%</td><td class='n'>97%</td></tr>
-<tr><td class='n'>66</td><td>performance-sanity</td><td>ldiskfs-dne</td><td class='n'>88%</td><td class='n'>99%</td><td class='n'>97%</td></tr>
-<tr><td class='n'>67</td><td>sanity-lnet</td><td>zfs-dne</td><td class='n'>88%</td><td class='n'>99%</td><td class='n'>97%</td></tr>
-<tr><td class='n'>68</td><td>parallel-scale-nfsv4</td><td>ldiskfs-dne</td><td class='n'>89%</td><td class='n'>99%</td><td class='n'>97%</td></tr>
+<tr><td class='n'>0</td><td>trivial</td><td>ldiskfs (review-ldiskfs)</td><td class='n'>11%</td><td class='n'>48%</td><td class='n'>33%</td></tr>
+<tr><td class='n'>1</td><td>sanity-flr</td><td>ldiskfs-dne</td><td class='n'>12%</td><td class='n'>51%</td><td class='n'>37%</td></tr>
+<tr><td class='n'>2</td><td>racer</td><td>ldiskfs-dne</td><td class='n'>12%</td><td class='n'>52%</td><td class='n'>38%</td></tr>
+<tr><td class='n'>3</td><td>lnet-selftest</td><td>ldiskfs-dne</td><td class='n'>12%</td><td class='n'>52%</td><td class='n'>38%</td></tr>
+<tr><td class='n'>4</td><td>sanity-dom</td><td>ldiskfs-dne</td><td class='n'>12%</td><td class='n'>55%</td><td class='n'>42%</td></tr>
+<tr><td class='n'>5</td><td>lustre-rsync-test</td><td>ldiskfs-dne</td><td class='n'>13%</td><td class='n'>55%</td><td class='n'>42%</td></tr>
+<tr><td class='n'>6</td><td>sanity-lnet</td><td>ldiskfs-dne</td><td class='n'>13%</td><td class='n'>57%</td><td class='n'>44%</td></tr>
+<tr><td class='n'>7</td><td>sanity-lfsck</td><td>ldiskfs-dne</td><td class='n'>14%</td><td class='n'>58%</td><td class='n'>46%</td></tr>
+<tr><td class='n'>8</td><td>sanity-hsm</td><td>ldiskfs-dne</td><td class='n'>15%</td><td class='n'>59%</td><td class='n'>48%</td></tr>
+<tr><td class='n'>9</td><td>sanityn</td><td>ldiskfs-dne</td><td class='n'>16%</td><td class='n'>63%</td><td class='n'>52%</td></tr>
+<tr><td class='n'>10</td><td>sanity</td><td>ldiskfs-dne</td><td class='n'>20%</td><td class='n'>69%</td><td class='n'>61%</td></tr>
+<tr><td class='n'>11</td><td>sanity-ec</td><td>ldiskfs-dne</td><td class='n'>20%</td><td class='n'>70%</td><td class='n'>62%</td></tr>
+<tr><td class='n'>12</td><td>sanity-pfl</td><td>ldiskfs-dne</td><td class='n'>21%</td><td class='n'>71%</td><td class='n'>64%</td></tr>
+<tr><td class='n'>13</td><td>obdfilter-survey</td><td>ldiskfs-dne</td><td class='n'>21%</td><td class='n'>71%</td><td class='n'>64%</td></tr>
+<tr><td class='n'>14</td><td>review-dne-selinux-ssk-part-2</td><td>its own group</td><td class='n'>25%</td><td class='n'>77%</td><td class='n'>70%</td></tr>
+<tr><td class='n'>15</td><td>sanity-quota</td><td>zfs</td><td class='n'>27%</td><td class='n'>79%</td><td class='n'>73%</td></tr>
+<tr><td class='n'>16</td><td>sanity-lsnapshot</td><td>zfs</td><td class='n'>27%</td><td class='n'>80%</td><td class='n'>73%</td></tr>
+<tr><td class='n'>17</td><td>sanity-flr</td><td>zfs</td><td class='n'>27%</td><td class='n'>80%</td><td class='n'>74%</td></tr>
+<tr><td class='n'>18</td><td>ost-pools</td><td>ldiskfs-dne</td><td class='n'>28%</td><td class='n'>81%</td><td class='n'>75%</td></tr>
+<tr><td class='n'>19</td><td>sanity-pcc</td><td>zfs-dne</td><td class='n'>29%</td><td class='n'>81%</td><td class='n'>76%</td></tr>
+<tr><td class='n'>20</td><td>mmp</td><td>zfs-dne</td><td class='n'>29%</td><td class='n'>81%</td><td class='n'>76%</td></tr>
+<tr><td class='n'>21</td><td>sanity</td><td>zfs-dne</td><td class='n'>32%</td><td class='n'>83%</td><td class='n'>77%</td></tr>
+<tr><td class='n'>22</td><td>sanity-sec</td><td>zfs-dne</td><td class='n'>34%</td><td class='n'>84%</td><td class='n'>79%</td></tr>
+<tr><td class='n'>23</td><td>parallel-scale-nfsv3</td><td>ldiskfs-dne</td><td class='n'>34%</td><td class='n'>85%</td><td class='n'>81%</td></tr>
+<tr><td class='n'>24</td><td>sanity-dom</td><td>zfs-dne</td><td class='n'>34%</td><td class='n'>85%</td><td class='n'>81%</td></tr>
+<tr><td class='n'>25</td><td>replay-single</td><td>zfs-dne</td><td class='n'>37%</td><td class='n'>86%</td><td class='n'>82%</td></tr>
+<tr><td class='n'>26</td><td>replay-vbr</td><td>ldiskfs-dne</td><td class='n'>37%</td><td class='n'>86%</td><td class='n'>83%</td></tr>
+<tr><td class='n'>27</td><td>sanity-scrub</td><td>ldiskfs-dne</td><td class='n'>38%</td><td class='n'>87%</td><td class='n'>84%</td></tr>
+<tr><td class='n'>28</td><td>sanity-lfsck</td><td>zfs-dne</td><td class='n'>39%</td><td class='n'>87%</td><td class='n'>84%</td></tr>
+<tr><td class='n'>29</td><td>lnet-selftest</td><td>zfs-dne</td><td class='n'>39%</td><td class='n'>87%</td><td class='n'>84%</td></tr>
+<tr><td class='n'>30</td><td>sanity-flr</td><td>zfs-dne</td><td class='n'>39%</td><td class='n'>87%</td><td class='n'>84%</td></tr>
+<tr><td class='n'>31</td><td>sanity-sec</td><td>ldiskfs-ubuntu</td><td class='n'>41%</td><td class='n'>88%</td><td class='n'>84%</td></tr>
+<tr><td class='n'>32</td><td>lustre-rsync-test</td><td>zfs-dne</td><td class='n'>41%</td><td class='n'>88%</td><td class='n'>84%</td></tr>
+<tr><td class='n'>33</td><td>recovery-small</td><td>zfs-dne</td><td class='n'>43%</td><td class='n'>88%</td><td class='n'>85%</td></tr>
+<tr><td class='n'>34</td><td>sanity-lnet</td><td>ldiskfs-ubuntu</td><td class='n'>43%</td><td class='n'>88%</td><td class='n'>85%</td></tr>
+<tr><td class='n'>35</td><td>sanityn</td><td>zfs-dne</td><td class='n'>45%</td><td class='n'>89%</td><td class='n'>86%</td></tr>
+<tr><td class='n'>36</td><td>conf-sanity</td><td>ldiskfs-dne</td><td class='n'>53%</td><td class='n'>91%</td><td class='n'>89%</td></tr>
+<tr><td class='n'>37</td><td>sanity-quota</td><td>ldiskfs-dne</td><td class='n'>55%</td><td class='n'>93%</td><td class='n'>91%</td></tr>
+<tr><td class='n'>38</td><td>parallel-scale</td><td>ldiskfs-dne</td><td class='n'>56%</td><td class='n'>93%</td><td class='n'>91%</td></tr>
+<tr><td class='n'>39</td><td>replay-ost-single</td><td>zfs</td><td class='n'>56%</td><td class='n'>93%</td><td class='n'>91%</td></tr>
+<tr><td class='n'>40</td><td>sanity-hsm</td><td>zfs-dne</td><td class='n'>57%</td><td class='n'>93%</td><td class='n'>92%</td></tr>
+<tr><td class='n'>41</td><td>parallel-scale-nfsv4</td><td>ldiskfs-dne</td><td class='n'>57%</td><td class='n'>93%</td><td class='n'>92%</td></tr>
+<tr><td class='n'>42</td><td>pjdfstest</td><td>ldiskfs-dne</td><td class='n'>57%</td><td class='n'>94%</td><td class='n'>92%</td></tr>
+<tr><td class='n'>43</td><td>review-dne-selinux-ssk-part-1</td><td>its own group</td><td class='n'>62%</td><td class='n'>95%</td><td class='n'>94%</td></tr>
+<tr><td class='n'>44</td><td>conf-sanity</td><td>zfs-dne</td><td class='n'>68%</td><td class='n'>95%</td><td class='n'>94%</td></tr>
+<tr><td class='n'>45</td><td>sanity</td><td>ldiskfs-arm</td><td class='n'>71%</td><td class='n'>95%</td><td class='n'>94%</td></tr>
+<tr><td class='n'>46</td><td>sanity-sec</td><td>ldiskfs-arm</td><td class='n'>73%</td><td class='n'>96%</td><td class='n'>95%</td></tr>
+<tr><td class='n'>47</td><td>sanity-lnet</td><td>ldiskfs-dne-arm</td><td class='n'>73%</td><td class='n'>96%</td><td class='n'>95%</td></tr>
+<tr><td class='n'>48</td><td>replay-dual</td><td>ldiskfs-dne</td><td class='n'>74%</td><td class='n'>97%</td><td class='n'>96%</td></tr>
+<tr><td class='n'>49</td><td>insanity</td><td>zfs</td><td class='n'>75%</td><td class='n'>97%</td><td class='n'>96%</td></tr>
+<tr><td class='n'>50</td><td>sanity-pfl</td><td>zfs-dne</td><td class='n'>75%</td><td class='n'>97%</td><td class='n'>96%</td></tr>
+<tr><td class='n'>51</td><td>review-dne-ipv6</td><td>its own group</td><td class='n'>80%</td><td class='n'>97%</td><td class='n'>96%</td></tr>
+<tr><td class='n'>52</td><td>sanity-benchmark</td><td>ldiskfs-dne</td><td class='n'>80%</td><td class='n'>97%</td><td class='n'>96%</td></tr>
+<tr><td class='n'>53</td><td>replay-single</td><td>zfs</td><td class='n'>81%</td><td class='n'>97%</td><td class='n'>97%</td></tr>
+<tr><td class='n'>54</td><td>sanity-ec</td><td>zfs-dne</td><td class='n'>82%</td><td class='n'>97%</td><td class='n'>97%</td></tr>
+<tr><td class='n'>55</td><td>replay-ost-single</td><td>ldiskfs-dne</td><td class='n'>82%</td><td class='n'>98%</td><td class='n'>97%</td></tr>
+<tr><td class='n'>56</td><td>mds-survey</td><td>ldiskfs-dne</td><td class='n'>82%</td><td class='n'>98%</td><td class='n'>97%</td></tr>
+<tr><td class='n'>57</td><td>sanity</td><td>ldiskfs-ubuntu</td><td class='n'>86%</td><td class='n'>98%</td><td class='n'>98%</td></tr>
+<tr><td class='n'>58</td><td>sanity-sec</td><td>ldiskfs-dne</td><td class='n'>87%</td><td class='n'>98%</td><td class='n'>98%</td></tr>
+<tr><td class='n'>59</td><td>insanity</td><td>zfs-dne</td><td class='n'>88%</td><td class='n'>98%</td><td class='n'>98%</td></tr>
+<tr><td class='n'>60</td><td>large-scale</td><td>zfs-dne</td><td class='n'>89%</td><td class='n'>98%</td><td class='n'>98%</td></tr>
+<tr><td class='n'>61</td><td>sanity-lnet</td><td>ldiskfs-arm</td><td class='n'>89%</td><td class='n'>98%</td><td class='n'>98%</td></tr>
+<tr><td class='n'>62</td><td>performance-sanity</td><td>ldiskfs-dne</td><td class='n'>91%</td><td class='n'>98%</td><td class='n'>98%</td></tr>
+<tr><td class='n'>63</td><td>recovery-small</td><td>ldiskfs-dne</td><td class='n'>92%</td><td class='n'>98%</td><td class='n'>98%</td></tr>
+<tr><td class='n'>64</td><td>sanity</td><td>ldiskfs-dne-arm</td><td class='n'>96%</td><td class='n'>99%</td><td class='n'>98%</td></tr>
+<tr><td class='n'>65</td><td>runtests</td><td>ldiskfs-dne</td><td class='n'>96%</td><td class='n'>99%</td><td class='n'>98%</td></tr>
+<tr><td class='n'>66</td><td>sanity-pcc</td><td>ldiskfs-dne</td><td class='n'>97%</td><td class='n'>99%</td><td class='n'>98%</td></tr>
+<tr><td class='n'>67</td><td>sanity-quota</td><td>zfs-dne</td><td class='n'>100%</td><td class='n'>99%</td><td class='n'>98%</td></tr>
+<tr><td class='n'>68</td><td>replay-single</td><td>ldiskfs-dne</td><td class='n'>102%</td><td class='n'>99%</td><td class='n'>99%</td></tr>
 </tbody></table></div></section>
 <section><h2>The climb</h2><p class='muted'>No hillclimb rounds yet. Each round's train and test scores will be drawn here.</p></section>
 <section><h2>How this is measured</h2><ul class="notes"><li>Bugs: a patchset&#x27;s patch faults grouped by error signature across scripts; a failure over most of the scripts its build ran counts as one cascade; bugs no selection could tell apart (same scripts, same configurations) count as one. The label audit (eval/audit) checks the grouping and the labels.</li><li>Each change counts once: a change whose patchsets fail hundreds of tests weighs no more than one that fails one. The per-bug figure is in the table.</li><li>A selection catches a bug when it runs a script in a configuration where that script failed with the bug in the patchset&#x27;s own build, with the chance the build showed (failed runs over runs). A configuration where the script never ran counts as not caught.</li><li>Trivial (review-ldiskfs) and the subtest-change sessions run for every selection and are charged to it.</li><li>Cost is session time on a random sample of all review patchsets: 23 minutes of setup per added session plus each script&#x27;s mean run time in its configuration.</li><li>Single-MDT, Ubuntu and SLES client configurations are asked for with keys no custom session has used yet; SELinux, shared-key and IPv6 configurations can only be asked for as whole groups.</li></ul>
