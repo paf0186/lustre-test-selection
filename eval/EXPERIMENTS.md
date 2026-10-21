@@ -117,3 +117,29 @@ Result (2026-10-21; evaluation: 2026-03-20 on, test months): gain over blind
 +8.1) on 18, +2.0 (-3.3 to +7.8) on 24.  Rising to 18 months, flat from 18 to
 24 (a change of -1.1 against a half width near 5): do not extend the data
 back for this model; weight recent months instead.
+
+## E4. The simple candidate (registered 2026-10-21)
+
+Selection: `trivial`, the scripts the patch edits, the first n test sets of the
+patch-blind order (ranked on the training months), and every test set that
+caught a bug on an earlier patchset of the same change.  Only parts that held
+up in E1 and E2.  Scored as a curve over n, on the two-year cases.
+
+Bars: in cross-validation and in the lockbox, its mean gain over the blind line
+across 15 to 40% cost is at least +2 points (the noise control's error) with
+the lower bound above zero; and it is not worse than the LambdaMART reference
+by more than 2 points.  If it passes, it is the version to shadow-run.
+
+## E5. Patch risk (registered 2026-10-21)
+
+A patch-level estimate of the chance a patch has a bug any test would catch,
+for uses beyond test selection (routing extra AI review).  Features: size,
+Gerrit's kind, span, functions changed, test-only and docs-only, the change's
+earlier CI results, and each component's past fault rate in the training months.
+Fitted on the training months to the population (the random sample, faulty
+patchsets outside it weighted down).
+
+Bars, on the population (sampled cases only), in cross-validation and the
+lockbox: ROC AUC at least 0.65 with the lower bound above 0.6; the riskiest
+fifth of patches at least twice the base rate of faults; and the safest fifth
+at most half of it.
