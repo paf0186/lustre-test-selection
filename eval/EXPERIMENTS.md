@@ -59,3 +59,29 @@ Lockbox for the hybrid: not confirmed.  -2.9 (-6.3 to +0.8) against the
 reference on the test months; on the recent months -0.7 (-7.5 to +7.0).  The
 cross-validation lead did not hold across periods.  The overlap discount is
 also worse in the lockbox (-2.2, -5.4 to +0.6).  Neither is adopted.
+
+## E2. WOWY on 2024-10-20 to 2026-10-19 (registered 2026-10-21, before the data is loaded)
+
+Setup: as E1, unchanged, on cases from 2024-10-20 on (two years: about three
+times E1's training data).  Same reference (LambdaMART without base-rate
+features), folds, seeds, grading, noise control and bars.  Same lockbox role
+for the held-out test months.
+
+Hypotheses and bars, as E1's, plus:
+
+6. More data helps the model: the reference's gain over the patch-blind line,
+   in the lockbox, rises above E1's +0.5 with its lower bound above zero.
+7. The leads E1 could not settle are settled one way: directory history, the
+   LLM and the principles each come out either "keep" (interval clear below
+   zero when removed) in both cross-validation and lockbox, or unclear in
+   both, in which case they leave the default stack.
+
+## E3. Learning curve (registered 2026-10-21)
+
+Train the reference on the training months of the last 6, 12, 18 and 24
+months only; score each on the same evaluation set (the test months from
+2026-03-20 on).  If the gain over blind still rises from 18 to 24 months by
+more than its interval's half width, extend the data back to 2023 (and then
+consider 2019); if it is flat, do not, and weight recent months instead.
+
+Result: (pending)
