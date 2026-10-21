@@ -113,15 +113,23 @@ def bootstrap(rows: list[dict], keys=("recall_vs_full", "bug_recall_vs_full", "a
 	return out
 
 
+def in_split(cases, split):
+	"""train, test, all, or recent: the test set's months after the LLM cutoff,
+	which also show how the predictor does going forward in time."""
+	if split == "all":
+		return list(cases)
+	if split == "recent":
+		return [c for c in cases if c["split"] == "test" and c.get("recent")]
+	return [c for c in cases if c["split"] == split]
+
+
 def run(name, pred, cases, costs, split):
 	train = [c for c in cases if c["split"] == "train"]
 	t0 = time.time()
 	if pred is not None:
 		pred.fit(train)
 	rows, meta = [], defaultdict(float)
-	for c in cases:
-		if split != "all" and c["split"] != split:
-			continue
+	for c in in_split(cases, split):
 		f = full(c)
 		if pred is None:
 			g = f
@@ -177,8 +185,8 @@ def curve(cases, costs, label, when) -> list[dict]:
 	train = [c for c in cases if c["split"] == "train"]
 	order = ranked.rank(train, costs, CLASSES)
 	out = []
-	for split in ("train", "test"):
-		rows_all = [c for c in cases if c["split"] == split]
+	for split in ("train", "test", "recent"):
+		rows_all = in_split(cases, split)
 		fulls = [full(c) for c in rows_all]
 		points = []
 		for n in range(len(order) + 1):
@@ -232,6 +240,8 @@ def value(cases, costs, when, label) -> dict:
 	how many of the patches' bugs it caught (each change counting once) and how
 	many only it caught, over every faulty case (a description of today's matrix,
 	not a predictor: no split)."""
+	since = costs.get("since", "")
+	cases = [c for c in cases if c["day"] >= since]
 	per_change = defaultdict(int)
 	for c in cases:
 		if c["faulty"]:
@@ -272,7 +282,7 @@ def main() -> None:
 	ap.add_argument("--cases", default=str(ROOT / "data" / "cases.jsonl"))
 	ap.add_argument("--costs", default=str(HERE / "costs.json"))
 	ap.add_argument("--predictor", action="append", help="name (default: every baseline)")
-	ap.add_argument("--split", action="append", choices=["train", "test", "all"])
+	ap.add_argument("--split", action="append", choices=["train", "test", "recent", "all"])
 	ap.add_argument("--label", default="baseline", help="what this run is: a round, a version")
 	ap.add_argument("--no-log", action="store_true")
 	args = ap.parse_args()
@@ -282,7 +292,7 @@ def main() -> None:
 	names = args.predictor or list(preds)
 	when = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
 	for name in names:
-		for split in args.split or ["train", "test"]:
+		for split in args.split or ["train", "test", "recent"]:
 			m = run(name, preds[name], cases, costs, split)
 			p = preds[name]
 			rec = {"when": when, "label": args.label, "predictor": name, "split": split,

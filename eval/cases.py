@@ -2,7 +2,8 @@
 """Build the eval's cases from the harvested database (design 2.1 to 2.8).
 
   eval/cases.py                 # data/cases.jsonl and eval/manifest.json
-  eval/cases.py --cutoff 2026-08-01
+  eval/cases.py --every 3        # hold out every third month (the default)
+  eval/cases.py --every 0 --cutoff 2026-08-01   # hold out only what follows the cutoff
 
 A case is a patchset: every faulty patchset, and every patchset of the random
 sample, faulty or not.  It holds what the predictor may see (`input`) and what
@@ -40,6 +41,19 @@ CLASS_KEYS = {k: v[0] for k, v in CLASSES.items()}
 ROOT = HERE.parent
 INFRA = {"node-provisioning", "lustre-initialization"}
 CUTOFF = "2026-08-01"       # after the LLM's training cutoff (design 2.8)
+EVERY = 3                   # hold out every third month
+
+
+def held_out(day: str, latest: str, every: int, cutoff: str) -> bool:
+	"""Test months: every `every`th calendar month counting back from the latest,
+	so the test set spans the whole period rather than only what is new now (a
+	feature being written draws its own failures); with every 0, the months after
+	the cutoff."""
+	if not every:
+		return day >= cutoff
+	m = int(day[:4]) * 12 + int(day[5:7])
+	last = int(latest[:4]) * 12 + int(latest[5:7])
+	return (last - m) % every == 0
 SAMPLE_FRACTION = 0.12
 
 
@@ -79,7 +93,7 @@ def merge_same_catch(bugs: list[dict]) -> list[dict]:
 	return out
 
 
-def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float):
+def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float, every: int = EVERY):
 	db.row_factory = sqlite3.Row
 	faults = defaultdict(list)
 	for f in db.execute("SELECT * FROM failure WHERE class != 'ambient'"):
@@ -129,6 +143,7 @@ def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float):
 		for f in fs:
 			lifetimes[c0][(f["suite"], f["subtest"], signature(f))].add(p0)
 	inherited = Counter()
+	latest = max(first_day.values())
 	for k in keys:
 		ss = sessions.get(k, [])
 		if not ss:
@@ -237,7 +252,8 @@ def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float):
 		day = first_day.get(k[0], "")
 		yield {
 			"key": f"{k[0]}/{k[1]}", "change": k[0], "patchset": k[1], "day": day,
-			"split": "test" if day >= cutoff else "train",
+			"split": "test" if held_out(day, latest, every, cutoff) else "train",
+			"recent": day >= cutoff,
 			"faulty": bool(out_bugs), "sampled": k in sample, "inherited": inherited[k],
 			"input": {
 				"key": f"{k[0]}/{k[1]}", "subject": p.get("subject"), "message": t.get("message"), "diff": t.get("diff"),
@@ -259,18 +275,20 @@ def main() -> None:
 	ap.add_argument("--out", default=str(ROOT / "data" / "cases.jsonl"))
 	ap.add_argument("--manifest", default=str(HERE / "manifest.json"))
 	ap.add_argument("--cutoff", default=CUTOFF)
+	ap.add_argument("--every", type=int, default=EVERY, help="hold out every Nth month; 0: after the cutoff")
 	ap.add_argument("--fraction", type=float, default=SAMPLE_FRACTION)
 	args = ap.parse_args()
 	db = sqlite3.connect(f"file:{args.db}?mode=ro", uri=True, timeout=60)
 	manifest = []
 	with open(args.out, "w") as out:
-		for c in build_cases(db, args.cutoff, args.fraction):
+		for c in build_cases(db, args.cutoff, args.fraction, args.every):
 			out.write(json.dumps(c) + "\n")
-			manifest.append({"key": c["key"], "split": c["split"], "faulty": c["faulty"],
+			manifest.append({"key": c["key"], "split": c["split"], "recent": c["recent"], "faulty": c["faulty"],
 					 "sampled": c["sampled"], "bugs": len(c["bugs"]),
 					 "hard_bugs": sum(not b["easy"] for b in c["bugs"]),
 					 "has_diff": bool(c["input"]["diff"])})
-	Path(args.manifest).write_text(json.dumps({"cutoff": args.cutoff, "fraction": args.fraction,
+	Path(args.manifest).write_text(json.dumps({"cutoff": args.cutoff, "every": args.every,
+						   "fraction": args.fraction,
 						   "cases": manifest}, indent=0) + "\n")
 	n = len(manifest)
 	print(f"{n} cases: {sum(m['faulty'] for m in manifest)} faulty, {sum(m['sampled'] for m in manifest)} "

@@ -161,10 +161,10 @@ SERIES = [  # data-series, swatch colour, legend text
 ]
 
 
-def gain_chart(rows: list[dict], w=640, h=320, x_max=0.6) -> str:
+def gain_chart(rows: list[dict], w=640, h=320, x_max=0.6, split="test") -> str:
 	"""Each test-set curve and point minus the patch-blind curve at the same cost:
 	how far above the null line a selection is."""
-	blind = next((r for r in rows if r["predictor"] == "ranked" and r["split"] == "test"), None)
+	blind = next((r for r in rows if r["predictor"] == "ranked" and r["split"] == split), None)
 	if not blind:
 		return ""
 	bp = sorted((p["cost_share"], p["recall_vs_full"]) for p in blind["curve"]
@@ -195,7 +195,7 @@ def gain_chart(rows: list[dict], w=640, h=320, x_max=0.6) -> str:
 		 'points above patch-blind</text>')
 	lo_x = bp[0][0]
 	for r in rows:
-		if r["split"] != "test" or r["predictor"] in ("ranked", "oracle", "value", "full"):
+		if r["split"] != split or r["predictor"] in ("ranked", "oracle", "value", "full"):
 			continue
 		if r.get("curve"):
 			ser = CURVES.get(r["predictor"])
@@ -297,6 +297,7 @@ def value_table(v: dict | None, builds: int) -> str:
 def headline(test: list[dict], manifest: dict) -> str:
 	cases = manifest.get("cases", [])
 	n_test = sum(c["split"] == "test" and c["faulty"] for c in cases)
+	n_recent = sum(c["split"] == "test" and c["faulty"] and c.get("recent") for c in cases)
 	bugs = sum(c["bugs"] for c in cases if c["split"] == "test")
 	full = next((r for r in test if r["predictor"] == "full"), None)
 	cands = [r for r in test if r["predictor"] not in ("full",) and not r.get("curve")
@@ -315,8 +316,11 @@ def headline(test: list[dict], manifest: dict) -> str:
 				     + (f" Best within the cost: {esc(b.get('title') or b['predictor'])}, {pct(b['recall_vs_full'])} of "
 					f"today's bugs at {pct(b['cost_share'])}." if b else "") + "</li>")
 	hours = f"{full['actual_hours_per_build']:.0f}" if full else "?"
+	every = manifest.get("every")
+	held = (f"every {every}{'rd' if every == 3 else 'th'} month of the period held out" if every
+		else f"changes first failing on or after {esc(manifest.get('cutoff', '?'))}")
 	return (f"<p class='lede'>Backtest on <b>{n_test}</b> faulty patchsets the predictors never saw "
-		f"(changes first failing on or after {esc(manifest.get('cutoff', '?'))}), holding <b>{bugs}</b> bugs. "
+		f"({held}; {n_recent} of them after {esc(manifest.get('cutoff', '?'))}), holding <b>{bugs}</b> bugs. "
 		f"Today every patch runs the whole review matrix, about <b>{hours}</b> session hours per build. "
 		f"\"Share of today's bugs\" is what each selection would catch of what today's matrix catches, "
 		f"with every change counting once.</p>"
@@ -429,6 +433,7 @@ def main() -> None:
 	manifest = json.loads(MANIFEST.read_text()) if MANIFEST.exists() else {}
 	last = latest(log)
 	test = [r for (p, s), r in last.items() if s == "test"]
+	recent = [r for (p, s), r in last.items() if s == "recent"]
 	train = [r for (p, s), r in last.items() if s == "train"]
 	blind = next((r for r in test if r["predictor"] == "ranked"), None)
 	test = [r for r in test if r["predictor"] not in ("oracle", "principles-on-blind")] + \
@@ -474,7 +479,11 @@ def main() -> None:
 <section><h2>Gain over the patch-blind baseline</h2>
 <p class="muted">Each selection's share of today's bugs minus what the same tests for every patch catch at
 the same cost, on the test set. Above zero, reading the patch is paying for itself.</p>
-{gain_chart(test)}</section>
+{gain_chart(test)}
+<h2>Going forward: the test months after {esc(manifest.get("cutoff", "?"))}</h2>
+<p class="muted">The same, on the held-out months after the cutoff only: predicting later patches from earlier
+ones, and after the LLM's training data.</p>
+{gain_chart(recent, split="recent")}</section>
 <section><h2>By kind of bug</h2><div class="smalls">{smalls}</div></section>
 <section><h2>Every predictor</h2>{table([r for r in test + train if not r.get("curve") and r["predictor"] != "value"])}</section>
 <section><h2>Bugs per session hour, by test set</h2>{value_table(val, costs_builds())}</section>

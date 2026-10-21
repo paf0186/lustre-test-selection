@@ -28,13 +28,16 @@ from classes import class_of  # noqa: E402
 INFRA = ("node-provisioning", "lustre-initialization")
 
 
-def build(db: sqlite3.Connection) -> dict:
+SINCE = "2026-03-20"   # today's matrix: older sessions ran a different one
+
+
+def build(db: sqlite3.Connection, since: str = SINCE) -> dict:
 	db.row_factory = sqlite3.Row
 	cls, group, build_of = {}, {}, {}
 	per_build = Counter()
 	secs_build = Counter()
 	sess_s = defaultdict(list)
-	for s in db.execute("SELECT * FROM session WHERE job = 'lustre-reviews'"):
+	for s in db.execute("SELECT * FROM session WHERE job = 'lustre-reviews' AND day >= ?", (since,)):
 		cls[s["id"]] = class_of(dict(s))
 		group[s["id"]] = s["test_group"]
 		build_of[s["id"]] = s["build"]
@@ -80,7 +83,9 @@ def build(db: sqlite3.Connection) -> dict:
 				 for g in sorted(runs) if g and g.startswith("review") and sessions_of[g] >= 20},
 		"group_class": {g: c.most_common(1)[0][0] for g, c in sorted(group_class.items())},
 		"session_s": {g: round(mean(ds)) for g, ds in sorted(sess_s.items()) if g and len(ds) >= 20},
-		"review_builds": db.execute("SELECT count(*) FROM build WHERE job = 'lustre-reviews'").fetchone()[0],
+		"since": since,
+		"review_builds": db.execute("SELECT count(*) FROM build WHERE job = 'lustre-reviews' AND first_day >= ?",
+					    (since,)).fetchone()[0],
 		"runs_per_build": {f"{s}|{c}": round(n / max(1, len(set(build_of.values()))), 3)
 				   for (s, c), n in sorted(per_build.items())},
 		"secs_per_build": {f"{s}|{c}": round(n / max(1, len(set(build_of.values()))))
@@ -92,8 +97,9 @@ def main() -> None:
 	ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
 	ap.add_argument("--db", default=str(HERE.parent / "data" / "failures.db"))
 	ap.add_argument("--out", default=str(HERE / "costs.json"))
+	ap.add_argument("--since", default=SINCE, help="sessions from this day: today's matrix")
 	args = ap.parse_args()
-	d = build(sqlite3.connect(f"file:{args.db}?mode=ro", uri=True, timeout=60))
+	d = build(sqlite3.connect(f"file:{args.db}?mode=ro", uri=True, timeout=60), args.since)
 	Path(args.out).write_text(json.dumps(d, indent=1, sort_keys=True) + "\n")
 	print(f"overhead {d['overhead_s']} s, {len(d['suite_class_s'])} script/class means, "
 	      f"{len(d['group_suites'])} groups", file=sys.stderr)
