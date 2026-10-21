@@ -1,0 +1,66 @@
+# Sensitive areas of Lustre: a patch touching one deserves more care than its
+# size suggests.  Each area matches files by path prefix (`paths`) or substring
+# (`contains`), or changed lines by regular expression (`lines`, searched in the
+# diff's added and removed lines only).  The `areas` signal has one column per
+# area; edit this file to add or sharpen one.
+
+[[area]]
+name = "on-disk-format"
+why = "on-disk structures: a mistake corrupts or strands data, and upgrades must read the old form"
+paths = ["lustre/osd-ldiskfs/osd_oi", "lustre/include/lustre_disk.h", "lustre/osd-zfs/osd_oi"]
+lines = ['struct\s+lustre_mdt_attrs', '\bLMA_', '\bLOV_(USER_)?MAGIC', '\blov_comp_md', 'struct\s+lu_fid\b',
+	 '\blustre_ost_attrs', '\bLMAI_', 'struct\s+lov_mds_md', '\bLMV_MAGIC', 'last_rcvd', '\bLR_']
+
+[[area]]
+name = "wire-protocol"
+why = "RPC formats and connect flags: mixed client and server versions must still talk"
+paths = ["lustre/include/uapi/linux/lustre/lustre_idl.h", "lustre/utils/wirecheck.c", "lustre/ptlrpc/wiretest.c",
+	 "lustre/ptlrpc/pack_generic.c", "lustre/ptlrpc/layout.c"]
+lines = ['\bOBD_CONNECT2?_', '\bMSG_[A-Z_]+_FL\b', 'struct\s+ptlrpc_body', '\bRMF_', '\bLUSTRE_MSG_MAGIC']
+
+[[area]]
+name = "security"
+why = "authentication, identity mapping and encryption: mistakes leak or deny access"
+paths = ["lustre/ptlrpc/gss/", "lustre/ptlrpc/sec", "lustre/llite/crypto", "lustre/utils/gss/",
+	 "lustre/utils/l_getidentity"]
+contains = ["nodemap", "sptlrpc"]
+lines = ['\bcapable\(', '\bCAP_[A-Z_]+', '\bsquash', '\bfscrypt_', '\bselinux']
+
+[[area]]
+name = "locking"
+why = "lock ordering and distributed locks: races and deadlocks surface rarely and far from the change"
+paths = ["lustre/ldlm/"]
+lines = ['\b(spin|read|write)_(un)?lock(_irq|_bh)?\(', '\bmutex_(un)?lock\(', '\b(down|up)_(read|write)\(',
+	 '\block_res\(', '\bldlm_lock_(de)?ref', '\brcu_read_(un)?lock\(']
+
+[[area]]
+name = "recovery"
+why = "replay, resend and eviction: exercised only when servers fail, so bugs hide until they do"
+paths = ["lustre/ptlrpc/recover.c", "lustre/ptlrpc/import.c", "lustre/ptlrpc/pinger.c", "lustre/target/",
+	 "lustre/ldlm/ldlm_lib.c"]
+lines = ['\btransno\b', '\breplay', '\bresend', '\bevict', '\brecovery']
+
+[[area]]
+name = "data-integrity"
+why = "the bulk data path and checksums: a mistake silently corrupts file data"
+paths = ["lustre/osc/osc_request.c", "lustre/ofd/ofd_io.c", "lustre/llite/rw", "lustre/obdclass/cl_"]
+lines = ['\bchecksum', '\bcksum', '\bbrw_', '\bbulk']
+
+[[area]]
+name = "memory-lifetime"
+why = "reference counts and frees: use-after-free and leaks crash far from the change"
+lines = ['\bOBD_FREE', '\bkfree\(', '\bkref_(get|put)\(', '\brefcount_(inc|dec)', '\batomic_dec_and_test\(',
+	 '_put\(', '\blu_object_put\(']
+
+[[area]]
+name = "user-api"
+why = "interfaces programs depend on: ioctls, llapi and lfs output must stay compatible"
+paths = ["lustre/include/uapi/", "lustre/utils/liblustreapi", "lustre/include/lustre/lustreapi.h"]
+lines = ['\b_IO[RW]*\(', '\bLL_IOC_']
+
+[[area]]
+name = "kernel-compat"
+why = "builds against other kernels and distros: breaks where CI's default distro does not run"
+paths = ["lustre/autoconf/", "libcfs/autoconf/", "lnet/autoconf/", "config/", "lustre.spec", "debian/"]
+contains = ["compat"]
+lines = ['^\s*#\s*if(n)?def\s+HAVE_', '\bLINUX_VERSION_CODE\b']

@@ -22,6 +22,29 @@ Its tables are generated and the prose is by hand:
 rainshadow matrix --days 30 --markdown             # the raw tables for any window or job
 ```
 
+## Patch signals
+
+`signals/` measures patches for any question we ask of them: will it have a bug
+CI catches, does it touch something sensitive, does it deserve another AI review
+pass.  A signal is a named measurement with a reason (`@signal` for a rule,
+`Learned` for one fitted on history, an LLM or embedding cache for the rest);
+sensitive areas are a table, `signals/areas.toml`.  A target is a label
+(`signals/targets.py`).  Any target is fitted from any signals by one scorer
+(logistic, calibrated to the population, with each score's reasons) and judged
+by one harness: cross-validation on the training months, the held-out months as
+a lockbox, every signal with and without, and a noise signal as the control.
+
+```bash
+python3 -m signals list                          # signals and targets
+python3 -m signals score 64955/94                # one patch: signals, scores, reasons
+python3 -m signals evaluate --target faulty      # AUC, riskiest and safest fifths
+python3 -m signals wowy --target faulty          # what each signal is worth
+```
+
+Add a signal: one decorated function in `signals/core.py` (or a module of its
+own, imported in `signals/__init__.py`), or an entry in `areas.toml`; then run
+`wowy` to see whether it earns its place.
+
 ## The eval
 
 An eval for predicting, per patch, which test scripts and configurations to run on
