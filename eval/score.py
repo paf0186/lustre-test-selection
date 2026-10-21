@@ -219,6 +219,15 @@ def curve(cases, costs, label, when) -> list[dict]:
 				texts = [model.select(c["input"], rate, sc) for c, sc in zip(rows_all, scored)]
 				mpts.append({"rate": rate, **_points(rows_all, fulls, texts)})
 			auc = pair_auc(model, rows_all, scored)
+			if llm:
+				hpts = []
+				for rate in MODEL_RATES:
+					texts = [model.select(c["input"], rate, sc, seed=True) for c, sc in zip(rows_all, scored)]
+					hpts.append({"rate": rate, **_points(rows_all, fulls, texts)})
+				out.append({"when": when, "label": label, "predictor": "hybrid", "split": split,
+					    "curve": hpts, "title": "hybrid: principles first, the model adds",
+					    "about": "the principles' selection for every patch, then test sets the learned model "
+						     "(with LLM reading) rates worth their session time"})
 			out.append({"when": when, "label": label, "predictor": "model-llm" if llm else "model",
 				    "split": split, "curve": mpts,
 				    "title": model.title, "about": model.about, "auc": auc,

@@ -34,6 +34,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from bugs import group, signature  # noqa: E402
+from links import changed_functions  # noqa: E402
 from classes import CLASSES, class_of  # noqa: E402
 
 CLASS_KEYS = {k: v[0] for k, v in CLASSES.items()}
@@ -93,7 +94,8 @@ def merge_same_catch(bugs: list[dict]) -> list[dict]:
 	return out
 
 
-def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float, every: int = EVERY):
+def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float, every: int = EVERY,
+		tree: Path | None = None):
 	db.row_factory = sqlite3.Row
 	faults = defaultdict(list)
 	for f in db.execute("SELECT * FROM failure WHERE class != 'ambient'"):
@@ -256,7 +258,8 @@ def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float, every: int
 			"recent": day >= cutoff,
 			"faulty": bool(out_bugs), "sampled": k in sample, "inherited": inherited[k],
 			"input": {
-				"key": f"{k[0]}/{k[1]}", "subject": p.get("subject"), "message": t.get("message"), "diff": t.get("diff"),
+				"key": f"{k[0]}/{k[1]}", "subject": p.get("subject"),
+				"functions": changed_functions(t.get("diff") or "", tree) if tree else None, "message": t.get("message"), "diff": t.get("diff"),
 				"files": json.loads(p["files"]) if p.get("files") else None,
 				"scripts": json.loads(p["scripts"]) if p.get("scripts") else None,
 				"test_parameters": p.get("test_parameters"), "gerrit_kind": p.get("gerrit_kind"),
@@ -276,12 +279,18 @@ def main() -> None:
 	ap.add_argument("--manifest", default=str(HERE / "manifest.json"))
 	ap.add_argument("--cutoff", default=CUTOFF)
 	ap.add_argument("--every", type=int, default=EVERY, help="hold out every Nth month; 0: after the cutoff")
+	ap.add_argument("--since", default="", help="only cases from this day: the window whose faults are harvested")
+	ap.add_argument("--tree", default=str(Path.home() / "lustre-release"),
+			help="a lustre-release tree, to name the C functions each patch changes ('' for none)")
 	ap.add_argument("--fraction", type=float, default=SAMPLE_FRACTION)
 	args = ap.parse_args()
 	db = sqlite3.connect(f"file:{args.db}?mode=ro", uri=True, timeout=60)
 	manifest = []
 	with open(args.out, "w") as out:
-		for c in build_cases(db, args.cutoff, args.fraction, args.every):
+		for c in build_cases(db, args.cutoff, args.fraction, args.every,
+				     Path(args.tree).expanduser() if args.tree else None):
+			if c["day"] < args.since:
+				continue
 			out.write(json.dumps(c) + "\n")
 			manifest.append({"key": c["key"], "split": c["split"], "recent": c["recent"], "faulty": c["faulty"],
 					 "sampled": c["sampled"], "bugs": len(c["bugs"]),

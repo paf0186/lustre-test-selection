@@ -65,6 +65,10 @@ def llm_answer(key: str | None) -> dict | None:
 	return d if "mechanisms" in d else None
 
 
+FAMILIES = {"principles", "edited", "words", "base", "history", "shape", "change_history", "llm",
+	    "links_fail", "links_bm25", "embed", "config"}
+
+
 def component(path: str) -> str:
 	parts = path.split("/")
 	return "/".join(parts[:2]) if len(parts) > 2 else parts[0]
@@ -85,10 +89,25 @@ def label(case: dict, cand: dict) -> int:
 
 
 class Model:
-	def __init__(self, costs: dict, classes: dict, kind: str = "gbdt", llm: bool = False):
+	def __init__(self, costs: dict, classes: dict, kind: str = "gbdt", llm: bool = False,
+		     families: set[str] | None = None, seed: int = 1):
 		self.costs, self.classes, self.kind, self.use_llm = costs, classes, kind, llm
+		self.families = set(families) if families is not None else (FAMILIES - (set() if llm else {"llm"}))
+		self.seed = seed
 		self.cands = candidates(costs, classes)
 		self.principles = Principles()
+		self.links = self.close = None
+		try:
+			from links import Links
+			self.links = Links()
+		except (OSError, ValueError):
+			pass
+		try:
+			from embed import EMB, Closeness
+			if (EMB / "tests.npy").exists():
+				self.close = Closeness()
+		except (OSError, ImportError, ValueError):
+			pass
 		self.name = f"model-{kind}{'-llm' if llm else ''}"
 		self.title = ("learned model" if kind == "gbdt" else "learned model (linear)") + \
 			(" with LLM reading" if llm else "")
@@ -129,6 +148,7 @@ class Model:
 						ch["ran"] += 1
 						ch["caught"] += y
 				rows.append((c, name, y))
+		self.rows = rows
 		# How often A catches what B catches, where both ran: a candidate is worth
 		# only what the sets already chosen would not catch anyway.
 		caught_by: dict[int, set[str]] = defaultdict(set)
@@ -153,7 +173,7 @@ class Model:
 			from sklearn.ensemble import HistGradientBoostingClassifier
 			self.clf = HistGradientBoostingClassifier(max_depth=4, learning_rate=0.05, max_iter=250,
 								  l2_regularization=1.0, min_samples_leaf=40,
-								  random_state=1)
+								  random_state=self.seed)
 		else:
 			from sklearn.linear_model import LogisticRegression
 			from sklearn.pipeline import make_pipeline
@@ -190,6 +210,11 @@ class Model:
 	# -- features -----------------------------------------------------------------
 
 	def features(self, inp: dict, name: str, change=None) -> list[float]:
+		return [v for fam, v in self.tagged(inp, name, change) if fam in self.families]
+
+	def tagged(self, inp: dict, name: str, change=None) -> list[tuple[str, float]]:
+		"""Every feature of a (patch, test set) pair, with the family it belongs to:
+		the unit the ablation study (eval/wowy.py) switches on and off."""
 		cand = self.cands[name]
 		script = cand.get("script") or ""
 		cls = cand["cls"]
@@ -202,49 +227,56 @@ class Model:
 		else:
 			p_exact = float(script in picks.get(cls, ()))
 			p_any = float(any(script in v for v in picks.values()))
-		rates = {lvl: [self._rate((lvl, u, name), name, change) for u in us] for lvl, us in units.items()}
+		out = [("principles", p_exact), ("principles", p_any),
+		       ("edited", float(script in edited_scripts(inp)))]
 		fw = set().union(*(words(f) for f in files)) if files else set()
 		sw = words(script or cand.get("group", ""))
-		overlap = float(any(a.startswith(b) or b.startswith(a) for a in fw for b in sw))
 		msg = (inp.get("message") or "") + " " + (inp.get("test_parameters") or "")
-		mentioned = float(bool(script) and re.search(rf"\b{re.escape(script)}\b", msg) is not None)
+		out += [("words", float(any(a.startswith(b) or b.startswith(a) for a in fw for b in sw))),
+			("words", float(bool(script) and re.search(rf"\b{re.escape(script)}\b", msg) is not None))]
+		out += [("base", math.log(self._prior(name, change) + 1e-6)),
+			("base", math.log1p(self.costs["suite_class_s"].get(f"{script}|{cls}", 0) if script else 0))]
+		rates = {lvl: [self._rate((lvl, u, name), name, change) for u in us] for lvl, us in units.items()}
+		out += [("history", max((r for r, _ in rates["comp"]), default=0)),
+			("history", sum(r for r, _ in rates["comp"]) / max(1, len(rates["comp"]))),
+			("history", max((r for r, _ in rates["dir"]), default=0)),
+			("history", math.log1p(max((n for _, n in rates["dir"]), default=0)))]
 		diff = inp.get("diff") or ""
 		changed = sum(1 for ln in diff.splitlines() if ln[:1] in "+-" and ln[:3] not in ("+++", "---"))
-		area = {a: float(any(any(m in f for m in marks) for f in files)) for a, marks in AREAS.items()}
-		out = [
-			p_exact, p_any,
-			float(script in edited_scripts(inp)),
-			overlap, mentioned,
-			math.log(self._prior(name, change) + 1e-6),
-			max((r for r, _ in rates["comp"]), default=0), sum(r for r, _ in rates["comp"]) / max(1, len(rates["comp"])),
-			max((r for r, _ in rates["dir"]), default=0),
-			math.log1p(max((n for _, n in rates["dir"]), default=0)),
-			math.log1p(len(files)), math.log1p(changed), float(len(units["comp"])),
-			float(self.principles.narrow(inp)),
-			math.log1p(self.costs["suite_class_s"].get(f"{script}|{cls}", 0) if script else 0),
-		]
+		out += [("shape", math.log1p(len(files))), ("shape", math.log1p(changed)),
+			("shape", float(len(units["comp"]))), ("shape", float(self.principles.narrow(inp)))]
+		out += [("shape", float(any(any(m in f for m in marks) for f in files))) for marks in AREAS.values()]
 		hist = inp.get("history") or {}
 		keys = set(cand["keys"])
-		out += [float(bool(keys & set(hist.get("caught", ())))), float(bool(keys & set(hist.get("last_caught", ())))),
-			float(bool(script) and any(k.split("|")[0] == script for k in hist.get("caught", ()))),
-			math.log1p(hist.get("faulty_patchsets", 0))]
-		ans = llm_answer(inp.get("key")) if self.use_llm else None
+		out += [("change_history", float(bool(keys & set(hist.get("caught", ()))))),
+			("change_history", float(bool(keys & set(hist.get("last_caught", ()))))),
+			("change_history", float(bool(script) and any(k.split("|")[0] == script for k in hist.get("caught", ())))),
+			("change_history", math.log1p(hist.get("faulty_patchsets", 0)))]
+		ans = llm_answer(inp.get("key")) if "llm" in self.families else None
 		if ans:
 			mech = ans["mechanisms"]
-			name_s = script or ""
 			grp = cand.get("group") or ""
-			by_script = max((v for m, v in mech.items() if name_s in MECH_SCRIPTS.get(m, ())
+			by_script = max((v for m, v in mech.items() if script in MECH_SCRIPTS.get(m, ())
 					 or (grp and any(x in grp for x in ("selinux", "ssk")) and m == "security-nodemap")),
 					default=0)
 			by_class = max((v for m, v in mech.items() if any(t in cls for t in MECH_CLASSES.get(m, ()))),
 				       default=0)
 			broad = max((mech.get(m, 0) for m in MECH_ALL), default=0)
-			out += [1.0, float(by_script), float(by_class), float(broad), float(ans.get("overall", 0)),
+			vals = [1.0, float(by_script), float(by_class), float(broad), float(ans.get("overall", 0)),
 				float(sum(1 for v in mech.values() if v >= 2))]
 		else:
-			out += [0.0, -1.0, -1.0, -1.0, -1.0, -1.0]
-		out += list(area.values())
-		out += [float(cls == c) for c in sorted(self.classes)]
+			vals = [0.0, -1.0, -1.0, -1.0, -1.0, -1.0]
+		out += [("llm", v) for v in vals]
+		lk = self.links.for_patch(inp).get(script) if self.links and script and self.families & {"links_fail", "links_bm25"} else None
+		out += [("links_fail", lk["fail"] if lk else 0.0), ("links_bm25", lk["bm25"] if lk else 0.0)]
+		cl = self.close.for_patch(inp.get("key")) if self.close and "embed" in self.families else None
+		if cl and script in cl:
+			ranks = sorted(cl, key=lambda k: -cl[k][1])
+			vals = [1.0, cl[script][0], cl[script][1], ranks.index(script) / len(ranks)]
+		else:
+			vals = [0.0, 0.0, 0.0, 1.0]
+		out += [("embed", v) for v in vals]
+		out += [("config", float(cls == c)) for c in sorted(self.classes)]
 		return out
 
 	def _principles(self, inp: dict):
@@ -261,7 +293,7 @@ class Model:
 		return dict(zip(names, self.clf.predict_proba(X)[:, 1]))
 
 	def select(self, inp: dict, rate: float, scores: dict[str, float] | None = None,
-		   redundancy: str = "max") -> str:
+		   redundancy: str = "none", seed: bool = False) -> str:
 		"""Test sets added by predicted catches per session hour while worth `rate`;
 		a candidate counts only for what the chosen sets would not also catch."""
 		scores = scores if scores is not None else self.scores(inp)
@@ -270,6 +302,18 @@ class Model:
 		running: set[str] = set()
 		left = dict(scores)
 		chosen: list[str] = []
+		if seed:
+			# the principles choose first; the model adds what they leave out
+			sp, sg, _ = self.principles.select(inp)
+			for cls, scripts in sp.items():
+				picks[cls] |= scripts
+				if scripts:
+					running.add(cls)
+			groups |= sg
+			for n, cand in self.cands.items():
+				if (cand.get("group") in sg) or (cand.get("script") in sp.get(cand["cls"], ())):
+					left.pop(n, None)
+					chosen.append(n)
 		while left:
 			best, best_v = None, -1.0
 			for n, p in left.items():
