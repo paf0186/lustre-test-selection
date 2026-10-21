@@ -76,6 +76,34 @@ Hypotheses and bars, as E1's, plus:
    zero when removed) in both cross-validation and lockbox, or unclear in
    both, in which case they leave the default stack.
 
+Result (2026-10-21; 4,142 cases from 2024-10-20, 3,134 bugs; cross-validation on
+2,941 cases in two folds, lockbox on the 1,201 test-month cases):
+
+1. Noise control: passed in cross-validation (-0.1, -1.1 to +0.9) but FAILED in
+   the lockbox (+1.0, +0.1 to +2.0): pure noise "helped".  The paired intervals
+   understate the real variance by about a point, so no lockbox difference
+   under about 2 points is evidence of anything.
+2. The change's own earlier CI results: keep, and the strongest part.
+   Removing them costs 5.6 (-7.1 to -4.0) in cross-validation, 3.5 (-5.2 to
+   -1.9) in the lockbox.  Directory history: -1.3 (-2.6 to -0.1) in
+   cross-validation, +0.3 in the lockbox: not confirmed.
+3. Size and risk: rejected.  Spending by risk at alpha 1 hurts in both (-2.9
+   and -2.9); alpha 0.5 and the size gate do not help.
+4. The LLM: unclear in both (-0.9, then -0.5): leaves the default stack.
+   Embeddings, BM25 links and the principles as features: unclear in
+   cross-validation and, in the lockbox, removing them "helps" by 1.1 to 2.1
+   points, inside the noise control's error: they leave the default stack.
+5. LambdaMART holds: boosted trees +1.1 (-1.1 to +3.2) and -1.7 in the lockbox;
+   logistic hurts (-3.2) in cross-validation.
+6. More data helps the model beat blind: FAILED.  The reference's gain over the
+   patch-blind line is +1.2 (-1.6 to +4.3) in cross-validation and -0.2 (-4.1
+   to +3.8) in the lockbox.
+7. Settled: directory history, the LLM and the principles all leave the
+   default stack (unclear in both, or confirmed only in one).
+
+Also: the hybrid is +0.7 (-1.5 to +3.1) and -1.7 in the lockbox, rejected;
+the overlap discount hurts in both (-2.1, -4.9).
+
 ## E3. Learning curve (registered 2026-10-21)
 
 Train the reference on the training months of the last 6, 12, 18 and 24
@@ -84,4 +112,8 @@ months only; score each on the same evaluation set (the test months from
 more than its interval's half width, extend the data back to 2023 (and then
 consider 2019); if it is flat, do not, and weight recent months instead.
 
-Result: (pending)
+Result (2026-10-21; evaluation: 2026-03-20 on, test months): gain over blind
+-3.5 (-8.9 to +1.6) on 6 months, -0.1 (-5.2 to +5.0) on 12, +3.1 (-1.8 to
++8.1) on 18, +2.0 (-3.3 to +7.8) on 24.  Rising to 18 months, flat from 18 to
+24 (a change of -1.1 against a half width near 5): do not extend the data
+back for this model; weight recent months instead.
