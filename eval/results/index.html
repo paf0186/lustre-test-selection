@@ -86,7 +86,7 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <header style="display:grid;gap:8px">
 <div class="eyebrow">Lustre CI: trivial plus predicted Test-Parameters</div>
 <h1>How much testing does a patch need?</h1>
-<p class='lede'>Backtest on <b>254</b> faulty patchsets the predictors never saw (every 3rd month of the period held out; 49 of them after 2026-08-01), holding <b>352</b> bugs. Today every patch runs the whole review matrix, about <b>130</b> session hours per build. "Share of today's bugs" is what each selection would catch of what today's matrix catches, with every change counting once.</p><ul class='targets'><li><b>90% at 25%:</b> not met yet. Best within the cost: + principles, 78% of today's bugs at 22%.</li><li><b>90% at 10%:</b> not met yet. Best within the cost: trivial only, 57% of today's bugs at 9%.</li><li><b>95% at 10%:</b> not met yet. Best within the cost: trivial only, 57% of today's bugs at 9%.</li></ul>
+<p class='lede'>Backtest on <b>254</b> faulty patchsets the predictors never saw (every 3rd month of the period held out; 49 of them after 2026-08-01), holding <b>328</b> bugs. Today every patch runs the whole review matrix, about <b>130</b> session hours per build. "Share of today's bugs" is what each selection would catch of what today's matrix catches, with every change counting once.</p><ul class='targets'><li><b>90% at 25%:</b> not met yet. Best within the cost: + principles, 78% of today's bugs at 22%.</li><li><b>90% at 10%:</b> not met yet. Best within the cost: trivial only, 57% of today's bugs at 9%.</li><li><b>95% at 10%:</b> not met yet. Best within the cost: trivial only, 57% of today's bugs at 9%.</li></ul>
 </header>
 <section><h2>Bugs caught against test cost</h2>
 <p class="muted">Cost up to 60% and bugs from 40% shown; today's matrix is 100% at 100%.</p>
@@ -287,78 +287,86 @@ ones, and after the LLM's training data.</p>
 <polyline data-series="modelllm" class="modelllm" points="175.0,176.6 175.0,176.6 175.0,176.6 175.0,176.6 175.0,176.6 175.4,177.2 177.2,180.4 179.5,184.3 187.1,207.6 195.9,172.3 202.9,148.4 216.9,164.1 240.0,183.1 290.1,177.3 352.6,187.3 534.2,219.0"/>
 <polyline data-series="onblind" class="onblind" points="261.6,197.9 264.1,176.7 271.0,176.7 275.0,176.7 284.4,183.1 290.8,187.5 314.0,199.1 361.0,176.7 384.1,184.6 433.6,178.0"/>
 </svg></section>
-<section><h2>What each part is worth</h2><p class='lede'>Each part of the stack switched off from the full model ("without"), or added alone to a base of base rates and edited scripts ("base +"). Gain is the mean, over 15 to 40% cost, of the share of today's bugs caught minus the patch-blind line's, in points; the difference is paired against the reference and bootstrapped over changes. 3 training seeds each. A part is worth keeping only if removing it costs points with the interval clear of zero.</p>
-<h2>Signals</h2><div class='scroll'><table><thead><tr><th>Variant</th><th>Gain over blind</th><th>Against the reference</th><th>Verdict</th><th>at 20%</th><th>at 25%</th><th>Recent: gain</th></tr></thead><tbody>
-<tr class=''><td>all families</td><td class='n'>+4.2 <span class='ci'>(-0.9 to +9.3)</span></td><td class='n'>n/a</td><td></td><td class='n'>+4.6</td><td class='n'>+2.4</td><td class='n'>-0.1</td></tr>
-<tr class='remove'><td>without base</td><td class='n'>+5.4 <span class='ci'>(+0.7 to +10.8)</span></td><td class='n'>+1.5 <span class='ci'>(+0.7 to +2.7)</span></td><td>remove (it hurts)</td><td class='n'>+7.0</td><td class='n'>+3.6</td><td class='n'>+0.1</td></tr>
-<tr class='unclear'><td>without change_history</td><td class='n'>+4.0 <span class='ci'>(-1.3 to +9.5)</span></td><td class='n'>-0.1 <span class='ci'>(-1.1 to +1.2)</span></td><td>unclear</td><td class='n'>+5.0</td><td class='n'>+2.1</td><td class='n'>+0.2</td></tr>
-<tr class='unclear'><td>without config</td><td class='n'>+4.2 <span class='ci'>(-0.7 to +9.6)</span></td><td class='n'>+0.2 <span class='ci'>(-0.6 to +1.1)</span></td><td>unclear</td><td class='n'>+4.9</td><td class='n'>+2.3</td><td class='n'>-0.2</td></tr>
-<tr class='unclear'><td>without edited</td><td class='n'>+2.8 <span class='ci'>(-1.9 to +7.9)</span></td><td class='n'>-1.0 <span class='ci'>(-2.3 to +0.1)</span></td><td>unclear</td><td class='n'>+4.1</td><td class='n'>+1.5</td><td class='n'>-0.7</td></tr>
-<tr class='unclear'><td>without embed</td><td class='n'>+4.3 <span class='ci'>(-0.8 to +9.5)</span></td><td class='n'>+0.3 <span class='ci'>(-0.4 to +1.1)</span></td><td>unclear</td><td class='n'>+4.8</td><td class='n'>+2.6</td><td class='n'>-0.6</td></tr>
-<tr class='keep'><td>without history</td><td class='n'>+1.0 <span class='ci'>(-3.8 to +6.2)</span></td><td class='n'>-3.0 <span class='ci'>(-5.0 to -1.3)</span></td><td>keep</td><td class='n'>+2.2</td><td class='n'>+0.0</td><td class='n'>-4.3</td></tr>
-<tr class='unclear'><td>without links_bm25</td><td class='n'>+4.2 <span class='ci'>(-1.0 to +9.3)</span></td><td class='n'>-0.1 <span class='ci'>(-0.9 to +0.6)</span></td><td>unclear</td><td class='n'>+4.7</td><td class='n'>+2.4</td><td class='n'>-0.5</td></tr>
-<tr class='unclear'><td>without links_fail</td><td class='n'>+4.3 <span class='ci'>(-1.0 to +9.4)</span></td><td class='n'>-0.0 <span class='ci'>(-1.0 to +0.6)</span></td><td>unclear</td><td class='n'>+4.7</td><td class='n'>+2.6</td><td class='n'>-0.1</td></tr>
-<tr class='unclear'><td>without llm</td><td class='n'>+3.1 <span class='ci'>(-2.2 to +8.2)</span></td><td class='n'>-0.8 <span class='ci'>(-3.2 to +1.8)</span></td><td>unclear</td><td class='n'>+4.9</td><td class='n'>+1.9</td><td class='n'>-1.7</td></tr>
-<tr class='unclear'><td>without principles</td><td class='n'>+4.2 <span class='ci'>(-1.0 to +9.4)</span></td><td class='n'>-0.0 <span class='ci'>(-1.1 to +1.1)</span></td><td>unclear</td><td class='n'>+5.3</td><td class='n'>+2.6</td><td class='n'>-0.5</td></tr>
-<tr class='unclear'><td>without shape</td><td class='n'>+4.4 <span class='ci'>(-0.6 to +9.9)</span></td><td class='n'>+0.4 <span class='ci'>(-1.0 to +2.0)</span></td><td>unclear</td><td class='n'>+5.4</td><td class='n'>+3.4</td><td class='n'>-1.3</td></tr>
-<tr class='unclear'><td>without words</td><td class='n'>+3.7 <span class='ci'>(-1.8 to +8.8)</span></td><td class='n'>-0.7 <span class='ci'>(-2.1 to +0.3)</span></td><td>unclear</td><td class='n'>+3.8</td><td class='n'>+1.9</td><td class='n'>-1.6</td></tr>
-<tr class='hurts'><td>base only (base rates, edited)</td><td class='n'>-8.8 <span class='ci'>(-15.2 to -3.1)</span></td><td class='n'>-12.9 <span class='ci'>(-18.1 to -8.4)</span></td><td>hurts</td><td class='n'>-6.4</td><td class='n'>-10.5</td><td class='n'>-13.6</td></tr>
-<tr class='helps'><td>base + change_history</td><td class='n'>-7.5 <span class='ci'>(-13.5 to -1.9)</span></td><td class='n'>+1.4 <span class='ci'>(+0.4 to +2.6)</span></td><td>helps</td><td class='n'>-5.4</td><td class='n'>-9.1</td><td class='n'>-13.5</td></tr>
-<tr class='unclear'><td>base + config</td><td class='n'>-9.1 <span class='ci'>(-15.4 to -3.4)</span></td><td class='n'>-0.2 <span class='ci'>(-0.7 to +0.1)</span></td><td>unclear</td><td class='n'>-6.6</td><td class='n'>-10.8</td><td class='n'>-13.4</td></tr>
-<tr class='helps'><td>base + embed</td><td class='n'>-6.9 <span class='ci'>(-12.9 to -1.5)</span></td><td class='n'>+2.0 <span class='ci'>(+0.9 to +3.3)</span></td><td>helps</td><td class='n'>-6.0</td><td class='n'>-9.2</td><td class='n'>-11.5</td></tr>
-<tr class='helps'><td>base + history</td><td class='n'>+4.1 <span class='ci'>(-1.0 to +9.0)</span></td><td class='n'>+13.0 <span class='ci'>(+8.7 to +17.7)</span></td><td>helps</td><td class='n'>+4.8</td><td class='n'>+3.0</td><td class='n'>-1.5</td></tr>
-<tr class='helps'><td>base + links_bm25</td><td class='n'>-6.2 <span class='ci'>(-12.3 to -0.9)</span></td><td class='n'>+2.7 <span class='ci'>(+1.2 to +4.4)</span></td><td>helps</td><td class='n'>-5.8</td><td class='n'>-8.9</td><td class='n'>-11.3</td></tr>
-<tr class='unclear'><td>base + links_fail</td><td class='n'>-8.9 <span class='ci'>(-15.2 to -3.2)</span></td><td class='n'>-0.1 <span class='ci'>(-0.3 to +0.2)</span></td><td>unclear</td><td class='n'>-6.5</td><td class='n'>-10.5</td><td class='n'>-13.5</td></tr>
-<tr class='helps'><td>base + llm</td><td class='n'>-5.8 <span class='ci'>(-11.9 to +0.1)</span></td><td class='n'>+3.1 <span class='ci'>(+1.1 to +5.7)</span></td><td>helps</td><td class='n'>-4.7</td><td class='n'>-7.4</td><td class='n'>-10.0</td></tr>
-<tr class='helps'><td>base + principles</td><td class='n'>-6.9 <span class='ci'>(-12.8 to -1.7)</span></td><td class='n'>+2.0 <span class='ci'>(+0.7 to +3.6)</span></td><td>helps</td><td class='n'>-6.4</td><td class='n'>-9.1</td><td class='n'>-12.3</td></tr>
-<tr class='helps'><td>base + shape</td><td class='n'>-5.1 <span class='ci'>(-10.7 to +0.2)</span></td><td class='n'>+3.8 <span class='ci'>(+1.6 to +6.5)</span></td><td>helps</td><td class='n'>-4.0</td><td class='n'>-7.1</td><td class='n'>-9.4</td></tr>
-<tr class='unclear'><td>base + words</td><td class='n'>-8.1 <span class='ci'>(-14.3 to -2.7)</span></td><td class='n'>+0.8 <span class='ci'>(-0.2 to +2.0)</span></td><td>unclear</td><td class='n'>-6.4</td><td class='n'>-10.0</td><td class='n'>-12.2</td></tr>
+<section><h2>What each part is worth</h2><p class='lede'>Each part switched off from the reference (lgbm-rank, "without"), or added alone to a base of base rates and edited scripts ("base +"). Gain is the mean, over 15 to 40% cost, of the share of today's bugs caught minus the patch-blind line's, in points; the difference is paired against the reference and bootstrapped over changes; 3 training seeds each. Decided by cross-validation on the training months; the lockbox column is the held-out test months, for confirmation only. A family of pure noise is the negative control: it must come out unclear.</p>
+<h2>Signals</h2><div class='scroll'><table><thead><tr><th>Variant</th><th>Gain over blind</th><th>Against the reference</th><th>Verdict</th><th>at 20%</th><th>at 25%</th><th>Lockbox: against the reference</th></tr></thead><tbody>
+<tr class=''><td>reference (lgbm-rank)</td><td class='n'>+2.1 <span class='ci'>(-1.9 to +6.1)</span></td><td class='n'>n/a</td><td></td><td class='n'>+3.1</td><td class='n'>+1.3</td><td class='n'>n/a</td></tr>
+<tr class='keep'><td>without change_history</td><td class='n'>-0.5 <span class='ci'>(-4.8 to +3.8)</span></td><td class='n'>-2.6 <span class='ci'>(-4.8 to -0.5)</span></td><td>keep</td><td class='n'>-1.2</td><td class='n'>-0.8</td><td class='n'>-2.9 <span class='ci'>(-5.7 to -0.5)</span></td></tr>
+<tr class='unclear'><td>without config</td><td class='n'>+2.8 <span class='ci'>(-1.6 to +7.1)</span></td><td class='n'>+0.7 <span class='ci'>(-1.0 to +2.3)</span></td><td>unclear</td><td class='n'>+2.4</td><td class='n'>+2.8</td><td class='n'>-0.8 <span class='ci'>(-3.3 to +1.4)</span></td></tr>
+<tr class='unclear'><td>without edited</td><td class='n'>+2.6 <span class='ci'>(-1.9 to +7.3)</span></td><td class='n'>+0.5 <span class='ci'>(-1.4 to +2.4)</span></td><td>unclear</td><td class='n'>+2.8</td><td class='n'>+2.1</td><td class='n'>+2.6 <span class='ci'>(+0.7 to +4.7)</span></td></tr>
+<tr class='unclear'><td>without embed</td><td class='n'>+3.0 <span class='ci'>(-1.1 to +7.4)</span></td><td class='n'>+1.0 <span class='ci'>(-0.9 to +2.8)</span></td><td>unclear</td><td class='n'>+4.2</td><td class='n'>+3.0</td><td class='n'>-0.1 <span class='ci'>(-2.8 to +2.1)</span></td></tr>
+<tr class='unclear'><td>without history</td><td class='n'>+1.7 <span class='ci'>(-2.8 to +6.3)</span></td><td class='n'>-0.5 <span class='ci'>(-3.4 to +2.4)</span></td><td>unclear</td><td class='n'>+2.0</td><td class='n'>+1.4</td><td class='n'>-0.5 <span class='ci'>(-4.2 to +2.9)</span></td></tr>
+<tr class='unclear'><td>without links_bm25</td><td class='n'>+0.7 <span class='ci'>(-3.3 to +4.9)</span></td><td class='n'>-1.4 <span class='ci'>(-3.4 to +0.7)</span></td><td>unclear</td><td class='n'>+1.8</td><td class='n'>+0.6</td><td class='n'>+0.4 <span class='ci'>(-1.8 to +2.4)</span></td></tr>
+<tr class='unclear'><td>without links_fail</td><td class='n'>+0.9 <span class='ci'>(-3.3 to +5.0)</span></td><td class='n'>-1.2 <span class='ci'>(-2.5 to +0.3)</span></td><td>unclear</td><td class='n'>+0.8</td><td class='n'>+0.7</td><td class='n'>-1.4 <span class='ci'>(-3.3 to +0.4)</span></td></tr>
+<tr class='keep'><td>without llm</td><td class='n'>+0.6 <span class='ci'>(-3.9 to +4.8)</span></td><td class='n'>-1.5 <span class='ci'>(-3.0 to -0.1)</span></td><td>keep</td><td class='n'>-0.2</td><td class='n'>+0.4</td><td class='n'>+0.3 <span class='ci'>(-1.4 to +2.1)</span></td></tr>
+<tr class='unclear'><td>without principles</td><td class='n'>+3.4 <span class='ci'>(-0.9 to +7.9)</span></td><td class='n'>+1.3 <span class='ci'>(-0.2 to +2.9)</span></td><td>unclear</td><td class='n'>+4.9</td><td class='n'>+3.6</td><td class='n'>+1.4 <span class='ci'>(-0.7 to +3.3)</span></td></tr>
+<tr class='unclear'><td>without shape</td><td class='n'>+1.9 <span class='ci'>(-2.4 to +6.1)</span></td><td class='n'>-0.2 <span class='ci'>(-1.5 to +1.1)</span></td><td>unclear</td><td class='n'>+1.9</td><td class='n'>+0.8</td><td class='n'>-0.1 <span class='ci'>(-2.8 to +2.9)</span></td></tr>
+<tr class='unclear'><td>without words</td><td class='n'>+1.6 <span class='ci'>(-2.5 to +5.8)</span></td><td class='n'>-0.5 <span class='ci'>(-1.8 to +0.8)</span></td><td>unclear</td><td class='n'>+1.6</td><td class='n'>+1.2</td><td class='n'>-1.3 <span class='ci'>(-3.1 to +0.3)</span></td></tr>
+<tr class='unclear'><td>with noise (negative control)</td><td class='n'>+2.1 <span class='ci'>(-1.8 to +6.6)</span></td><td class='n'>+0.2 <span class='ci'>(-1.5 to +2.0)</span></td><td>unclear</td><td class='n'>+3.4</td><td class='n'>+2.3</td><td class='n'>+1.6 <span class='ci'>(-1.1 to +4.5)</span></td></tr>
+<tr class='hurts'><td>base only (base rates, edited)</td><td class='n'>-11.6 <span class='ci'>(-16.2 to -6.9)</span></td><td class='n'>-13.7 <span class='ci'>(-17.9 to -10.0)</span></td><td>hurts</td><td class='n'>-9.3</td><td class='n'>-13.1</td><td class='n'>-13.3 <span class='ci'>(-18.6 to -8.1)</span></td></tr>
+<tr class='helps'><td>base + change_history</td><td class='n'>-8.7 <span class='ci'>(-13.5 to -4.1)</span></td><td class='n'>+2.9 <span class='ci'>(+1.5 to +4.4)</span></td><td>helps</td><td class='n'>-6.4</td><td class='n'>-9.1</td><td class='n'>+3.3 <span class='ci'>(+0.5 to +6.5)</span></td></tr>
+<tr class='unclear'><td>base + config</td><td class='n'>-11.4 <span class='ci'>(-15.9 to -6.7)</span></td><td class='n'>+0.3 <span class='ci'>(-0.2 to +0.7)</span></td><td>unclear</td><td class='n'>-9.4</td><td class='n'>-12.6</td><td class='n'>+0.6 <span class='ci'>(-0.6 to +2.2)</span></td></tr>
+<tr class='helps'><td>base + embed</td><td class='n'>-6.8 <span class='ci'>(-10.7 to -2.9)</span></td><td class='n'>+4.9 <span class='ci'>(+2.8 to +7.4)</span></td><td>helps</td><td class='n'>-5.9</td><td class='n'>-7.4</td><td class='n'>+3.3 <span class='ci'>(+0.6 to +6.5)</span></td></tr>
+<tr class='helps'><td>base + history</td><td class='n'>-3.5 <span class='ci'>(-7.7 to +0.5)</span></td><td class='n'>+8.1 <span class='ci'>(+5.4 to +10.8)</span></td><td>helps</td><td class='n'>-2.4</td><td class='n'>-4.4</td><td class='n'>+7.7 <span class='ci'>(+3.3 to +12.8)</span></td></tr>
+<tr class='helps'><td>base + links_bm25</td><td class='n'>-8.3 <span class='ci'>(-12.8 to -3.8)</span></td><td class='n'>+3.3 <span class='ci'>(+1.6 to +5.4)</span></td><td>helps</td><td class='n'>-8.0</td><td class='n'>-9.9</td><td class='n'>+3.7 <span class='ci'>(+1.1 to +6.6)</span></td></tr>
+<tr class='helps'><td>base + links_fail</td><td class='n'>-10.9 <span class='ci'>(-15.5 to -6.3)</span></td><td class='n'>+0.7 <span class='ci'>(+0.2 to +1.4)</span></td><td>helps</td><td class='n'>-8.9</td><td class='n'>-11.9</td><td class='n'>+1.5 <span class='ci'>(+0.1 to +3.6)</span></td></tr>
+<tr class='helps'><td>base + llm</td><td class='n'>-8.5 <span class='ci'>(-12.5 to -4.1)</span></td><td class='n'>+3.2 <span class='ci'>(+1.4 to +5.2)</span></td><td>helps</td><td class='n'>-8.3</td><td class='n'>-9.1</td><td class='n'>+2.0 <span class='ci'>(-1.3 to +5.9)</span></td></tr>
+<tr class='unclear'><td>base + noise</td><td class='n'>-10.8 <span class='ci'>(-15.4 to -6.1)</span></td><td class='n'>+0.9 <span class='ci'>(-0.0 to +1.9)</span></td><td>unclear</td><td class='n'>-9.4</td><td class='n'>-12.5</td><td class='n'>-0.9 <span class='ci'>(-3.3 to +1.0)</span></td></tr>
+<tr class='unclear'><td>base + principles</td><td class='n'>-11.7 <span class='ci'>(-16.1 to -6.7)</span></td><td class='n'>-0.0 <span class='ci'>(-0.8 to +0.8)</span></td><td>unclear</td><td class='n'>-9.7</td><td class='n'>-12.8</td><td class='n'>+1.2 <span class='ci'>(-0.4 to +2.9)</span></td></tr>
+<tr class='helps'><td>base + shape</td><td class='n'>-8.4 <span class='ci'>(-12.5 to -3.8)</span></td><td class='n'>+3.3 <span class='ci'>(+1.7 to +5.3)</span></td><td>helps</td><td class='n'>-7.7</td><td class='n'>-10.0</td><td class='n'>+1.9 <span class='ci'>(-0.7 to +4.8)</span></td></tr>
+<tr class='helps'><td>base + words</td><td class='n'>-10.9 <span class='ci'>(-15.5 to -6.2)</span></td><td class='n'>+0.7 <span class='ci'>(+0.3 to +1.2)</span></td><td>helps</td><td class='n'>-9.0</td><td class='n'>-11.8</td><td class='n'>+1.3 <span class='ci'>(-0.3 to +3.2)</span></td></tr>
 </tbody></table></div>
-<h2>Selector</h2><div class='scroll'><table><thead><tr><th>Variant</th><th>Gain over blind</th><th>Against the reference</th><th>Verdict</th><th>at 20%</th><th>at 25%</th><th>Recent: gain</th></tr></thead><tbody>
-<tr class=''><td>model alone</td><td class='n'>+4.2 <span class='ci'>(-0.9 to +9.3)</span></td><td class='n'>n/a</td><td></td><td class='n'>+4.6</td><td class='n'>+2.4</td><td class='n'>-0.1</td></tr>
-<tr class='unclear'><td>principles first (hybrid)</td><td class='n'>+2.6 <span class='ci'>(-1.8 to +7.1)</span></td><td class='n'>-1.3 <span class='ci'>(-4.5 to +2.3)</span></td><td>unclear</td><td class='n'>n/a</td><td class='n'>+3.0</td><td class='n'>-1.7</td></tr>
-<tr class='unclear'><td>overlap discount</td><td class='n'>+2.4 <span class='ci'>(-2.1 to +7.4)</span></td><td class='n'>-1.3 <span class='ci'>(-3.8 to +1.0)</span></td><td>unclear</td><td class='n'>+1.9</td><td class='n'>-0.4</td><td class='n'>-2.7</td></tr>
+<h2>Spend by risk</h2><div class='scroll'><table><thead><tr><th>Variant</th><th>Gain over blind</th><th>Against the reference</th><th>Verdict</th><th>at 20%</th><th>at 25%</th><th>Lockbox: against the reference</th></tr></thead><tbody>
+<tr class=''><td>same threshold for every patch</td><td class='n'>+2.1 <span class='ci'>(-1.9 to +6.1)</span></td><td class='n'>n/a</td><td></td><td class='n'>+3.1</td><td class='n'>+1.3</td><td class='n'>n/a</td></tr>
+<tr class='unclear'><td>small patches (&lt;= 25 lines) get nothing extra</td><td class='n'>+2.7 <span class='ci'>(-1.4 to +6.9)</span></td><td class='n'>+0.5 <span class='ci'>(-0.9 to +2.0)</span></td><td>unclear</td><td class='n'>+2.8</td><td class='n'>+2.0</td><td class='n'>+0.7 <span class='ci'>(-1.5 to +2.5)</span></td></tr>
+<tr class='unclear'><td>spend by risk (alpha 0.5)</td><td class='n'>+2.8 <span class='ci'>(-1.8 to +7.1)</span></td><td class='n'>+0.5 <span class='ci'>(-0.9 to +1.9)</span></td><td>unclear</td><td class='n'>+2.7</td><td class='n'>+2.5</td><td class='n'>-0.4 <span class='ci'>(-1.9 to +0.9)</span></td></tr>
+<tr class='unclear'><td>spend by risk (alpha 1)</td><td class='n'>+1.6 <span class='ci'>(-3.3 to +6.4)</span></td><td class='n'>-0.6 <span class='ci'>(-2.8 to +1.4)</span></td><td>unclear</td><td class='n'>+2.0</td><td class='n'>+0.9</td><td class='n'>-2.6 <span class='ci'>(-5.2 to -0.2)</span></td></tr>
+<tr class='unclear'><td>spend by risk (alpha 1) and the size gate</td><td class='n'>+1.5 <span class='ci'>(-3.0 to +6.5)</span></td><td class='n'>-0.5 <span class='ci'>(-3.1 to +1.9)</span></td><td>unclear</td><td class='n'>+2.0</td><td class='n'>+0.7</td><td class='n'>-1.9 <span class='ci'>(-4.9 to +0.9)</span></td></tr>
 </tbody></table></div>
-<h2>Model</h2><div class='scroll'><table><thead><tr><th>Variant</th><th>Gain over blind</th><th>Against the reference</th><th>Verdict</th><th>at 20%</th><th>at 25%</th><th>Recent: gain</th></tr></thead><tbody>
-<tr class=''><td>boosted trees</td><td class='n'>+4.2 <span class='ci'>(-0.9 to +9.3)</span></td><td class='n'>n/a</td><td></td><td class='n'>+4.6</td><td class='n'>+2.4</td><td class='n'>-0.1</td></tr>
-<tr class='unclear'><td>logistic</td><td class='n'>+5.5 <span class='ci'>(+0.3 to +11.4)</span></td><td class='n'>+1.5 <span class='ci'>(-1.3 to +4.1)</span></td><td>unclear</td><td class='n'>+5.1</td><td class='n'>+4.1</td><td class='n'>+0.4</td></tr>
-<tr class='unclear'><td>LambdaMART ranker</td><td class='n'>+6.5 <span class='ci'>(+2.0 to +11.2)</span></td><td class='n'>+2.5 <span class='ci'>(-0.5 to +6.0)</span></td><td>unclear</td><td class='n'>+6.5</td><td class='n'>+6.5</td><td class='n'>+2.7</td></tr>
+<h2>Selector</h2><div class='scroll'><table><thead><tr><th>Variant</th><th>Gain over blind</th><th>Against the reference</th><th>Verdict</th><th>at 20%</th><th>at 25%</th><th>Lockbox: against the reference</th></tr></thead><tbody>
+<tr class=''><td>model alone</td><td class='n'>+2.1 <span class='ci'>(-1.9 to +6.1)</span></td><td class='n'>n/a</td><td></td><td class='n'>+3.1</td><td class='n'>+1.3</td><td class='n'>n/a</td></tr>
+<tr class='unclear'><td>principles first (hybrid)</td><td class='n'>+5.0 <span class='ci'>(+0.8 to +9.7)</span></td><td class='n'>+3.0 <span class='ci'>(-0.4 to +6.6)</span></td><td>unclear</td><td class='n'>n/a</td><td class='n'>+6.1</td><td class='n'>-2.9 <span class='ci'>(-6.3 to +0.8)</span></td></tr>
+<tr class='unclear'><td>overlap discount</td><td class='n'>+1.6 <span class='ci'>(-2.7 to +5.6)</span></td><td class='n'>-0.6 <span class='ci'>(-2.2 to +1.0)</span></td><td>unclear</td><td class='n'>+1.3</td><td class='n'>+0.5</td><td class='n'>-2.2 <span class='ci'>(-5.4 to +0.6)</span></td></tr>
 </tbody></table></div>
-<h2>Each principle, removed</h2><p class='muted'>Bugs the principles alone would lose, and cost they would save, without each rule; test set.</p><div class='scroll'><table><thead><tr><th>Rule</th><th>Bugs lost</th><th>Cost saved</th></tr></thead><tbody>
-<tr><td>quota</td><td class='n'>+2.4 <span class='ci'>(+0.5 to +5.0)</span></td><td class='n'>+0.2</td></tr>
-<tr><td>security</td><td class='n'>+1.9 <span class='ci'>(+0.0 to +4.9)</span></td><td class='n'>+0.3</td></tr>
-<tr><td>mds</td><td class='n'>+1.2 <span class='ci'>(+0.0 to +3.4)</span></td><td class='n'>+0.8</td></tr>
-<tr><td>lnet</td><td class='n'>+0.9 <span class='ci'>(+0.0 to +3.0)</span></td><td class='n'>+0.3</td></tr>
-<tr><td>dom</td><td class='n'>+0.5 <span class='ci'>(+0.0 to +1.5)</span></td><td class='n'>+0.0</td></tr>
-<tr><td>obdclass</td><td class='n'>+0.3 <span class='ci'>(+0.0 to +0.9)</span></td><td class='n'>+1.8</td></tr>
-<tr><td>kernel-compat</td><td class='n'>+0.3 <span class='ci'>(+0.0 to +0.8)</span></td><td class='n'>+1.0</td></tr>
-<tr><td>client-vfs</td><td class='n'>+0.2 <span class='ci'>(+0.0 to +0.5)</span></td><td class='n'>+0.3</td></tr>
-<tr><td>locking</td><td class='n'>+0.1 <span class='ci'>(+0.0 to +0.4)</span></td><td class='n'>+0.1</td></tr>
-<tr><td>client-rpc</td><td class='n'>+0.1 <span class='ci'>(+0.0 to +0.3)</span></td><td class='n'>+0.2</td></tr>
-<tr><td>layouts</td><td class='n'>+0.1 <span class='ci'>(+0.0 to +0.3)</span></td><td class='n'>+0.2</td></tr>
-<tr><td>zfs</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.7</td></tr>
+<h2>Model</h2><div class='scroll'><table><thead><tr><th>Variant</th><th>Gain over blind</th><th>Against the reference</th><th>Verdict</th><th>at 20%</th><th>at 25%</th><th>Lockbox: against the reference</th></tr></thead><tbody>
+<tr class=''><td>reference (lgbm-rank)</td><td class='n'>+2.1 <span class='ci'>(-1.9 to +6.1)</span></td><td class='n'>n/a</td><td></td><td class='n'>+3.1</td><td class='n'>+1.3</td><td class='n'>n/a</td></tr>
+<tr class='unclear'><td>boosted trees</td><td class='n'>+1.7 <span class='ci'>(-2.6 to +6.0)</span></td><td class='n'>-0.5 <span class='ci'>(-4.0 to +3.1)</span></td><td>unclear</td><td class='n'>+1.3</td><td class='n'>+1.4</td><td class='n'>-1.8 <span class='ci'>(-5.6 to +2.0)</span></td></tr>
+<tr class='unclear'><td>logistic</td><td class='n'>+4.6 <span class='ci'>(-0.0 to +9.2)</span></td><td class='n'>+2.4 <span class='ci'>(-1.4 to +6.4)</span></td><td>unclear</td><td class='n'>+4.7</td><td class='n'>+3.3</td><td class='n'>-1.4 <span class='ci'>(-5.8 to +3.0)</span></td></tr>
+</tbody></table></div>
+<h2>Each principle, removed</h2><p class='muted'>Bugs the principles alone would lose, and cost they would save, without each rule. A rule no patch here exercised shows zero: unproven, not useless.</p><div class='scroll'><table><thead><tr><th>Rule</th><th>Bugs lost</th><th>Cost saved</th></tr></thead><tbody>
+<tr><td>mds</td><td class='n'>+2.0 <span class='ci'>(+0.5 to +3.9)</span></td><td class='n'>+1.1</td></tr>
+<tr><td>client-vfs</td><td class='n'>+1.0 <span class='ci'>(+0.0 to +2.6)</span></td><td class='n'>+0.2</td></tr>
+<tr><td>security</td><td class='n'>+1.0 <span class='ci'>(+0.1 to +2.2)</span></td><td class='n'>+0.6</td></tr>
+<tr><td>lnet</td><td class='n'>+1.0 <span class='ci'>(+0.0 to +2.6)</span></td><td class='n'>+0.2</td></tr>
+<tr><td>rpc-recovery</td><td class='n'>+0.9 <span class='ci'>(+0.1 to +1.9)</span></td><td class='n'>+0.7</td></tr>
+<tr><td>hsm</td><td class='n'>+0.7 <span class='ci'>(+0.0 to +2.2)</span></td><td class='n'>+0.0</td></tr>
+<tr><td>lfs-api</td><td class='n'>+0.7 <span class='ci'>(+0.0 to +2.1)</span></td><td class='n'>+0.4</td></tr>
+<tr><td>obdclass</td><td class='n'>+0.6 <span class='ci'>(+0.0 to +1.7)</span></td><td class='n'>+2.0</td></tr>
+<tr><td>zfs</td><td class='n'>+0.6 <span class='ci'>(+0.0 to +1.8)</span></td><td class='n'>+0.4</td></tr>
+<tr><td>ldiskfs</td><td class='n'>+0.3 <span class='ci'>(+0.0 to +1.0)</span></td><td class='n'>+0.8</td></tr>
+<tr><td>test-framework</td><td class='n'>+0.3 <span class='ci'>(+0.0 to +1.0)</span></td><td class='n'>+0.4</td></tr>
+<tr><td>client-crypto</td><td class='n'>+0.3 <span class='ci'>(+0.0 to +1.0)</span></td><td class='n'>+0.0</td></tr>
+<tr><td>nodemap</td><td class='n'>+0.2 <span class='ci'>(+0.0 to +0.6)</span></td><td class='n'>+0.1</td></tr>
+<tr><td>client-rpc</td><td class='n'>+0.1 <span class='ci'>(+0.0 to +0.3)</span></td><td class='n'>+0.1</td></tr>
+<tr><td>config-mount</td><td class='n'>+0.1 <span class='ci'>(+0.0 to +0.3)</span></td><td class='n'>+0.2</td></tr>
+<tr><td>kernel-compat</td><td class='n'>+0.1 <span class='ci'>(+0.0 to +0.4)</span></td><td class='n'>+0.8</td></tr>
+<tr><td>layouts</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.1)</span></td><td class='n'>+0.1</td></tr>
+<tr><td>pools</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
 <tr><td>docs-only</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
 <tr><td>tests-only</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
 <tr><td>client-pcc</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
-<tr><td>client-crypto</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
 <tr><td>compression</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
 <tr><td>erasure-coding</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
-<tr><td>pools</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
-<tr><td>hsm</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
+<tr><td>dom</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
 <tr><td>changelog</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
 <tr><td>lfsck</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
+<tr><td>quota</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.2</td></tr>
 <tr><td>oss</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.2</td></tr>
-<tr><td>ldiskfs</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+1.6</td></tr>
-<tr><td>rpc-recovery</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.3</td></tr>
-<tr><td>kerberos</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
-<tr><td>config-mount</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.3</td></tr>
+<tr><td>locking</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.1</td></tr>
+<tr><td>kerberos</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.1</td></tr>
 <tr><td>libcfs</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
-<tr><td>nodemap</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
 <tr><td>nrs</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
 <tr><td>direct-io</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
-<tr><td>lfs-api</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.2</td></tr>
 <tr><td>lsnapshot</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.0</td></tr>
-<tr><td>test-framework</td><td class='n'>+0.0 <span class='ci'>(+0.0 to +0.0)</span></td><td class='n'>+0.3</td></tr>
 </tbody></table></div></section>
 <section><h2>By kind of bug</h2><div class="smalls"><figure><figcaption>Easy bugs (in tests the patch edits)</figcaption><svg viewBox="0 0 320 240" role="img" aria-label="Easy bugs (in tests the patch edits)" class="chart">
 <line x1="46.0" y1="204.0" x2="46.0" y2="14.0" class="grid"/>

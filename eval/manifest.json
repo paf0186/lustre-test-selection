@@ -79,8 +79,8 @@
 "recent": true,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
-"hard_bugs": 3,
+"bugs": 2,
+"hard_bugs": 2,
 "has_diff": true
 },
 {
@@ -189,8 +189,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 5,
-"hard_bugs": 5,
+"bugs": 2,
+"hard_bugs": 2,
 "has_diff": true
 },
 {
@@ -559,7 +559,7 @@
 "recent": true,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -679,7 +679,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -899,8 +899,8 @@
 "recent": true,
 "faulty": true,
 "sampled": false,
-"bugs": 29,
-"hard_bugs": 29,
+"bugs": 28,
+"hard_bugs": 28,
 "has_diff": true
 },
 {
@@ -919,8 +919,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
-"hard_bugs": 3,
+"bugs": 2,
+"hard_bugs": 2,
 "has_diff": true
 },
 {
@@ -1379,8 +1379,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -1399,8 +1399,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -1419,8 +1419,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 16,
-"hard_bugs": 16,
+"bugs": 13,
+"hard_bugs": 13,
 "has_diff": true
 },
 {
@@ -1599,7 +1599,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -1609,7 +1609,7 @@
 "recent": false,
 "faulty": true,
 "sampled": true,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -1879,7 +1879,7 @@
 "recent": true,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -1919,7 +1919,7 @@
 "recent": true,
 "faulty": true,
 "sampled": true,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -2099,8 +2099,8 @@
 "recent": false,
 "faulty": true,
 "sampled": true,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -2989,7 +2989,7 @@
 "recent": false,
 "faulty": true,
 "sampled": true,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -3169,7 +3169,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -3529,7 +3529,7 @@
 "recent": true,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 2,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -3989,7 +3989,7 @@
 "recent": false,
 "faulty": true,
 "sampled": true,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -4119,7 +4119,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -4129,7 +4129,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 2,
 "hard_bugs": 1,
 "has_diff": true
 },
@@ -4139,7 +4139,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 2,
 "hard_bugs": 1,
 "has_diff": true
 },
@@ -4149,7 +4149,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -4159,7 +4159,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -5119,7 +5119,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -5569,8 +5569,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 6,
-"hard_bugs": 6,
+"bugs": 5,
+"hard_bugs": 5,
 "has_diff": true
 },
 {
@@ -5579,8 +5579,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 4,
-"hard_bugs": 4,
+"bugs": 3,
+"hard_bugs": 3,
 "has_diff": true
 },
 {
@@ -5589,8 +5589,8 @@
 "recent": false,
 "faulty": true,
 "sampled": true,
-"bugs": 5,
-"hard_bugs": 5,
+"bugs": 4,
+"hard_bugs": 4,
 "has_diff": true
 },
 {
@@ -5689,8 +5689,8 @@
 "recent": false,
 "faulty": true,
 "sampled": true,
-"bugs": 3,
-"hard_bugs": 3,
+"bugs": 2,
+"hard_bugs": 2,
 "has_diff": true
 },
 {
@@ -5699,8 +5699,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 4,
-"hard_bugs": 4,
+"bugs": 3,
+"hard_bugs": 3,
 "has_diff": true
 },
 {
@@ -5759,8 +5759,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
-"hard_bugs": 3,
+"bugs": 2,
+"hard_bugs": 2,
 "has_diff": true
 },
 {
@@ -5819,7 +5819,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -5949,7 +5949,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6009,8 +6009,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6019,8 +6019,8 @@
 "recent": false,
 "faulty": true,
 "sampled": true,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6029,8 +6029,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6039,8 +6039,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6049,8 +6049,8 @@
 "recent": false,
 "faulty": true,
 "sampled": true,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6059,8 +6059,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6069,8 +6069,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6089,8 +6089,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6129,8 +6129,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6139,8 +6139,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6149,8 +6149,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6159,8 +6159,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6169,8 +6169,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6179,8 +6179,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6189,8 +6189,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6199,8 +6199,8 @@
 "recent": false,
 "faulty": true,
 "sampled": true,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6209,8 +6209,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -6269,7 +6269,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 2,
 "hard_bugs": 1,
 "has_diff": true
 },
@@ -6289,8 +6289,8 @@
 "recent": false,
 "faulty": true,
 "sampled": true,
-"bugs": 4,
-"hard_bugs": 1,
+"bugs": 3,
+"hard_bugs": 2,
 "has_diff": true
 },
 {
@@ -6299,7 +6299,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6319,7 +6319,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6339,7 +6339,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6349,7 +6349,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 4,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6359,7 +6359,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 6,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6369,7 +6369,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6379,7 +6379,7 @@
 "recent": false,
 "faulty": true,
 "sampled": true,
-"bugs": 4,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6389,7 +6389,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6399,7 +6399,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6409,7 +6409,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6429,7 +6429,7 @@
 "recent": false,
 "faulty": true,
 "sampled": true,
-"bugs": 6,
+"bugs": 3,
 "hard_bugs": 1,
 "has_diff": true
 },
@@ -6439,7 +6439,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 8,
+"bugs": 6,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6469,7 +6469,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 4,
+"bugs": 3,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6659,7 +6659,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 2,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6669,7 +6669,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 4,
+"bugs": 5,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -6679,7 +6679,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 2,
 "hard_bugs": 1,
 "has_diff": true
 },
@@ -6689,7 +6689,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 2,
 "hard_bugs": 1,
 "has_diff": true
 },
@@ -6769,7 +6769,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 7,
+"bugs": 6,
 "hard_bugs": 1,
 "has_diff": true
 },
@@ -7299,8 +7299,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 8,
-"hard_bugs": 8,
+"bugs": 7,
+"hard_bugs": 7,
 "has_diff": true
 },
 {
@@ -8029,8 +8029,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -8319,8 +8319,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -8879,8 +8879,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
-"hard_bugs": 3,
+"bugs": 2,
+"hard_bugs": 2,
 "has_diff": true
 },
 {
@@ -9069,7 +9069,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 4,
+"bugs": 2,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -9079,7 +9079,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -9319,7 +9319,7 @@
 "recent": true,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -9889,7 +9889,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -10279,8 +10279,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 4,
-"hard_bugs": 4,
+"bugs": 2,
+"hard_bugs": 2,
 "has_diff": true
 },
 {
@@ -11079,8 +11079,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 5,
-"hard_bugs": 4,
+"bugs": 4,
+"hard_bugs": 3,
 "has_diff": true
 },
 {
@@ -11199,8 +11199,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -11529,7 +11529,7 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -12489,8 +12489,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 10,
-"hard_bugs": 10,
+"bugs": 9,
+"hard_bugs": 9,
 "has_diff": true
 },
 {
@@ -12499,8 +12499,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 10,
-"hard_bugs": 10,
+"bugs": 9,
+"hard_bugs": 9,
 "has_diff": true
 },
 {
@@ -12529,8 +12529,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 4,
-"hard_bugs": 4,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -13249,8 +13249,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
-"hard_bugs": 0,
+"bugs": 2,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -13929,8 +13929,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 11,
-"hard_bugs": 11,
+"bugs": 10,
+"hard_bugs": 10,
 "has_diff": true
 },
 {
@@ -13939,8 +13939,8 @@
 "recent": false,
 "faulty": true,
 "sampled": false,
-"bugs": 10,
-"hard_bugs": 10,
+"bugs": 9,
+"hard_bugs": 9,
 "has_diff": true
 },
 {
@@ -14569,7 +14569,7 @@
 "recent": true,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -14709,7 +14709,7 @@
 "recent": true,
 "faulty": true,
 "sampled": false,
-"bugs": 4,
+"bugs": 3,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -14719,7 +14719,7 @@
 "recent": true,
 "faulty": true,
 "sampled": false,
-"bugs": 6,
+"bugs": 3,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -14729,7 +14729,7 @@
 "recent": true,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -16449,7 +16449,7 @@
 "recent": true,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
@@ -18049,7 +18049,7 @@
 "recent": true,
 "faulty": true,
 "sampled": false,
-"bugs": 3,
+"bugs": 2,
 "hard_bugs": 1,
 "has_diff": true
 },
@@ -18149,8 +18149,8 @@
 "recent": true,
 "faulty": true,
 "sampled": false,
-"bugs": 2,
-"hard_bugs": 2,
+"bugs": 1,
+"hard_bugs": 1,
 "has_diff": true
 },
 {
@@ -18359,7 +18359,7 @@
 "recent": true,
 "faulty": true,
 "sampled": true,
-"bugs": 2,
+"bugs": 1,
 "hard_bugs": 0,
 "has_diff": true
 },
