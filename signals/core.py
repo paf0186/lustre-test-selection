@@ -94,6 +94,8 @@ class ComponentFaultRate(Learned):
 				self.tot[comp][1] += wi * c["faulty"]
 				self.own[c["change"]][comp][0] += wi
 				self.own[c["change"]][comp][1] += wi * c["faulty"]
+		self.tot = dict(self.tot)
+		self.own = {k: dict(v) for k, v in self.own.items()}
 		return self
 
 	def value(self, p, change=None):

@@ -22,6 +22,22 @@ Its tables are generated and the prose is by hand:
 rainshadow matrix --days 30 --markdown             # the raw tables for any window or job
 ```
 
+## Selecting tests for a change
+
+```bash
+./testsel.py train            # model/: the blind order, the budget, the risk scorer
+./testsel.py 64955            # Test-Parameters for the current patchset, with reasons, and its risk
+./testsel.py 64955 -r 94 --json
+```
+
+The selection is `trivial`; the test sets belonging to the code areas the patch
+changes (`must` in eval/predictors/principles.toml); the edited scripts, or just
+the edited tests (ONLY=) when only test functions change; the first n test sets
+of the patch-blind order, n set by the budget; and whatever caught a bug on the
+change's earlier patchsets.  A patch that needs no testing gets `trivial` alone.
+Risk is the `faulty` target's score from `signals/`, with a tier (low, medium,
+high: below the median, to the 85th percentile, above) and its reasons.
+
 ## Patch signals
 
 `signals/` measures patches for any question we ask of them: will it have a bug
