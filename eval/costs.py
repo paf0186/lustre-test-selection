@@ -14,6 +14,7 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import sqlite3
 import sys
@@ -29,6 +30,7 @@ INFRA = ("node-provisioning", "lustre-initialization")
 
 
 SINCE = "2026-03-20"   # today's matrix: older sessions ran a different one
+MATRIX_DAYS = 30
 
 
 def build(db: sqlite3.Connection, since: str = SINCE) -> dict:
@@ -38,7 +40,12 @@ def build(db: sqlite3.Connection, since: str = SINCE) -> dict:
 	secs_build = Counter()
 	subtests = defaultdict(list)
 	sess_s = defaultdict(list)
+	last = db.execute("SELECT max(day) FROM session WHERE job = 'lustre-reviews'").fetchone()[0]
+	recent_from = (dt.date.fromisoformat(last[:10]) - dt.timedelta(days=MATRIX_DAYS)).isoformat()
+	recent = set()
 	for s in db.execute("SELECT * FROM session WHERE job = 'lustre-reviews' AND day >= ?", (since,)):
+		if s["day"] >= recent_from:
+			recent.add(s["id"])
 		cls[s["id"]] = class_of(dict(s))
 		group[s["id"]] = s["test_group"]
 		build_of[s["id"]] = s["build"]
@@ -55,10 +62,11 @@ def build(db: sqlite3.Connection, since: str = SINCE) -> dict:
 			continue
 		g = group[sid]
 		always = g == "review-ldiskfs" or (g or "").endswith("subtest-change")
-		if sid not in seen:
-			seen.add(sid)
-			sessions_of[g] += 1
-		runs[g][suite] += 1
+		if sid in recent:
+			if sid not in seen:
+				seen.add(sid)
+				sessions_of[g] += 1
+			runs[g][suite] += 1
 		if total and status in ("PASS", "FAIL"):
 			subtests[suite].append(total)
 		if suite not in INFRA and (cls[sid] or always):
@@ -79,13 +87,18 @@ def build(db: sqlite3.Connection, since: str = SINCE) -> dict:
 	for sid, g in group.items():
 		if g and cls.get(sid):
 			group_class.setdefault(g, Counter())[cls[sid]] += 1
+	group_suites = {g: sorted(s for s, n in runs[g].items() if s not in INFRA and n >= 0.5 * sessions_of[g])
+			for g in sorted(runs) if g and g.startswith("review") and sessions_of[g] >= 20}
+	group_cls = {g: c.most_common(1)[0][0] for g, c in sorted(group_class.items())}
 	return {
 		"overhead_s": round(sum(mean(infra[s]) for s in INFRA if infra[s])),
 		"suite_class_s": {f"{s}|{c}": round(mean(ds)) for (s, c), ds in sorted(per.items()) if len(ds) >= 3},
 		"suite_s": {s: round(mean(ds)) for s, ds in sorted(by_suite.items())},
-		"group_suites": {g: sorted(s for s, n in runs[g].items() if s not in INFRA and n >= 0.5 * sessions_of[g])
-				 for g in sorted(runs) if g and g.startswith("review") and sessions_of[g] >= 20},
-		"group_class": {g: c.most_common(1)[0][0] for g, c in sorted(group_class.items())},
+		"group_suites": group_suites,
+		"group_class": group_cls,
+		"matrix": sorted({f"{s}|{group_cls[g]}" for g, ss in group_suites.items()
+				  if not g.endswith("subtest-change") and group_cls.get(g) for s in ss}),
+		"matrix_since": recent_from,
 		"session_s": {g: round(mean(ds)) for g, ds in sorted(sess_s.items()) if g and len(ds) >= 20},
 		"since": since,
 		"suite_subtests": {s: round(mean(v)) for s, v in sorted(subtests.items()) if len(v) >= 3},

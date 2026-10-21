@@ -154,7 +154,8 @@ def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float, every: int
 		earlier = {p0: v for p0, v in caught_at.get(k[0], {}).items() if p0 < k[1]}
 		history = {"caught": sorted(set().union(*earlier.values())) if earlier else [],
 			   "last_caught": sorted(earlier[max(earlier)]) if earlier else [],
-			   "faulty_patchsets": len(earlier)}
+			   "faulty_patchsets": len(earlier),
+			   "by_patchset": [[p0, sorted(earlier[p0])] for p0 in sorted(earlier)]}
 		p = patch.get(k, {})
 		t = text.get(k, {})
 		scripts_run = {x["suite"] for s in ss for x in sets.get(s["id"], [])}

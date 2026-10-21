@@ -4,6 +4,7 @@ is learned from the training set, so it says something about code with no
 failure history."""
 from __future__ import annotations
 
+import functools
 import tomllib
 from collections import defaultdict
 from pathlib import Path
@@ -13,8 +14,13 @@ from .baselines import edited_scripts, lines_for
 RULES = Path(__file__).resolve().parent / "principles.toml"
 
 
+@functools.cache
+def _load(path: Path) -> tuple[dict, ...]:
+	return tuple(tomllib.loads(path.read_text())["rule"])
+
+
 def load(path: Path = RULES) -> list[dict]:
-	return tomllib.loads(path.read_text())["rule"]
+	return list(_load(path))
 
 
 NO_TEST_KINDS = {"NO_CODE_CHANGE", "NO_CHANGE"}

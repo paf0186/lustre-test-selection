@@ -173,3 +173,68 @@ against the simple candidate (E4), to know what the policy costs and buys:
   subtest-change sessions).  ONLY= is adopted unless it is more than 2 points
   worse than the whole script; if "nothing" is within 1 point of ONLY=, that
   is noted, since Autotest already runs the edited tests.
+
+Result (2026-10-21; costs regenerated, which moves the simple candidate's own
+gain to +1.7 in cross-validation and +2.8 in the lockbox).  The must rules are
+no price: they gain +1.0 over the simple candidate in cross-validation (-0.1 to
++2.1) and +0.9 in the lockbox (-0.6 to +2.9), for a gain over blind of +2.8
+(+0.2 to +5.4) and +3.8 (+1.3 to +6.8).  Half the population's patches (1,043
+of 2,129) touch an area with a must list.  Edited tests: ONLY=, the whole
+script and nothing beyond subtest-change are within 0.1 point of each other in
+both; 113 of the population's patches change only tests.  ONLY= is adopted;
+"nothing" is within 1 point, as noted: Autotest's subtest-change sessions
+already run the edited tests, so the ONLY= line adds little but costs little.
+
+## E7. History cap and the review matrix (registered 2026-10-21)
+
+A long-lived change piles up history: every test set that ever caught a bug on
+it re-runs on every later patchset.  Variants of E6's policy (must rules,
+ONLY= for test-only patches), each against E6's policy with history from every
+earlier patchset:
+
+- history from the last 3, 2 or 1 faulty patchsets, and none at all;
+- the blind base free to pick test sets outside the review matrix (the
+  (script, class) pairs the review groups ran in the last 30 days).
+
+A cap is adopted if it is no worse than "all" by more than 1 point in both
+cross-validation and the lockbox (it cannot gain recall, only cost); the
+smallest such cap wins.  If "none" also passes, history is reported as not
+pulling its weight in the selection.  The matrix filter is policy (a test set
+outside the matrix is outside it for a reason) and is adopted whatever the
+result; a loss over 2 points is reported as its price.
+
+Result (2026-10-21).  Gain over E6's policy (history from every earlier
+patchset), cross-validation then lockbox: the last 3 faulty patchsets +0.5
+(+0.1 to +1.2) and +0.5 (+0.1 to +1.2); the last 2 +0.6 and +0.7; the last one
++1.0 (+0.4 to +1.7) and +0.9 (+0.3 to +1.6); none -0.3 (-1.7 to +1.2) and -0.9
+(-2.5 to +0.5).  Every cap passes and costs nothing in bugs: older history
+re-runs test sets for bugs since fixed.  The smallest cap, the last faulty
+patchset, is adopted.  "None" also passes the bar against "all", so history
+from every patchset did not pull its weight; the last faulty patchset does,
+about a point above none in both.  The matrix filter changes nothing (+0.0 in
+both): the blind order's picks were all in the review matrix already.
+
+## E8. Test-only patches (registered 2026-10-21)
+
+Found reading E7's generated examples: a patch changing only test scripts
+(not test-framework, cfg or functions.sh) runs the whole patch-blind base, and
+can cost more than today's run (Autotest already tests such patches lightly:
+a median of 17.8 hours against 138 for all patches).  A change to a test
+script cannot break Lustre's code, only that script.  Two policy changes on top
+of E7's (must rules, ONLY=, history from the last faulty patchset):
+
+- a patch changing only test scripts skips the patch-blind base: it runs what
+  it edits (ONLY= or whole scripts) and its history;
+- a test script no longer counts as code of an area with a must list
+  (sanity-hsm.sh is not HSM code): the edited-tests rule covers it.
+
+Policy, adopted unless either loses more than 1 point in cross-validation or
+the lockbox; reported with the cost share they save.
+
+Result (2026-10-21): both adopted.  Over E7's policy, cross-validation then
+lockbox: skipping the base for test-only patches +0.5 (+0.2 to +0.8) and +0.5
+(+0.3 to +0.8); test scripts as no area's code +0.0 in both (it changes few
+selections, and only their cost); both +0.6 (+0.3 to +0.9) and +0.6 (+0.3 to
++0.9).  The policy's gain over the blind line is now +4.5 (+1.9 to +6.7) in
+cross-validation and +5.2 (+2.6 to +8.1) in the lockbox.
+

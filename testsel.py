@@ -68,6 +68,8 @@ def train(args) -> None:
 	with open(MODEL / "risk.pkl", "wb") as f:
 		pickle.dump(risk, f)
 	meta = {"trained": dt.date.today().isoformat(), "cases": len(cases), "budget": args.budget, "n": n,
+		"policy": {"use_must": True, "edited": "only", "history_cap": args.history_cap,
+			   "tests_skip_base": True, "must_skips_tests": True},
 		"risk_signals": signals}
 	(MODEL / "meta.json").write_text(json.dumps(meta, indent=1) + "\n")
 	print(f"order of {len(order)} test sets, base n={n} for a {args.budget:.0%} budget; risk on "
@@ -100,7 +102,8 @@ def patch_input(change: int, patchset: int | None, tree: Path) -> dict:
 			if c and f.get("test_group") != "custom":
 				earlier.setdefault(f["patchset"], set()).add(f"{f['suite']}|{c}")
 	history = {"caught": sorted(set().union(*earlier.values())) if earlier else [],
-		   "last_caught": sorted(earlier[max(earlier)]) if earlier else [], "faulty_patchsets": len(earlier)}
+		   "last_caught": sorted(earlier[max(earlier)]) if earlier else [], "faulty_patchsets": len(earlier),
+		   "by_patchset": [[p0, sorted(earlier[p0])] for p0 in sorted(earlier)]}
 	return {"key": f"{change}/{patchset}", "subject": p.get("subject"), "message": message, "diff": diff,
 		"files": p.get("files"), "scripts": p.get("scripts"), "test_parameters": p.get("test_parameters"),
 		"gerrit_kind": p.get("kind"), "series": p.get("series"), "series_size": p.get("series_size"),
@@ -113,15 +116,13 @@ def select(args) -> None:
 	with open(MODEL / "risk.pkl", "rb") as f:
 		risk = pickle.load(f)
 	inp = patch_input(args.change, args.patchset, Path(args.tree).expanduser())
-	sel = Simple(order, meta["n"], edited=args.edited, use_must=True).predict(inp)
+	policy = dict(meta["policy"], **({"edited": args.edited} if args.edited else {}))
+	sel = Simple(order, meta["n"], **policy).predict(inp)
 	r = risk.score(inp)
 	tier = next(name for cut, name in TIERS if r["percentile"] >= cut)
 	out = {"change": args.change, "patch": inp["key"], "subject": inp["subject"],
 	       "test_parameters": ["Test-Parameters: " + ln for ln in sel["text"].splitlines()],
-	       "why": sel["why"] + [f"the first {meta['n']} test sets of the patch-blind order "
-				    f"({meta['budget']:.0%} budget)"] +
-	       ([f"caught on earlier patchsets: {', '.join(inp['history']['caught'])}"]
-		if inp["history"]["caught"] else []),
+	       "why": sel["why"],
 	       "risk": {"score": round(r["score"], 3), "percentile": round(r["percentile"], 2), "tier": tier,
 			"base_rate": round(r["base_rate"], 3),
 			"reasons": list(dict.fromkeys(x["why"] or x["column"] for x in r["reasons"])),
@@ -150,7 +151,9 @@ def main() -> None:
 	ap.add_argument("change", help="a Gerrit change number, or 'train'")
 	ap.add_argument("-r", "--patchset", type=int)
 	ap.add_argument("--json", action="store_true")
-	ap.add_argument("--edited", choices=["only", "none", "whole"], default="only")
+	ap.add_argument("--edited", choices=["only", "none", "whole"], help="override the trained policy")
+	ap.add_argument("--history-cap", type=int, default=1,
+			help="train: re-run what the last N faulty patchsets caught (E7)")
 	ap.add_argument("--tree", default=str(Path.home() / "lustre-release"))
 	ap.add_argument("--cases", default=str(HERE / "data" / "cases.jsonl"))
 	ap.add_argument("--budget", type=float, default=0.25, help="train: the blind base's share of today's cost")

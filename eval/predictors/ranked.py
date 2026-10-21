@@ -11,11 +11,15 @@ from collections import defaultdict
 from .baselines import lines_for
 
 
-def candidates(costs: dict, classes: dict) -> dict[str, dict]:
-	"""(script, class) pairs that keys can ask for, and whole groups for the rest."""
+def candidates(costs: dict, classes: dict, matrix_only: bool = True) -> dict[str, dict]:
+	"""(script, class) pairs that keys can ask for, and whole groups for the rest;
+	only pairs the review matrix runs, unless matrix_only is off."""
 	out = {}
+	matrix = set(costs.get("matrix") or ()) if matrix_only else None
 	for key, secs in costs["suite_class_s"].items():
 		script, cls = key.split("|")
+		if matrix is not None and key not in matrix:
+			continue
 		if cls in classes and classes[cls][0] is not None:
 			out[key] = {"script": script, "cls": cls, "secs": secs, "keys": [key]}
 	for group, suites in costs["group_suites"].items():
@@ -27,7 +31,7 @@ def candidates(costs: dict, classes: dict) -> dict[str, dict]:
 	return out
 
 
-def rank(cases: list[dict], costs: dict, classes: dict) -> list[dict]:
+def rank(cases: list[dict], costs: dict, classes: dict, matrix_only: bool = True) -> list[dict]:
 	"""The greedy order, with each step's gain on the given (training) cases."""
 	per_change = defaultdict(int)
 	for c in cases:
@@ -46,7 +50,7 @@ def rank(cases: list[dict], costs: dict, classes: dict) -> list[dict]:
 				if r:
 					by_key[k].append((ci, bi, f / r))
 	total = sum(weight.values())
-	cands = candidates(costs, classes)
+	cands = candidates(costs, classes, matrix_only)
 	running: set[str] = set()                   # classes with a session already
 	order = []
 	while cands:

@@ -134,11 +134,14 @@ class Fold:
 	"""Everything fitted on one fold's training cases, and its evaluation cases'
 	features: a variant only picks columns and refits the classifier."""
 
-	def __init__(self, train: list[dict], evals: list[dict], costs: dict, seed: int = 0):
+	def __init__(self, train: list[dict], evals: list[dict], costs: dict, seed: int = 0, light: bool = False):
 		self.train, self.evals = train, evals
+		self.order = ranked.rank(train, costs, CLASSES)
+		self.order_all = ranked.rank(train, costs, CLASSES, matrix_only=False)
+		if light:
+			return
 		self.M = Model(costs, CLASSES, families=FAMILIES).fit(train)
 		self.risk = Risk().fit(train)
-		self.order = ranked.rank(train, costs, CLASSES)
 		self.names = list(self.M.cands)
 		tags = [f for f, _ in self.M.tagged(train[0]["input"], self.names[0], train[0]["change"])]
 		self.col = {fam: [i for i, f in enumerate(tags) if f == fam] for fam in FAMILIES}
@@ -212,13 +215,14 @@ def main() -> None:
 	ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
 	ap.add_argument("--cases", default=str(ROOT / "data" / "cases.jsonl"))
 	ap.add_argument("--mode", choices=["cv", "lockbox"], default="cv")
-	ap.add_argument("--only", choices=["families", "selector", "spend", "rules", "models", "candidate", "risk"],
+	ap.add_argument("--only", choices=["families", "selector", "spend", "rules", "models", "candidate", "risk", "history", "tests"],
 			action="append")
 	ap.add_argument("--seeds", type=int, default=len(SEEDS))
 	ap.add_argument("--ref", default="lgbm-rank", choices=["gbdt", "lgbm-rank", "linear"])
 	args = ap.parse_args()
 	out_path = HERE / "results" / ("wowy.json" if args.mode == "cv" else "wowy-lockbox.json")
-	sections = set(args.only or ["families", "selector", "spend", "models", "rules", "candidate", "risk"])
+	sections = set(args.only or ["families", "selector", "spend", "models", "rules", "candidate", "risk", "history", "tests"])
+	light = sections <= {"history", "tests"}       # needs only the blind order, not the model's features
 	t0 = time.time()
 	cases = [json.loads(x) for x in open(args.cases)]
 	costs = json.loads((HERE / "costs.json").read_text())
@@ -232,10 +236,10 @@ def main() -> None:
 		test = [c for c in cases if c["split"] == "test"]
 		folds = [(train, test)]
 		views = {"test": None, "recent": lambda c: c.get("recent")}
-	fits = [Fold(tr, ev, costs, i) for i, (tr, ev) in enumerate(folds)]
+	fits = [Fold(tr, ev, costs, i, light) for i, (tr, ev) in enumerate(folds)]
 	evals = [c for f in fits for c in f.evals]
 	splits = {v: Split([c for c in evals if not keep or keep(c)], costs) for v, keep in views.items()}
-	print(f"{args.mode}: {len(fits)} folds, {sum(len(f.Xtr) for f in fits)} training rows, "
+	print(f"{args.mode}: {len(fits)} folds, {0 if light else sum(len(f.Xtr) for f in fits)} training rows, "
 	      f"{len(evals)} evaluation cases, features in {time.time() - t0:.0f} s", file=sys.stderr)
 
 	pos = {id(c): i for i, c in enumerate(evals)}
@@ -272,7 +276,7 @@ def main() -> None:
 				      f"vs ref {fmt(s['diff'])} {fmtci(s['diff_ci'])}  @20 {fmt(s['at20'])} @25 {fmt(s['at25'])}",
 				      file=sys.stderr)
 
-	ref = averaged(REF_FAMILIES)
+	ref = None if light else averaged(REF_FAMILIES)
 	if "families" in sections:
 		record("families", f"reference ({args.ref})", ref, None)
 		for fam in sorted(REF_FAMILIES):
@@ -322,6 +326,49 @@ def main() -> None:
 				      f"@20 {fmt(s_['at20'])} @25 {fmt(s_['at25'])}  [{v}]", file=sys.stderr)
 			if simple is None:
 				simple = aggs
+		save()
+	if "history" in sections:
+		# E7: E6's policy with the change's history capped at its last few faulty
+		# patchsets, and with the blind base free to pick outside the review matrix
+		ns = [0, 1, 2, 3, 4, 6, 8, 10, 13, 16, 20, 25, 30, 40]
+		policy = {"use_must": True, "edited": "only"}
+		base = None
+		for title, order, kw in (("E6 policy, history from every earlier patchset", "order", {}),
+					 ("history from the last 3 faulty patchsets", "order", {"history_cap": 3}),
+					 ("history from the last 2 faulty patchsets", "order", {"history_cap": 2}),
+					 ("history from the last faulty patchset", "order", {"history_cap": 1}),
+					 ("no history", "order", {"history_cap": 0}),
+					 ("blind base outside the review matrix too", "order_all", {})):
+			aggs = aggregate([[[Simple(getattr(f, order), n, **policy, **kw).predict(c["input"])["text"]
+					    for c in f.evals] for n in ns] for f in fits])
+			for v, sp in splits.items():
+				s_ = summarize(title, aggs[v], base[v] if base else None, blind[v], len(sp.changes))
+				results["sections"].setdefault("history", {}).setdefault(v, []).append(s_)
+				print(f"  history {title:48s} gain {fmt(s_['gain'])} {fmtci(s_['gain_ci'])} "
+				      f"vs E6 {fmt(s_['diff'])} {fmtci(s_['diff_ci'])}  "
+				      f"@20 {fmt(s_['at20'])} @25 {fmt(s_['at25'])}  [{v}]", file=sys.stderr)
+			if base is None:
+				base = aggs
+		save()
+	if "tests" in sections:
+		# E8: test-only patches, on top of E7's policy
+		ns = [0, 1, 2, 3, 4, 6, 8, 10, 13, 16, 20, 25, 30, 40]
+		policy = {"use_must": True, "edited": "only", "history_cap": 1}
+		base = None
+		for title, kw in (("E7 policy (history from the last faulty patchset)", {}),
+				  ("+ test-only patches skip the blind base", {"tests_skip_base": True}),
+				  ("+ test scripts are no area's code", {"must_skips_tests": True}),
+				  ("+ both", {"tests_skip_base": True, "must_skips_tests": True})):
+			aggs = aggregate([[[Simple(f.order, n, **policy, **kw).predict(c["input"])["text"]
+					    for c in f.evals] for n in ns] for f in fits])
+			for v, sp in splits.items():
+				s_ = summarize(title, aggs[v], base[v] if base else None, blind[v], len(sp.changes))
+				results["sections"].setdefault("tests", {}).setdefault(v, []).append(s_)
+				print(f"  tests {title:50s} gain {fmt(s_['gain'])} {fmtci(s_['gain_ci'])} "
+				      f"vs E7 {fmt(s_['diff'])} {fmtci(s_['diff_ci'])}  "
+				      f"@20 {fmt(s_['at20'])} @25 {fmt(s_['at25'])}  [{v}]", file=sys.stderr)
+			if base is None:
+				base = aggs
 		save()
 	if "risk" in sections:
 		# E5: how well the patch risk ranks population patches

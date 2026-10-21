@@ -28,13 +28,21 @@ rainshadow matrix --days 30 --markdown             # the raw tables for any wind
 ./testsel.py train            # model/: the blind order, the budget, the risk scorer
 ./testsel.py 64955            # Test-Parameters for the current patchset, with reasons, and its risk
 ./testsel.py 64955 -r 94 --json
+python3 eval/explain.py       # HOW_IT_WORKS.md and docs/: the rules, costs and order, from model/
 ```
 
+**[HOW_IT_WORKS.md](HOW_IT_WORKS.md)** is the full account, generated from the
+trained model: which test sets are mandatory when, the cost model, the order
+test sets are added in and where the budget cuts it, worked examples, and the
+cost/catch chart on held-out months.
+
 The selection is `trivial`; the test sets belonging to the code areas the patch
-changes (`must` in eval/predictors/principles.toml); the edited scripts, or just
-the edited tests (ONLY=) when only test functions change; the first n test sets
-of the patch-blind order, n set by the budget; and whatever caught a bug on the
-change's earlier patchsets.  A patch that needs no testing gets `trivial` alone.
+changes (`must` in eval/predictors/principles.toml; test scripts are no area's
+code); the edited scripts, or just the edited tests (ONLY=) when only test
+functions change; the first n test sets of the patch-blind order, n set by the
+budget, unless the patch changes only test scripts; and whatever caught a bug
+on the change's last faulty patchset.  A patch that needs no testing gets
+`trivial` alone.
 Risk is the `faulty` target's score from `signals/`, with a tier (low, medium,
 high: below the median, to the 85th percentile, above) and its reasons.
 
