@@ -199,6 +199,13 @@ def main() -> None:
 		return {k: [sum(r[k][i] for r in runs) / len(runs) for i in range(len(RATES))] for k in splits}
 
 	results: dict = {"grid": GRID, "seeds": SEEDS[:args.seeds], "sections": {}}
+	if args.only and OUT.exists():
+		# one section rerun: keep the others' results
+		results["sections"] = json.loads(OUT.read_text()).get("sections", {})
+		for sec in sections:
+			results["sections"].pop(sec, None)
+			if sec == "rules":
+				results["sections"].pop("rules_ref", None)
 
 	def record(section, name, aggs, ref):
 		for k, sp in splits.items():
@@ -208,6 +215,10 @@ def main() -> None:
 				print(f"  {section:9s} {name:34s} gain {fmt(s['gain'])} {fmtci(s['gain_ci'])} "
 				      f"vs ref {fmt(s['diff'])} {fmtci(s['diff_ci'])}  @20 {fmt(s['at20'])} @25 {fmt(s['at25'])}",
 				      file=sys.stderr)
+
+	def save():
+		results["seconds"] = round(time.time() - t0)
+		OUT.write_text(json.dumps(results, indent=0) + "\n")
 
 	full_set = set(FAMILIES)
 	ref = averaged(full_set)
@@ -219,14 +230,17 @@ def main() -> None:
 		record("families", "base only (base rates, edited)", base, ref)
 		for fam in sorted(FAMILIES - BASE):
 			record("families", f"base + {fam}", averaged(BASE | {fam}), base)
+		save()
 	if "selector" in sections:
 		record("selector", "model alone", ref, None)
 		record("selector", "principles first (hybrid)", averaged(full_set, seed_principles=True), ref)
 		record("selector", "overlap discount", averaged(full_set, redundancy="max"), ref)
+		save()
 	if "models" in sections:
 		record("models", "boosted trees", ref, None)
 		record("models", "logistic", averaged(full_set, kind="linear"), ref)
 		record("models", "LambdaMART ranker", averaged(full_set, kind="lgbm-rank"), ref)
+		save()
 	if "rules" in sections:
 		rules = load()
 		def principles_aggs(rs):
@@ -239,7 +253,7 @@ def main() -> None:
 			aggs = principles_aggs(rules[:i] + rules[i + 1:])
 			for k, sp in splits.items():
 				# one operating point: the change in bugs caught and in cost, paired
-				a, b = ref_p[k][0], aggs[0]
+				a, b = ref_p[k][0], aggs[k][0]
 				rng = np.random.default_rng(7)
 				d = []
 				for _ in range(BOOT):
@@ -253,8 +267,7 @@ def main() -> None:
 					"name": r["name"], "bugs_lost": sa[0] / sa[1] - sb[0] / sb[1],
 					"bugs_lost_ci": [float(np.percentile(d, 2.5)), float(np.percentile(d, 97.5))],
 					"cost_saved": sa[2] / sa[3] - sb[2] / sb[3]})
-	results["seconds"] = round(time.time() - t0)
-	OUT.write_text(json.dumps(results, indent=0) + "\n")
+	save()
 	print(f"done in {results['seconds']} s: {OUT}", file=sys.stderr)
 
 

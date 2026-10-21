@@ -177,7 +177,10 @@ def build_cases(db: sqlite3.Connection, cutoff: str, fraction: float, every: int
 		always_ran = defaultdict(set)           # (script, group) -> always-run sessions
 		cls = {}
 		for s in ss:
-			c = class_of(s)
+			# A developer's custom session runs their own test lists and environment
+			# (ONLY=, a default layout, repeats): no prediction asks for it, so what
+			# it catches is not evidence for any test set.
+			c = None if s["test_group"] == "custom" else class_of(s)
 			cls[s["id"]] = c
 			for x in sets.get(s["id"], []):
 				if x["suite"] in INFRA:

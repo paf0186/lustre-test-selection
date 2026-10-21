@@ -310,7 +310,7 @@ def wowy_section() -> str:
 		if not c:
 			return ""
 		if without:
-			return "keep" if c[1] < 0 else ("hurts" if c[0] > 0 else "unclear")
+			return "keep" if c[1] < 0 else ("remove (it hurts)" if c[0] > 0 else "unclear")
 		return "helps" if c[0] > 0 else ("hurts" if c[1] < 0 else "unclear")
 	out = [f"<p class='lede'>Each part of the stack switched off from the full model (\"without\"), or added "
 	       "alone to a base of base rates and edited scripts (\"base +\"). Gain is the mean, over "
@@ -329,7 +329,7 @@ def wowy_section() -> str:
 		for r in rows.get("test", []):
 			v = verdict(r, r["name"].startswith("without"))
 			rc = recent.get(r["name"], {})
-			out.append(f"<tr class='{v}'><td>{esc(r['name'])}</td><td class='n'>{pp(r['gain'])}{ci(r['gain_ci'])}</td>"
+			out.append(f"<tr class='{v.split()[0] if v else ''}'><td>{esc(r['name'])}</td><td class='n'>{pp(r['gain'])}{ci(r['gain_ci'])}</td>"
 				   f"<td class='n'>{pp(r['diff'])}{ci(r['diff_ci'])}</td><td>{v}</td>"
 				   f"<td class='n'>{pp(r['at20'])}</td><td class='n'>{pp(r['at25'])}</td>"
 				   f"<td class='n'>{pp(rc.get('gain'))}</td></tr>")
@@ -463,7 +463,7 @@ th { font: 600 0.72rem var(--mono); text-transform: uppercase; letter-spacing: 0
 td.n { font-variant-numeric: tabular-nums; font-family: var(--mono); }
 tr.train td { color: var(--muted); } tr.poor td { color: var(--today); }
 tr.keep td:nth-child(4), tr.helps td:nth-child(4) { color: var(--table); font-weight: 600; }
-tr.hurts td:nth-child(4) { color: var(--today); font-weight: 600; } .ci { color: var(--muted); font-size: 11px; }
+tr.hurts td:nth-child(4), tr.remove td:nth-child(4) { color: var(--today); font-weight: 600; } .ci { color: var(--muted); font-size: 11px; }
 .muted { color: var(--muted); } code { font: 0.9em var(--mono); }
 ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80ch; }
 """
