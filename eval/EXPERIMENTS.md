@@ -130,6 +130,12 @@ across 15 to 40% cost is at least +2 points (the noise control's error) with
 the lower bound above zero; and it is not worse than the LambdaMART reference
 by more than 2 points.  If it passes, it is the version to shadow-run.
 
+Result (2026-10-21, two-year cases): PASSED.  Gain over the blind line +2.5
+(+0.5 to +4.6) in cross-validation and +3.1 (+1.0 to +5.5) in the lockbox;
+against the LambdaMART reference +1.2 (-1.4 to +3.6) and +3.2 (+0.3 to +6.2).
+On the recent months alone +0.3, from few patches.  It is the version to
+shadow-run.
+
 ## E5. Patch risk (registered 2026-10-21)
 
 A patch-level estimate of the chance a patch has a bug any test would catch,
@@ -143,3 +149,12 @@ Bars, on the population (sampled cases only), in cross-validation and the
 lockbox: ROC AUC at least 0.65 with the lower bound above 0.6; the riskiest
 fifth of patches at least twice the base rate of faults; and the safest fifth
 at most half of it.
+
+Result (2026-10-21): PASSED all three, in both.  Cross-validation (1,488
+population patches, 168 faulty): AUC 0.736 (0.673 to 0.782), riskiest fifth
+2.45x the base rate (1.97 to 2.84), safest fifth 0.18x (0.07 to 0.35).  Lockbox
+(641 patches, 58 faulty): AUC 0.775 (0.699 to 0.841), 2.76x, 0.17x.  The recent
+months (76 patches, 6 faulty) are too few to judge.  In the signals framework's
+own WOWY (cross-validation), the change's history is the one clear signal
+(-0.053 AUC without it) and the LLM's overall rating a marginal one (-0.014,
+-0.029 to -0.000); the rest are unclear alone.

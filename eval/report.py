@@ -343,6 +343,37 @@ def wowy_section() -> str:
 				   f"<td class='n'>{pp(r['at20'])}</td><td class='n'>{pp(r['at25'])}</td>"
 				   f"<td class='n'>{pp(lr.get('diff'))}{ci(lr.get('diff_ci'))}</td></tr>")
 		out.append("</tbody></table></div>")
+	cand = d["sections"].get("candidate", {})
+	if cand:
+		lockc = {r["name"]: r for r in ((lock or {}).get("sections", {}).get("candidate", {}).get("test", []))}
+		out.append("<h2>The simple candidate (E4)</h2><p class='muted'>trivial, the edited scripts, the first n "
+			   "test sets of the patch-blind order, and every test set that caught a bug on an earlier "
+			   "patchset of the same change.</p><div class='scroll'><table><thead><tr><th>Variant</th>"
+			   "<th>Gain over blind</th><th>Against the reference</th><th>Lockbox: gain over blind</th>"
+			   "<th>Lockbox: against the reference</th></tr></thead><tbody>")
+		for r in cand.get(view, []):
+			lr = lockc.get(r["name"], {})
+			out.append(f"<tr><td>{esc(r['name'])}</td><td class='n'>{pp(r['gain'])}{ci(r['gain_ci'])}</td>"
+				   f"<td class='n'>{pp(r['diff'])}{ci(r['diff_ci'])}</td>"
+				   f"<td class='n'>{pp(lr.get('gain'))}{ci(lr.get('gain_ci'))}</td>"
+				   f"<td class='n'>{pp(lr.get('diff'))}{ci(lr.get('diff_ci'))}</td></tr>")
+		out.append("</tbody></table></div>")
+	risk = d["sections"].get("risk", {}).get(view)
+	if risk:
+		lr = (lock or {}).get("sections", {}).get("risk", {}).get("test", {})
+		def vc(v, c, unit=""):
+			return f"{v:.2f}{unit}" + (f" <span class='ci'>({c[0]:.2f} to {c[1]:.2f})</span>" if c else "")
+		out.append("<h2>Patch risk (E5)</h2><p class='muted'>How well the patch risk ranks population patches: "
+			   "the riskiest fifth's fault rate over the base rate, and the safest fifth's.</p>"
+			   "<div class='scroll'><table><thead><tr><th></th><th>Patches</th><th>Faulty</th><th>AUC</th>"
+			   "<th>Riskiest fifth</th><th>Safest fifth</th></tr></thead><tbody>")
+		for name, r in (("cross-validation", risk), ("lockbox", lr)):
+			if r:
+				out.append(f"<tr><td>{name}</td><td class='n'>{r['patches']}</td><td class='n'>{r['faulty']}</td>"
+					   f"<td class='n'>{vc(r['auc'], r.get('auc_ci'))}</td>"
+					   f"<td class='n'>{vc(r['riskiest_fifth_lift'], r.get('riskiest_ci'), 'x')}</td>"
+					   f"<td class='n'>{vc(r['safest_fifth_lift'], r.get('safest_ci'), 'x')}</td></tr>")
+		out.append("</tbody></table></div>")
 	rules = d["sections"].get("rules", {}).get(view, [])
 	if rules:
 		rules = sorted(rules, key=lambda r: -r["bugs_lost"])
