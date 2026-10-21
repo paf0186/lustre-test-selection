@@ -27,6 +27,8 @@ def lines_for(picks: dict[str, set[str]], classes: dict, groups: set[str] = froz
 	from classes import SCRIPT_KEYS
 	out = []
 	for cls in sorted(picks):
+		if cls not in classes:
+			continue
 		keys = classes[cls][0]
 		if keys is None or not picks[cls]:
 			continue
