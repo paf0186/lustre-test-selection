@@ -158,3 +158,18 @@ months (76 patches, 6 faulty) are too few to judge.  In the signals framework's
 own WOWY (cross-validation), the change's history is the one clear signal
 (-0.053 AUC without it) and the LLM's overall rating a marginal one (-0.014,
 -0.029 to -0.000); the rest are unclear alone.
+
+## E6. Mandatory links and single-test patches (registered 2026-10-21)
+
+Policy, not a hypothesis: the test sets that belong to a code area run when the
+patch changes it (principles.toml `must`), and a patch changing only test
+functions runs those tests (ONLY=) instead of the whole script.  Measured
+against the simple candidate (E4), to know what the policy costs and buys:
+
+- Must rules: report the change in gain over blind, in cross-validation and the
+  lockbox.  Adopted whatever the result; a loss of more than 2 points is
+  reported as the policy's price.
+- Edited tests: three variants (whole script, ONLY=, nothing beyond Autotest's
+  subtest-change sessions).  ONLY= is adopted unless it is more than 2 points
+  worse than the whole script; if "nothing" is within 1 point of ONLY=, that
+  is noted, since Autotest already runs the edited tests.

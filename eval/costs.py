@@ -36,6 +36,7 @@ def build(db: sqlite3.Connection, since: str = SINCE) -> dict:
 	cls, group, build_of = {}, {}, {}
 	per_build = Counter()
 	secs_build = Counter()
+	subtests = defaultdict(list)
 	sess_s = defaultdict(list)
 	for s in db.execute("SELECT * FROM session WHERE job = 'lustre-reviews' AND day >= ?", (since,)):
 		cls[s["id"]] = class_of(dict(s))
@@ -48,7 +49,8 @@ def build(db: sqlite3.Connection, since: str = SINCE) -> dict:
 	runs = defaultdict(Counter)
 	sessions_of = Counter()
 	seen = set()
-	for sid, suite, status, dur in db.execute("SELECT session_id, suite, status, duration FROM test_set"):
+	for sid, suite, status, dur, total in db.execute(
+			"SELECT session_id, suite, status, duration, sub_total FROM test_set"):
 		if sid not in cls:
 			continue
 		g = group[sid]
@@ -57,6 +59,8 @@ def build(db: sqlite3.Connection, since: str = SINCE) -> dict:
 			seen.add(sid)
 			sessions_of[g] += 1
 		runs[g][suite] += 1
+		if total and status in ("PASS", "FAIL"):
+			subtests[suite].append(total)
 		if suite not in INFRA and (cls[sid] or always):
 			# The sessions that run whatever is selected are their own rows.
 			where = g if always else cls[sid]
@@ -84,6 +88,7 @@ def build(db: sqlite3.Connection, since: str = SINCE) -> dict:
 		"group_class": {g: c.most_common(1)[0][0] for g, c in sorted(group_class.items())},
 		"session_s": {g: round(mean(ds)) for g, ds in sorted(sess_s.items()) if g and len(ds) >= 20},
 		"since": since,
+		"suite_subtests": {s: round(mean(v)) for s, v in sorted(subtests.items()) if len(v) >= 3},
 		"review_builds": db.execute("SELECT count(*) FROM build WHERE job = 'lustre-reviews' AND first_day >= ?",
 					    (since,)).fetchone()[0],
 		"runs_per_build": {f"{s}|{c}": round(n / max(1, len(set(build_of.values()))), 3)

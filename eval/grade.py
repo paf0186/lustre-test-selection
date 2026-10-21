@@ -8,6 +8,7 @@ The grade is a pure function of the case, the prediction and the cost model.
 """
 from __future__ import annotations
 
+import re
 import shlex
 from dataclasses import dataclass, field
 
@@ -22,6 +23,18 @@ class Line:
 	scripts: list[str]
 	keys: dict[str, str] = field(default_factory=dict)
 	group: str | None = None
+	only: set[str] | None = None        # env=ONLY=...: just these subtests (test_NN names)
+
+
+ONLY = re.compile(r"(?:^|,)\s*ONLY=(\"[^\"]*\"|'[^']*'|[^,]*)")
+
+
+def only_of(keys: dict[str, str]) -> set[str] | None:
+	env = keys.get("env") or keys.get("envdefinitions") or ""
+	m = ONLY.search(env)
+	if not m:
+		return None
+	return {f"test_{t}" for t in m.group(1).strip("\"'").replace(",", " ").split() if t}
 
 
 def parse_keys(text: str) -> dict[str, str]:
@@ -75,12 +88,16 @@ def parse(text: str, costs: dict) -> tuple[bool, list[Line]]:
 			scripts = costs["group_suites"][group] + [s for s in scripts if s not in costs["group_suites"][group]]
 			lines.append(Line(costs["group_class"].get(group), scripts, keys, group))
 		elif scripts:
-			lines.append(Line(line_class(keys), scripts, keys))
+			lines.append(Line(line_class(keys), scripts, keys, only=only_of(keys)))
 	return trivial, lines
 
 
-def script_cost(script: str, cls: str | None, costs: dict) -> float:
-	return costs["suite_class_s"].get(f"{script}|{cls}", costs["suite_s"].get(script, 1800))
+def script_cost(script: str, cls: str | None, costs: dict, only: set[str] | None = None) -> float:
+	secs = costs["suite_class_s"].get(f"{script}|{cls}", costs["suite_s"].get(script, 1800))
+	if only:
+		# its share of the script: the subtests asked for, of the script's usual count
+		secs *= min(1.0, len(only) / max(1, costs.get("suite_subtests", {}).get(script, 50)))
+	return secs
 
 
 def grade(case: dict, prediction: str, costs: dict) -> dict:
@@ -93,7 +110,7 @@ def grade(case: dict, prediction: str, costs: dict) -> dict:
 				     for ln in lines)
 		out["lines"] = len(lines)
 		return out
-	picked = set()
+	picked: dict[str, set[str] | None] = {}       # key -> the subtests run (None: all)
 	for ln in lines:
 		if ln.cls is None:
 			continue
@@ -101,19 +118,24 @@ def grade(case: dict, prediction: str, costs: dict) -> dict:
 			need = SCRIPT_KEYS.get(s)
 			if need and parse_keys(need).items() - ln.keys.items():
 				continue
-			picked.add(f"{s}|{ln.cls}")
+			k = f"{s}|{ln.cls}"
+			if ln.only is None or picked.get(k, set()) is None:
+				picked[k] = None
+			else:
+				picked[k] = (picked.get(k) or set()) | ln.only
 	bugs = []
 	for b in case["bugs"]:
 		miss = 1 - b["always"]
+		subs = {u[1] for u in b.get("units", [])}
 		for k, (r, f) in b["evidence"].items():
-			if k in picked and r:
+			if k in picked and r and (picked[k] is None or picked[k] & subs):
 				miss *= 1 - f / r
 		bugs.append(round(1 - miss, 4))
 	c = case["cost"]
 	trivial_s = c["trivial"] or costs["session_s"].get("review-ldiskfs", 0)
 	cost = trivial_s + c["subtest_change"]
 	for ln in lines:
-		cost += costs["overhead_s"] + sum(script_cost(s, ln.cls, costs) for s in ln.scripts)
+		cost += costs["overhead_s"] + sum(script_cost(s, ln.cls, costs, ln.only) for s in ln.scripts)
 	all_caught = 1.0
 	for p in bugs:
 		all_caught *= p

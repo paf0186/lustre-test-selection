@@ -9,6 +9,10 @@
 #
 # Rules name mechanisms, never a change or a test that once failed (design 4.2).
 #
+# `must`: the test sets that belong to this code area.  A patch changing the area
+# runs them, whatever the history or a model says, unless it needs no testing
+# at all (documentation only, or Gerrit's no-code-change and no-change kinds).
+#
 # `narrow = true`: the rule's scripts cover all a file it matches can break.  A
 # patch whose every file matches a narrow rule, and no other, skips the
 # patch-blind base and runs only what its rules add.
@@ -41,18 +45,21 @@ why = "the client VFS layer: sanity covers one client's POSIX behaviour, sanityn
 name = "client-pcc"
 paths = ["lustre/llite/pcc", "lustre/utils/lpcc", "lustre/utils/liblustreapi_pcc"]
 scripts = ["sanity-pcc"]
+must = ["sanity-pcc"]
 why = "persistent client cache"
 
 [[rule]]
 name = "client-crypto"
 paths = ["lustre/llite/crypto", "lustre/include/lustre_crypto"]
 scripts = ["sanity-sec"]
+must = ["sanity-sec"]
 why = "client encryption is tested in sanity-sec"
 
 [[rule]]
 name = "compression"
 contains = ["compr"]
 scripts = ["sanity-compr"]
+must = ["sanity-compr"]
 why = "client-side data compression"
 
 [[rule]]
@@ -67,6 +74,7 @@ why = "client RPC and caching layers: sanity for the data and metadata paths, sa
 name = "layouts"
 paths = ["lustre/lov/", "lustre/lod/"]
 scripts = ["sanity", "sanity-pfl", "sanity-flr"]
+must = ["sanity-pfl", "sanity-flr"]
 why = "file layouts: composite (PFL) and mirrored (FLR) layouts each have their own suite"
 
 [[rule]]
@@ -75,12 +83,14 @@ paths = ["lustre/ec/"]
 contains = ["_ec.", "/ec_"]
 scripts = ["sanity-ec"]
 classes = ["ldiskfs-dne", "zfs-dne"]
+must = ["sanity-ec"]
 why = "erasure coded layouts: resync punches parity and finds data with SEEK_DATA/SEEK_HOLE, which the two backends do differently"
 
 [[rule]]
 name = "pools"
 contains = ["pool"]
 scripts = ["ost-pools"]
+must = ["ost-pools"]
 why = "OST pools"
 
 # -- metadata server ----------------------------------------------------------
@@ -96,12 +106,14 @@ why = "metadata server: sanity and sanityn for operations, replay-single for rep
 name = "dom"
 contains = ["_dom", "dom_", "mdt_io"]
 scripts = ["sanity-dom"]
+must = ["sanity-dom"]
 why = "data on MDT"
 
 [[rule]]
 name = "hsm"
 contains = ["hsm", "coordinator"]
 scripts = ["sanity-hsm"]
+must = ["sanity-hsm"]
 why = "hierarchical storage management: the coordinator and copytool"
 
 [[rule]]
@@ -114,6 +126,7 @@ why = "changelogs are exercised by sanity's changelog tests and lustre_rsync"
 name = "lfsck"
 paths = ["lustre/lfsck/"]
 scripts = ["sanity-lfsck", "sanity-scrub", "sanity"]
+must = ["sanity-lfsck", "sanity-scrub"]
 why = "LFSCK and the OI scrub it drives; sanity runs namespace LFSCK over striped and remote directories too"
 
 [[rule]]
@@ -122,6 +135,7 @@ paths = ["lustre/quota/"]
 contains = ["quota", "lfs_project"]
 scripts = ["sanity-quota"]
 classes = ["ldiskfs-dne", "zfs-dne"]
+must = ["sanity-quota"]
 why = "quota master and slaves, project quota; accounting is the backend's, so both backends"
 
 # -- object storage -----------------------------------------------------------
@@ -140,6 +154,7 @@ name = "ldiskfs"
 paths = ["lustre/osd-ldiskfs/", "ldiskfs/", "lustre/kernel_patches/"]
 scripts = ["sanity", "sanity-scrub", "conf-sanity"]
 classes = ["ldiskfs-dne", "ldiskfs"]
+must = ["sanity-scrub"]
 why = "the ldiskfs backend: everything goes through it; OI scrub and mount/format paths are its own"
 
 [[rule]]
@@ -170,6 +185,7 @@ paths = ["lustre/ptlrpc/gss/", "lustre/ptlrpc/sec", "lustre/ptlrpc/nodemap", "lu
 contains = ["nodemap", "sptlrpc"]
 scripts = ["sanity-sec"]
 group = "review-dne-selinux-ssk-part-2"
+must = ["sanity-sec"]
 why = "RPC security, nodemaps and identity upcalls: sanity-sec, and the SELinux and shared-key sessions that only exist as their own group"
 
 [[rule]]
@@ -178,6 +194,7 @@ paths = ["lustre/ptlrpc/gss/", "lustre/utils/gss/"]
 contains = ["krb5", "kerberos"]
 scripts = ["sanity-krb5"]
 narrow = true
+must = ["sanity-krb5"]
 why = "Kerberos flavors of GSS"
 
 [[rule]]
@@ -186,6 +203,7 @@ paths = ["lustre/mgs/", "lustre/mgc/", "lustre/obdclass/obd_mount", "lustre/obdc
          "lustre/utils/mount_", "lustre/utils/mkfs_lustre", "lustre/utils/lustre_cfg", "lustre/utils/lctl",
          "lustre/conf/"]
 scripts = ["conf-sanity", "ost-pools"]
+must = ["conf-sanity"]
 why = "configuration logs, mount, format and parameters; pool commands are the runtime config log updates every client must apply"
 
 [[rule]]
@@ -199,6 +217,7 @@ name = "lnet"
 paths = ["lnet/"]
 scripts = ["sanity-lnet", "lnet-selftest", "sanity"]
 narrow = true
+must = ["sanity-lnet", "lnet-selftest"]
 why = "the network layer: sanity-lnet for configuration, lnet-selftest for traffic, sanity as a client of it"
 
 [[rule]]
@@ -211,6 +230,7 @@ why = "portability and debug infrastructure under everything"
 name = "nodemap"
 contains = ["nodemap"]
 scripts = ["sanity-sec", "sanity-quota"]
+must = ["sanity-sec"]
 why = "nodemaps: sanity-quota's squash, tenant and admin nodemap tests wait for nodemap sync to the targets"
 
 [[rule]]
@@ -241,6 +261,7 @@ contains = ["lsnapshot", "snapshot"]
 scripts = ["sanity-lsnapshot"]
 classes = ["zfs-dne"]
 narrow = true
+must = ["sanity-lsnapshot"]
 why = "snapshots need ZFS"
 
 # -- builds across platforms --------------------------------------------------

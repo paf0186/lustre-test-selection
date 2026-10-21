@@ -304,16 +304,24 @@ def main() -> None:
 	if "candidate" in sections:
 		# E4: a curve over the size of the blind base; matched to RATES' length by sampling n
 		ns = [0, 1, 2, 3, 4, 6, 8, 10, 13, 16, 20, 25, 30, 40]
-		aggs = aggregate([[[Simple(f.order, n).predict(c["input"])["text"] for c in f.evals] for n in ns]
-				  for f in fits])
 		record("candidate", "reference", ref, None)
-		for v, sp in splits.items():
-			s_ = summarize("simple candidate", aggs[v], ref[v], blind[v], len(sp.changes))
-			s_["vs_blind"] = s_["gain"]
-			results["sections"]["candidate"].setdefault(v, []).append(s_)
-			print(f"  candidate simple                               gain {fmt(s_['gain'])} {fmtci(s_['gain_ci'])} "
-			      f"vs ref {fmt(s_['diff'])} {fmtci(s_['diff_ci'])}  @20 {fmt(s_['at20'])} @25 {fmt(s_['at25'])}  [{v}]",
-			      file=sys.stderr)
+		simple = None
+		for title, kw in (("simple candidate", {}),
+				  ("+ must rules, edited scripts whole", {"use_must": True}),
+				  ("+ must rules, edited tests only (ONLY=)", {"use_must": True, "edited": "only"}),
+				  ("+ must rules, edited tests left to subtest-change", {"use_must": True, "edited": "none"})):
+			aggs = aggregate([[[Simple(f.order, n, **kw).predict(c["input"])["text"] for c in f.evals]
+					   for n in ns] for f in fits])
+			# E4 is against the reference; E6's variants are against the simple candidate
+			base_ref = ref if simple is None else simple
+			for v, sp in splits.items():
+				s_ = summarize(title, aggs[v], base_ref[v], blind[v], len(sp.changes))
+				results["sections"]["candidate"].setdefault(v, []).append(s_)
+				print(f"  candidate {title:48s} gain {fmt(s_['gain'])} {fmtci(s_['gain_ci'])} "
+				      f"vs {'ref' if simple is None else 'simple'} {fmt(s_['diff'])} {fmtci(s_['diff_ci'])}  "
+				      f"@20 {fmt(s_['at20'])} @25 {fmt(s_['at25'])}  [{v}]", file=sys.stderr)
+			if simple is None:
+				simple = aggs
 		save()
 	if "risk" in sections:
 		# E5: how well the patch risk ranks population patches

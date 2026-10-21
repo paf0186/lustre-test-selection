@@ -17,6 +17,38 @@ def load(path: Path = RULES) -> list[dict]:
 	return tomllib.loads(path.read_text())["rule"]
 
 
+NO_TEST_KINDS = {"NO_CODE_CHANGE", "NO_CHANGE"}
+
+
+def needs_no_testing(inp: dict) -> bool:
+	"""Documentation only, or a patchset Gerrit says changes no code."""
+	files = inp.get("files") or []
+	if (inp.get("gerrit_kind") or "") in NO_TEST_KINDS:
+		return True
+	return bool(files) and all(f.startswith(("Documentation/", "lustre/doc/", "contrib/")) or
+				   f.endswith((".md", ".txt")) or f in ("LICENSE", "README", "ChangeLog")
+				   for f in files)
+
+
+def must(inp: dict, rules: list[dict] | None = None) -> tuple[dict[str, set[str]], list[str]]:
+	"""The test sets that belong to the code areas the patch changes: they run
+	whatever else is selected (the rules' `must` lists)."""
+	from collections import defaultdict
+	picks: dict[str, set[str]] = defaultdict(set)
+	why = []
+	if needs_no_testing(inp):
+		return picks, why
+	for rule in rules if rules is not None else load():
+		if not rule.get("must"):
+			continue
+		hit = [f for f in inp.get("files") or [] if matches(rule, f)]
+		if hit:
+			for cls in rule.get("classes", ["ldiskfs-dne"]):
+				picks[cls].update(rule["must"])
+			why.append(f"{rule['name']} must run {', '.join(rule['must'])}: {hit[0]}")
+	return picks, why
+
+
 def matches(rule: dict, path: str) -> bool:
 	return any(path.startswith(p) for p in rule.get("paths", ())) or \
 		any(c in path for c in rule.get("contains", ()))

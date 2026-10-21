@@ -91,3 +91,22 @@ def test_crashes_group_by_what_crashed_and_cascades_join_their_fault():
 		      f("4", "conf-sanity", "test_6", "other words", cascade_of='{"id": "3"}')], run)
 	assert sorted(b["scripts"] for b in bugs) == [["conf-sanity"], ["sanity", "sanityn"]]
 	assert generic("crash: Out of memory: Killed process", "CRASH")
+
+
+def test_only_lines_catch_only_their_subtests_and_cost_their_share():
+	costs = {**COSTS, "suite_subtests": {"sanity": 100}}
+	case = {"bugs": [{"evidence": {"sanity|ldiskfs-dne": [2, 2]}, "always": 0.0,
+			  "units": [["sanity", "test_42a", "x"]]}],
+		"cost": {"actual": 100000, "trivial": 15000, "subtest_change": 0}}
+	hit = grade(case, 'trivial\ntestlist=sanity env=ONLY="42a 43"', costs)
+	miss = grade(case, "trivial\ntestlist=sanity env=ONLY=99", costs)
+	assert hit["bugs"] == [1.0] and miss["bugs"] == [0.0]
+	assert hit["cost_s"] == 15000 + 1400 + 14000 * 2 / 100
+
+
+def test_a_must_rule_runs_its_suite_unless_the_patch_needs_no_testing():
+	from predictors.principles import must, needs_no_testing
+	picks, why = must({"files": ["lustre/mdt/mdt_coordinator.c"]})
+	assert "sanity-hsm" in picks["ldiskfs-dne"] and why
+	assert not must({"files": ["Documentation/man8/lfs.8"]})[0]
+	assert needs_no_testing({"files": ["lustre/llite/file.c"], "gerrit_kind": "NO_CODE_CHANGE"})
