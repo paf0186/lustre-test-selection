@@ -61,7 +61,11 @@ section { background: var(--panel); border: 1px solid var(--grid); border-radius
 .toggle { display: inline-flex; gap: 6px; align-items: center; font: 13px var(--body); margin-top: 10px;
   cursor: pointer; }
 main:not(.show-train) .train { display: none; }
-.legend i.dot { background: var(--fg); } .legend i.line { width: 16px; height: 2px; border-radius: 0; background: var(--today); vertical-align: 3px; } .legend i.ring { border: 2px solid var(--fg); width: 6px; height: 6px; }
+.legend i.dot { background: var(--fg); }
+.toggles { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; }
+.toggles .toggle { margin-top: 0; font-size: 12px; }
+.toggles i.swatch { display: inline-block; width: 16px; height: 3px; vertical-align: 3px; }
+.chart .zero { stroke: var(--today); stroke-width: 1.5; } .legend i.line { width: 16px; height: 2px; border-radius: 0; background: var(--today); vertical-align: 3px; } .legend i.ring { border: 2px solid var(--fg); width: 6px; height: 6px; }
 dl.key { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 14px 0 0; font-size: 13px; }
 dl.key dt { font-weight: 600; } dl.key dd { margin: 0; color: var(--muted); min-width: 0; }
 @media (max-width: 560px) { dl.key { grid-template-columns: 1fr; } dl.key dd { margin-bottom: 6px; } }
@@ -81,91 +85,145 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <p class='lede'>Backtest on <b>223</b> faulty patchsets the predictors never saw (changes first failing on or after 2026-08-01), holding <b>311</b> bugs. Today every patch runs the whole review matrix, about <b>133</b> session hours per build. "Share of today's bugs" is what each selection would catch of what today's matrix catches, with every change counting once.</p><ul class='targets'><li><b>90% at 25%:</b> not met yet. Best within the cost: + principles, 78% of today's bugs at 20%.</li><li><b>90% at 10%:</b> not met yet. Best within the cost: trivial only, 51% of today's bugs at 10%.</li><li><b>95% at 10%:</b> not met yet. Best within the cost: trivial only, 51% of today's bugs at 10%.</li></ul>
 </header>
 <section><h2>Bugs caught against test cost</h2>
-<svg viewBox="0 0 640 420" role="img" aria-label="bugs caught against cost" class="chart">
-<line x1="56.0" y1="374.0" x2="56.0" y2="18.0" class="grid"/>
-<text x="56.0" y="390.0" class="tick" text-anchor="middle">0%</text>
-<line x1="112.6" y1="374.0" x2="112.6" y2="18.0" class="grid"/>
-<text x="112.6" y="390.0" class="tick" text-anchor="middle">10%</text>
-<line x1="197.5" y1="374.0" x2="197.5" y2="18.0" class="grid"/>
-<text x="197.5" y="390.0" class="tick" text-anchor="middle">25%</text>
-<line x1="339.0" y1="374.0" x2="339.0" y2="18.0" class="grid"/>
-<text x="339.0" y="390.0" class="tick" text-anchor="middle">50%</text>
-<line x1="480.5" y1="374.0" x2="480.5" y2="18.0" class="grid"/>
-<text x="480.5" y="390.0" class="tick" text-anchor="middle">75%</text>
-<line x1="622.0" y1="374.0" x2="622.0" y2="18.0" class="grid"/>
-<text x="622.0" y="390.0" class="tick" text-anchor="middle">100%</text>
-<line x1="56.0" y1="374.0" x2="622.0" y2="374.0" class="grid"/>
-<text x="50.0" y="378.0" class="tick" text-anchor="end">0%</text>
-<line x1="56.0" y1="285.0" x2="622.0" y2="285.0" class="grid"/>
-<text x="50.0" y="289.0" class="tick" text-anchor="end">25%</text>
-<line x1="56.0" y1="196.0" x2="622.0" y2="196.0" class="grid"/>
-<text x="50.0" y="200.0" class="tick" text-anchor="end">50%</text>
-<line x1="56.0" y1="107.0" x2="622.0" y2="107.0" class="grid"/>
-<text x="50.0" y="111.0" class="tick" text-anchor="end">75%</text>
-<line x1="56.0" y1="53.6" x2="622.0" y2="53.6" class="grid"/>
-<text x="50.0" y="57.6" class="tick" text-anchor="end">90%</text>
-<line x1="56.0" y1="18.0" x2="622.0" y2="18.0" class="grid"/>
+<p class="muted">Cost up to 60% and bugs from 40% shown; today's matrix is 100% at 100%.</p>
+<svg viewBox="0 0 720 480" role="img" aria-label="bugs caught against cost" class="chart">
+<line x1="56.0" y1="434.0" x2="56.0" y2="18.0" class="grid"/>
+<text x="56.0" y="450.0" class="tick" text-anchor="middle">0%</text>
+<line x1="163.7" y1="434.0" x2="163.7" y2="18.0" class="grid"/>
+<text x="163.7" y="450.0" class="tick" text-anchor="middle">10%</text>
+<line x1="271.3" y1="434.0" x2="271.3" y2="18.0" class="grid"/>
+<text x="271.3" y="450.0" class="tick" text-anchor="middle">20%</text>
+<line x1="325.2" y1="434.0" x2="325.2" y2="18.0" class="grid"/>
+<text x="325.2" y="450.0" class="tick" text-anchor="middle">25%</text>
+<line x1="379.0" y1="434.0" x2="379.0" y2="18.0" class="grid"/>
+<text x="379.0" y="450.0" class="tick" text-anchor="middle">30%</text>
+<line x1="486.7" y1="434.0" x2="486.7" y2="18.0" class="grid"/>
+<text x="486.7" y="450.0" class="tick" text-anchor="middle">40%</text>
+<line x1="594.3" y1="434.0" x2="594.3" y2="18.0" class="grid"/>
+<text x="594.3" y="450.0" class="tick" text-anchor="middle">50%</text>
+<line x1="702.0" y1="434.0" x2="702.0" y2="18.0" class="grid"/>
+<text x="702.0" y="450.0" class="tick" text-anchor="middle">60%</text>
+<line x1="56.0" y1="434.0" x2="702.0" y2="434.0" class="grid"/>
+<text x="50.0" y="438.0" class="tick" text-anchor="end">40%</text>
+<line x1="56.0" y1="364.7" x2="702.0" y2="364.7" class="grid"/>
+<text x="50.0" y="368.7" class="tick" text-anchor="end">50%</text>
+<line x1="56.0" y1="295.3" x2="702.0" y2="295.3" class="grid"/>
+<text x="50.0" y="299.3" class="tick" text-anchor="end">60%</text>
+<line x1="56.0" y1="226.0" x2="702.0" y2="226.0" class="grid"/>
+<text x="50.0" y="230.0" class="tick" text-anchor="end">70%</text>
+<line x1="56.0" y1="191.3" x2="702.0" y2="191.3" class="grid"/>
+<text x="50.0" y="195.3" class="tick" text-anchor="end">75%</text>
+<line x1="56.0" y1="156.7" x2="702.0" y2="156.7" class="grid"/>
+<text x="50.0" y="160.7" class="tick" text-anchor="end">80%</text>
+<line x1="56.0" y1="87.3" x2="702.0" y2="87.3" class="grid"/>
+<text x="50.0" y="91.3" class="tick" text-anchor="end">90%</text>
+<line x1="56.0" y1="18.0" x2="702.0" y2="18.0" class="grid"/>
 <text x="50.0" y="22.0" class="tick" text-anchor="end">100%</text>
-<rect x="56.0" y="18.0" width="141.5" height="35.6" class="target t0"/>
-<rect x="56.0" y="18.0" width="56.6" height="35.6" class="target t1"/>
-<rect x="56.0" y="18.0" width="56.6" height="17.8" class="target t2"/>
-<text x="193.5" y="47.6" class="tlabel" text-anchor="end">90% at 25%</text>
-<text x="108.6" y="29.8" class="tlabel" text-anchor="end">95/10</text>
-<text x="339.0" y="414" class="axis" text-anchor="middle">share of today's test cost</text>
-<text transform="translate(14 196.0) rotate(-90)" class="axis" text-anchor="middle">share of today's bugs caught</text>
-<polyline class="blind" points="109.8,194.1 113.0,183.4 114.1,179.9 114.7,179.9 122.4,163.8 123.1,163.8 124.3,163.8 126.2,163.8 129.4,159.3 136.0,151.8 140.8,151.8 142.2,151.8 143.1,147.5 145.2,139.3 155.3,126.3 172.6,105.8 191.2,95.8 191.6,92.5 198.7,91.8 206.3,89.9 209.8,89.4 213.1,89.4 216.3,89.2 219.8,84.3 230.5,83.0 232.0,80.9 234.6,80.9 238.9,80.7 241.7,80.7 244.4,79.0 245.5,78.9 262.3,69.5 266.2,68.9 289.6,65.6 292.1,65.6 293.8,65.6 298.3,63.9 336.5,54.0 342.1,53.7 361.8,52.1 362.6,52.1 374.2,51.1 377.5,51.1 398.9,51.0 400.5,51.0 407.5,51.0 408.6,50.9 410.8,50.9 414.8,50.9 426.1,49.7 447.3,43.5 450.4,43.5 451.0,43.5 467.7,43.3 495.4,33.3 503.1,33.1 505.7,32.0 506.0,32.0 507.5,32.0 514.5,30.3 515.4,30.3 521.8,30.2 522.8,30.2 530.6,30.2 533.6,30.2 536.4,28.5 538.0,28.5 539.2,28.5 547.0,28.5 548.0,28.2"/>
-<text x="413.5" y="81.2" class="clabel blind">patch-blind, best value first</text>
-<polyline class="model" points="120.6,151.3 120.6,151.3 120.6,151.3 120.7,151.3 120.8,151.3 120.9,151.3 121.1,151.3 121.5,151.1 123.4,145.5 127.0,143.6 132.4,134.4 140.1,122.6 151.1,110.5 172.2,97.6 199.1,91.7 268.5,63.4 409.0,47.4"/>
-<text x="162.8" y="144.3" class="clabel model">learned model</text>
-<polyline class="modelllm" points="120.6,151.3 120.6,151.3 120.6,151.3 120.7,151.3 120.8,151.3 120.9,151.3 121.2,150.2 121.6,150.2 123.4,146.1 126.4,140.9 131.5,132.6 139.4,120.8 150.7,114.6 171.6,100.5 196.4,91.4 261.2,67.5 394.8,52.0"/>
-<text x="406.5" y="114.2" class="clabel modelllm">learned model with LLM reading</text>
-<polyline class="oracle" points="109.8,194.1 109.8,188.5 109.8,149.0 109.8,127.9 109.9,95.9 110.1,64.2 110.5,28.6 110.6,25.1 110.6,22.7 110.6,21.6 110.6,21.4 110.6,21.3 111.4,21.3"/>
-<text x="120.2" y="329.5" class="clabel oracle">oracle (the ceiling)</text>
-<polyline class="onblind" points="171.9,97.8 174.1,87.7 178.5,87.6 180.0,87.6 184.0,83.0 192.6,79.7 196.1,79.7 217.8,71.1 228.9,65.5 245.2,60.8"/>
-<text x="256.9" y="89.3" class="clabel onblind">principles on a blind base</text>
-<polyline class="blind train" points="98.8,180.8 102.2,169.0 103.3,161.1 103.8,158.8 111.7,138.9 112.4,137.2 113.6,135.0 115.5,131.7 118.7,126.3 125.5,115.6 130.3,110.5 131.8,108.9 132.7,108.0 134.8,106.1 145.1,97.2 162.7,82.4 181.5,69.8 181.9,69.5 189.1,65.1 196.9,60.4 200.5,58.7 203.8,57.3 207.1,55.5 210.7,53.6 221.5,48.5 223.0,48.1 225.7,47.3 230.0,46.1 232.8,45.3 235.6,44.6 236.7,44.4 253.8,40.5 257.7,39.7 281.5,35.7 284.0,35.3 285.8,35.0 290.4,34.3 329.1,29.3 334.9,28.5 354.8,26.2 355.7,26.1 367.4,24.9 370.8,24.6 392.5,22.8 394.2,22.7 401.2,22.2 402.3,22.1 404.6,22.0 408.7,21.8 420.2,21.2 441.7,20.3 444.9,20.2 445.5,20.2 462.5,19.6 490.5,18.8 498.4,18.6 501.1,18.5 501.4,18.5 502.8,18.4 510.0,18.3 510.9,18.3 517.4,18.2 518.4,18.2 526.4,18.1 529.4,18.0 532.2,18.0 533.9,18.0 535.0,18.0 542.9,18.0 544.0,18.0"/>
-<polyline class="oracle train" points="98.8,180.8 98.8,174.7 98.9,139.1 99.0,102.9 99.1,70.3 99.6,42.1 99.9,24.2 100.0,19.7 100.1,18.3 100.2,18.1 100.2,18.0 100.2,18.0 102.9,18.0"/>
-<polyline class="model train" points="105.4,139.1 105.4,139.1 105.4,136.9 105.5,135.6 105.6,133.2 105.7,130.2 106.0,127.2 106.4,125.8 108.1,119.8 111.2,115.5 115.3,102.8 121.3,94.8 129.6,81.9 148.0,68.4 170.5,55.0 229.5,38.0 358.8,30.2"/>
-<polyline class="modelllm train" points="105.4,139.1 105.4,139.1 105.4,137.0 105.5,134.4 105.6,130.5 105.7,130.0 105.9,126.7 106.3,125.2 107.2,119.0 109.2,108.1 112.3,101.4 118.0,90.9 125.4,83.1 141.7,64.2 161.7,57.7 214.8,45.2 336.8,31.9"/>
-<polyline class="onblind train" points="173.8,92.4 176.0,83.0 180.0,78.2 181.6,74.9 185.8,70.9 193.7,64.4 197.4,62.1 219.1,52.4 229.9,46.9 246.3,40.7"/>
-<line x1="622.0" y1="18.0" x2="622.0" y2="18.0" class="link train"/>
-<line x1="98.8" y1="180.8" x2="109.8" y2="194.1" class="link train"/>
-<line x1="105.4" y1="139.1" x2="120.6" y2="157.8" class="link train"/>
-<line x1="182.5" y1="89.6" x2="187.8" y2="102.3" class="link train"/>
-<line x1="363.9" y1="38.0" x2="385.8" y2="48.5" class="link train"/>
-<line x1="173.8" y1="92.4" x2="171.9" y2="97.8" class="link train"/>
-<line x1="622.0" y1="18.0" x2="622.0" y2="18.0" class="ci today"/>
-<line x1="622.0" y1="18.0" x2="622.0" y2="18.0" class="ci today"/>
-<circle cx="622.0" cy="18.0" r="5" class="pt today"><title>today&#x27;s matrix (test set): 100% of today's bugs at 100% of its cost</title></circle>
-<line x1="107.3" y1="194.1" x2="112.8" y2="194.1" class="ci trivial"/>
-<line x1="109.8" y1="217.0" x2="109.8" y2="172.3" class="ci trivial"/>
-<circle cx="109.8" cy="194.1" r="5" class="pt trivial"><title>trivial only (test set): 51% of today's bugs at 10% of its cost</title></circle>
-<line x1="117.2" y1="157.8" x2="124.8" y2="157.8" class="ci edited"/>
-<line x1="120.6" y1="181.0" x2="120.6" y2="135.4" class="ci edited"/>
-<circle cx="120.6" cy="157.8" r="5" class="pt edited"><title>+ edited test scripts (test set): 61% of today's bugs at 11% of its cost</title></circle>
-<line x1="176.9" y1="102.3" x2="199.4" y2="102.3" class="ci table"/>
-<line x1="187.8" y1="121.6" x2="187.8" y2="83.1" class="ci table"/>
-<circle cx="187.8" cy="102.3" r="5" class="pt table"><title>+ directory history, 20% (test set): 76% of today's bugs at 23% of its cost</title></circle>
-<line x1="362.4" y1="48.5" x2="412.2" y2="48.5" class="ci table"/>
-<line x1="385.8" y1="61.0" x2="385.8" y2="36.4" class="ci table"/>
-<circle cx="385.8" cy="48.5" r="5" class="pt table"><title>+ directory history, 5% (test set): 91% of today's bugs at 58% of its cost</title></circle>
-<line x1="162.6" y1="97.8" x2="183.0" y2="97.8" class="ci other"/>
-<line x1="171.9" y1="115.4" x2="171.9" y2="79.9" class="ci other"/>
-<circle cx="171.9" cy="97.8" r="5" class="pt other"><title>+ principles (test set): 78% of today's bugs at 20% of its cost</title></circle>
-<circle cx="622.0" cy="18.0" r="5" class="pt today hollow train"><title>today&#x27;s matrix (training set): 100% of today's bugs at 100% of its cost</title></circle>
-<circle cx="98.8" cy="180.8" r="5" class="pt trivial hollow train"><title>trivial only (training set): 54% of today's bugs at 8% of its cost</title></circle>
-<circle cx="105.4" cy="139.1" r="5" class="pt edited hollow train"><title>+ edited test scripts (training set): 66% of today's bugs at 9% of its cost</title></circle>
-<circle cx="182.5" cy="89.6" r="5" class="pt table hollow train"><title>+ directory history, 20% (training set): 80% of today's bugs at 22% of its cost</title></circle>
-<circle cx="363.9" cy="38.0" r="5" class="pt table hollow train"><title>+ directory history, 5% (training set): 94% of today's bugs at 54% of its cost</title></circle>
-<circle cx="173.8" cy="92.4" r="5" class="pt other hollow train"><title>+ principles (training set): 79% of today's bugs at 21% of its cost</title></circle>
-<text x="613.0" y="22.0" class="plabel" text-anchor="end">today&#x27;s matrix</text>
-<text x="394.8" y="52.5" class="plabel" text-anchor="start">+ directory history, 5%</text>
-<text x="180.9" y="101.8" class="plabel" text-anchor="start">+ principles</text>
-<text x="196.8" y="119.3" class="plabel" text-anchor="start">+ directory history, 20%</text>
-<text x="129.6" y="161.8" class="plabel" text-anchor="start">+ edited test scripts</text>
-<text x="118.8" y="198.1" class="plabel" text-anchor="start">trivial only</text>
+<rect x="56.0" y="18.0" width="269.2" height="69.3" class="target t0"/>
+<rect x="56.0" y="18.0" width="107.7" height="69.3" class="target t1"/>
+<rect x="56.0" y="18.0" width="107.7" height="34.7" class="target t2"/>
+<text x="321.2" y="81.3" class="tlabel" text-anchor="end">90% at 25%</text>
+<text x="159.7" y="46.7" class="tlabel" text-anchor="end">95/10</text>
+<text x="379.0" y="474" class="axis" text-anchor="middle">share of today's test cost</text>
+<text transform="translate(14 226.0) rotate(-90)" class="axis" text-anchor="middle">share of today's bugs caught</text>
+<polyline data-series="blind" class="blind" points="158.3,361.0 164.5,340.1 166.6,333.4 167.6,333.4 182.3,302.0 183.7,302.0 185.9,302.0 189.5,302.0 195.5,293.2 208.3,278.6 217.2,278.6 220.0,278.6 221.7,270.3 225.7,254.3 244.9,228.8 277.9,189.0 313.1,169.6 313.9,163.2 327.4,161.7 342.0,158.0 348.6,157.1 354.8,157.1 361.0,156.7 367.7,147.2 388.0,144.7 390.7,140.6 395.8,140.6 403.8,140.2 409.2,140.2 414.4,136.7 416.4,136.7 448.5,118.3 455.8,117.1 500.4,110.6 505.1,110.6 508.4,110.6 516.9,107.4 589.5,88.1 600.3,87.6 637.6,84.4 639.3,84.4 661.3,82.4 667.7,82.4 702.0,82.4 702.0,82.4"/>
+<polyline data-series="model" class="model" points="179.0,277.6 179.0,277.6 179.0,277.6 179.0,277.6 179.2,277.6 179.4,277.6 179.8,277.6 180.6,277.3 184.3,266.4 191.0,262.5 201.3,244.8 216.0,221.7 236.9,198.1 277.1,173.0 328.1,161.5 460.3,106.5"/>
+<polyline data-series="modelllm" class="modelllm" points="179.0,277.6 179.0,277.6 179.0,277.6 179.0,277.6 179.2,277.6 179.5,277.6 180.1,275.5 180.8,275.5 184.3,267.5 189.9,257.3 199.6,241.2 214.7,218.2 236.1,206.2 275.9,178.7 323.0,161.0 446.3,114.5 700.5,84.1"/>
+<polyline data-series="oracle" class="oracle" points="158.3,361.0 158.3,350.0 158.4,273.1 158.4,232.1 158.5,169.8 158.8,107.9 159.6,38.6 159.8,31.9 159.9,27.2 159.9,25.0 159.9,24.6 159.9,24.4 161.4,24.4"/>
+<polyline data-series="onblind" class="onblind" points="276.5,173.5 280.7,153.8 289.0,153.5 291.9,153.5 299.6,144.7 315.8,138.1 322.5,138.1 363.7,121.4 385.0,110.5 415.9,101.4"/>
+<polyline data-series="blind" class="blind train" points="137.5,335.0 143.8,312.1 145.9,296.7 147.0,292.2 161.9,253.6 163.3,250.1 165.5,245.9 169.2,239.5 175.3,228.9 188.2,208.2 197.4,198.1 200.2,195.0 201.9,193.3 206.0,189.5 225.4,172.2 259.0,143.5 294.8,119.0 295.6,118.4 309.3,109.7 324.1,100.6 330.8,97.2 337.1,94.5 343.4,91.0 350.2,87.3 370.9,77.5 373.6,76.6 378.7,75.0 386.9,72.7 392.4,71.2 397.7,69.8 399.7,69.3 432.3,61.9 439.7,60.3 485.0,52.5 489.8,51.7 493.2,51.1 501.8,49.7 575.5,39.9 586.4,38.5 624.4,34.0 626.1,33.8 648.4,31.4 654.9,30.8 696.1,27.4 699.3,27.1 702.0,26.2 702.0,26.1"/>
+<polyline data-series="oracle" class="oracle train" points="137.5,335.0 137.5,323.1 137.6,253.8 137.8,183.3 138.1,119.9 139.0,65.0 139.5,30.1 139.7,21.3 139.8,18.6 140.1,18.2 140.1,18.0 140.2,18.0 145.3,18.0"/>
+<polyline data-series="model" class="model train" points="150.0,253.8 150.0,253.8 150.0,249.6 150.2,247.1 150.4,242.4 150.6,236.6 151.2,230.7 151.8,228.0 155.1,216.3 160.9,207.9 168.7,183.2 180.2,167.5 196.1,142.4 231.0,116.1 273.9,90.0 386.1,56.9 632.0,41.7"/>
+<polyline data-series="modelllm" class="modelllm train" points="150.0,253.8 150.0,253.8 150.0,249.7 150.1,244.6 150.3,237.1 150.5,236.0 151.0,229.7 151.6,226.7 153.5,214.8 157.2,193.4 163.0,180.4 174.0,159.9 187.9,144.9 219.1,108.0 257.0,95.3 358.2,71.0 590.2,45.1"/>
+<polyline data-series="onblind" class="onblind train" points="280.0,163.0 284.3,144.7 291.9,135.2 294.9,128.7 302.8,121.0 318.0,108.4 324.9,104.0 366.3,85.0 386.9,74.3 418.1,62.1"/>
+<line x1="702.0" y1="18.0" x2="702.0" y2="18.0" class="link train" data-series="points"/>
+<line x1="137.5" y1="335.0" x2="158.3" y2="361.0" class="link train" data-series="points"/>
+<line x1="150.0" y1="253.8" x2="179.0" y2="290.3" class="link train" data-series="points"/>
+<line x1="296.6" y1="157.5" x2="306.7" y2="182.3" class="link train" data-series="points"/>
+<line x1="641.7" y1="57.0" x2="683.4" y2="77.4" class="link train" data-series="points"/>
+<line x1="280.0" y1="163.0" x2="276.5" y2="173.5" class="link train" data-series="points"/>
+<line x1="153.5" y1="361.0" x2="164.0" y2="361.0" class="ci trivial" data-series="points"/>
+<line x1="158.3" y1="405.5" x2="158.3" y2="318.4" class="ci trivial" data-series="points"/>
+<circle data-series="points" cx="158.3" cy="361.0" r="5" class="pt trivial"><title>trivial only (test set): 51% of today's bugs at 10% of its cost</title></circle>
+<line x1="172.3" y1="290.3" x2="186.8" y2="290.3" class="ci edited" data-series="points"/>
+<line x1="179.0" y1="335.4" x2="179.0" y2="246.6" class="ci edited" data-series="points"/>
+<circle data-series="points" cx="179.0" cy="290.3" r="5" class="pt edited"><title>+ edited test scripts (test set): 61% of today's bugs at 11% of its cost</title></circle>
+<line x1="286.0" y1="182.3" x2="328.8" y2="182.3" class="ci table" data-series="points"/>
+<line x1="306.7" y1="219.8" x2="306.7" y2="144.8" class="ci table" data-series="points"/>
+<circle data-series="points" cx="306.7" cy="182.3" r="5" class="pt table"><title>+ directory history, 20% (test set): 76% of today's bugs at 23% of its cost</title></circle>
+<line x1="638.9" y1="77.4" x2="702.0" y2="77.4" class="ci table" data-series="points"/>
+<line x1="683.4" y1="101.7" x2="683.4" y2="53.8" class="ci table" data-series="points"/>
+<circle data-series="points" cx="683.4" cy="77.4" r="5" class="pt table"><title>+ directory history, 5% (test set): 91% of today's bugs at 58% of its cost</title></circle>
+<line x1="258.7" y1="173.5" x2="297.5" y2="173.5" class="ci other" data-series="points"/>
+<line x1="276.5" y1="207.8" x2="276.5" y2="138.6" class="ci other" data-series="points"/>
+<circle data-series="points" cx="276.5" cy="173.5" r="5" class="pt other"><title>+ principles (test set): 78% of today's bugs at 20% of its cost</title></circle>
+<circle data-series="points" cx="137.5" cy="335.0" r="5" class="pt trivial hollow train"><title>trivial only (training set): 54% of today's bugs at 8% of its cost</title></circle>
+<circle data-series="points" cx="150.0" cy="253.8" r="5" class="pt edited hollow train"><title>+ edited test scripts (training set): 66% of today's bugs at 9% of its cost</title></circle>
+<circle data-series="points" cx="296.6" cy="157.5" r="5" class="pt table hollow train"><title>+ directory history, 20% (training set): 80% of today's bugs at 22% of its cost</title></circle>
+<circle data-series="points" cx="641.7" cy="57.0" r="5" class="pt table hollow train"><title>+ directory history, 5% (training set): 94% of today's bugs at 54% of its cost</title></circle>
+<circle data-series="points" cx="280.0" cy="163.0" r="5" class="pt other hollow train"><title>+ principles (training set): 79% of today's bugs at 21% of its cost</title></circle>
+<text x="674.4" y="81.4" class="plabel" data-series="points" text-anchor="end">+ directory history, 5%</text>
+<text x="285.5" y="177.5" class="plabel" data-series="points" text-anchor="start">+ principles</text>
+<text x="315.7" y="199.3" class="plabel" data-series="points" text-anchor="start">+ directory history, 20%</text>
+<text x="188.0" y="294.3" class="plabel" data-series="points" text-anchor="start">+ edited test scripts</text>
+<text x="167.3" y="365.0" class="plabel" data-series="points" text-anchor="start">trivial only</text>
 </svg>
-<label class='toggle'><input type='checkbox' id='show-train'> Show the training set</label><div class='legend'><span><i class='dot'></i><i class='line solid'></i>test set: filled points, solid lines (the results)</span><span class='train'><i class='ring'></i><i class='line dotted'></i>training set: hollow points, dotted lines (the data the rules were fitted to; the gap to the test set is overfitting and drift)</span></div><div class='legend'><span><i class='line'></i>patch-blind baseline: the same tests for every patch, best value first</span><span><i class='line' style='background:var(--edited)'></i>oracle: each patch's own cheapest catches, the ceiling</span><span><i class='line' style='background:var(--other)'></i>principles on a blind base</span><span><i class='line' style='background:var(--table)'></i>learned model: principles and history as features</span><span><i class='line' style='background:var(--fg)'></i>the same with an LLM's reading of each patch as features too</span><span>whiskers: 95% interval</span></div><dl class='key'><dt>today&#x27;s matrix</dt><dd>every review session Autotest runs today</dd><dt>trivial only</dt><dd>Test-Parameters: trivial and nothing else: review-ldiskfs (sanity, lnet-selftest)</dd><dt>+ edited test scripts</dt><dd>trivial, plus every test script the patch changes, run once in DNE ldiskfs</dd><dt>+ directory history, 20%</dt><dd>trivial and edited scripts, plus each script and configuration that caught a bug on at least 20% of the training set&#x27;s patches changing the same directory</dd><dt>+ directory history, 5%</dt><dd>trivial and edited scripts, plus each script and configuration that caught a bug on at least 5% of the training set&#x27;s patches changing the same directory</dd><dt>+ principles</dt><dd>trivial and edited scripts, plus the suites and configurations that exercise each part of Lustre the patch changes (eval/predictors/principles.toml); nothing learned</dd><dt>patch-blind, best value first</dt><dd>the same tests for every patch: scripts and configurations ranked on the training set by bugs caught per second, added in that order</dd><dt>learned model</dt><dd>one model scores every patch and test set pair, from the principles, co-failure history, shared path words, base rates and the patch&#x27;s shape; each patch gets the test sets worth their session time</dd><dt>learned model with LLM reading</dt><dd>one model scores every patch and test set pair, from the principles, co-failure history, shared path words, base rates and the patch&#x27;s shape; each patch gets the test sets worth their session time</dd><dt>oracle: each patch&#x27;s own cheapest catches</dt><dd>knowing each patch&#x27;s bugs, the tests that catch them for the least session time; no predictor can do better</dd><dt>principles on a blind base</dt><dd>the first n sets of the patch-blind order (skipped for narrow patches: docs, tests, LNet, lfs), plus the principles&#x27; selection; n from 0 to 25</dd></dl></section>
+<div class='legend'><span><i class='dot'></i><i class='line solid'></i>test set: filled points, solid lines (the results)</span><span class='train'><i class='ring'></i><i class='line dotted'></i>training set: hollow points, dotted lines (the data the rules were fitted to; the gap to the test set is overfitting and drift)</span><span>whiskers: 95% interval</span></div><div class='toggles'><label class='toggle'><input type='checkbox' id='show-train'> training set</label><label class='toggle'><input type='checkbox' data-toggle='blind' checked><i class='swatch' style='background:var(--today)'></i>patch-blind baseline: the same tests for every patch, best value first</label><label class='toggle'><input type='checkbox' data-toggle='oracle' checked><i class='swatch' style='background:var(--edited)'></i>oracle: each patch&#x27;s own cheapest catches, the ceiling</label><label class='toggle'><input type='checkbox' data-toggle='onblind' checked><i class='swatch' style='background:var(--other)'></i>principles on a blind base</label><label class='toggle'><input type='checkbox' data-toggle='model' checked><i class='swatch' style='background:var(--table)'></i>learned model: principles and history as features</label><label class='toggle'><input type='checkbox' data-toggle='modelllm' checked><i class='swatch' style='background:var(--fg)'></i>the same with an LLM&#x27;s reading of each patch as features too</label><label class='toggle'><input type='checkbox' data-toggle='points' checked><i class='swatch' style='background:var(--muted)'></i>single selections (trivial, edited scripts, principles, directory history)</label></div><dl class='key'><dt>today&#x27;s matrix</dt><dd>every review session Autotest runs today</dd><dt>trivial only</dt><dd>Test-Parameters: trivial and nothing else: review-ldiskfs (sanity, lnet-selftest)</dd><dt>+ edited test scripts</dt><dd>trivial, plus every test script the patch changes, run once in DNE ldiskfs</dd><dt>+ directory history, 20%</dt><dd>trivial and edited scripts, plus each script and configuration that caught a bug on at least 20% of the training set&#x27;s patches changing the same directory</dd><dt>+ directory history, 5%</dt><dd>trivial and edited scripts, plus each script and configuration that caught a bug on at least 5% of the training set&#x27;s patches changing the same directory</dd><dt>+ principles</dt><dd>trivial and edited scripts, plus the suites and configurations that exercise each part of Lustre the patch changes (eval/predictors/principles.toml); nothing learned</dd><dt>patch-blind, best value first</dt><dd>the same tests for every patch: scripts and configurations ranked on the training set by bugs caught per second, added in that order</dd><dt>learned model</dt><dd>one model scores every patch and test set pair, from the principles, co-failure history, shared path words, base rates and the patch&#x27;s shape; each patch gets the test sets worth their session time</dd><dt>learned model with LLM reading</dt><dd>one model scores every patch and test set pair, from the principles, co-failure history, shared path words, base rates and the patch&#x27;s shape; each patch gets the test sets worth their session time</dd><dt>oracle: each patch&#x27;s own cheapest catches</dt><dd>knowing each patch&#x27;s bugs, the tests that catch them for the least session time; no predictor can do better</dd><dt>principles on a blind base</dt><dd>the first n sets of the patch-blind order (skipped for narrow patches: docs, tests, LNet, lfs), plus the principles&#x27; selection; n from 0 to 25</dd></dl></section>
+<section><h2>Gain over the patch-blind baseline</h2>
+<p class="muted">Each selection's share of today's bugs minus what the same tests for every patch catch at
+the same cost, on the test set. Above zero, reading the patch is paying for itself.</p>
+<svg viewBox="0 0 640 320" role="img" aria-label="gain over the patch-blind baseline" class="chart">
+<line x1="56.0" y1="274.0" x2="56.0" y2="18.0" class="grid"/>
+<text x="56.0" y="290.0" class="tick" text-anchor="middle">0%</text>
+<line x1="150.3" y1="274.0" x2="150.3" y2="18.0" class="grid"/>
+<text x="150.3" y="290.0" class="tick" text-anchor="middle">10%</text>
+<line x1="244.7" y1="274.0" x2="244.7" y2="18.0" class="grid"/>
+<text x="244.7" y="290.0" class="tick" text-anchor="middle">20%</text>
+<line x1="291.8" y1="274.0" x2="291.8" y2="18.0" class="grid"/>
+<text x="291.8" y="290.0" class="tick" text-anchor="middle">25%</text>
+<line x1="339.0" y1="274.0" x2="339.0" y2="18.0" class="grid"/>
+<text x="339.0" y="290.0" class="tick" text-anchor="middle">30%</text>
+<line x1="433.3" y1="274.0" x2="433.3" y2="18.0" class="grid"/>
+<text x="433.3" y="290.0" class="tick" text-anchor="middle">40%</text>
+<line x1="527.7" y1="274.0" x2="527.7" y2="18.0" class="grid"/>
+<text x="527.7" y="290.0" class="tick" text-anchor="middle">50%</text>
+<line x1="622.0" y1="274.0" x2="622.0" y2="18.0" class="grid"/>
+<text x="622.0" y="290.0" class="tick" text-anchor="middle">60%</text>
+<line x1="56.0" y1="274.0" x2="622.0" y2="274.0" class="grid"/>
+<text x="50.0" y="278.0" class="tick" text-anchor="end">-15</text>
+<line x1="56.0" y1="242.0" x2="622.0" y2="242.0" class="grid"/>
+<text x="50.0" y="246.0" class="tick" text-anchor="end">-10</text>
+<line x1="56.0" y1="210.0" x2="622.0" y2="210.0" class="grid"/>
+<text x="50.0" y="214.0" class="tick" text-anchor="end">-5</text>
+<line x1="56.0" y1="178.0" x2="622.0" y2="178.0" class="zero"/>
+<text x="50.0" y="182.0" class="tick" text-anchor="end">+0</text>
+<line x1="56.0" y1="146.0" x2="622.0" y2="146.0" class="grid"/>
+<text x="50.0" y="150.0" class="tick" text-anchor="end">+5</text>
+<line x1="56.0" y1="114.0" x2="622.0" y2="114.0" class="grid"/>
+<text x="50.0" y="118.0" class="tick" text-anchor="end">+10</text>
+<line x1="56.0" y1="82.0" x2="622.0" y2="82.0" class="grid"/>
+<text x="50.0" y="86.0" class="tick" text-anchor="end">+15</text>
+<line x1="56.0" y1="50.0" x2="622.0" y2="50.0" class="grid"/>
+<text x="50.0" y="54.0" class="tick" text-anchor="end">+20</text>
+<line x1="56.0" y1="18.0" x2="622.0" y2="18.0" class="grid"/>
+<text x="50.0" y="22.0" class="tick" text-anchor="end">+25</text>
+<text x="618.0" y="172.0" class="clabel blind" text-anchor="end">patch-blind</text>
+<text x="339.0" y="314" class="axis" text-anchor="middle">share of today's test cost</text>
+<text transform="translate(14 146.0) rotate(-90)" class="axis" text-anchor="middle">points above patch-blind</text>
+<circle data-series="points" cx="145.6" cy="178.0" r="5" class="pt trivial"><title>trivial only: +0 points at 10%</title></circle>
+<text data-series="points" x="153.6" y="182.0" class="plabel">trivial only</text>
+<circle data-series="points" cx="163.7" cy="160.6" r="5" class="pt edited"><title>+ edited test scripts: +3 points at 11%</title></circle>
+<text data-series="points" x="171.7" y="164.6" class="plabel">+ edited test scripts</text>
+<circle data-series="points" cx="275.6" cy="186.4" r="5" class="pt table"><title>+ directory history, 20%: -1 points at 23%</title></circle>
+<text data-series="points" x="283.6" y="190.4" class="plabel">+ directory history, 20%</text>
+<circle data-series="points" cx="605.7" cy="173.4" r="5" class="pt table"><title>+ directory history, 5%: +1 points at 58%</title></circle>
+<text data-series="points" x="613.7" y="177.4" class="plabel">+ directory history, 5%</text>
+<circle data-series="points" cx="249.2" cy="162.2" r="5" class="pt other"><title>+ principles: +2 points at 20%</title></circle>
+<text data-series="points" x="257.2" y="166.2" class="plabel">+ principles</text>
+<polyline data-series="model" class="model" points="163.7,148.8 163.7,148.8 163.7,148.9 163.8,149.0 164.0,149.4 164.1,149.7 164.5,150.6 165.2,151.9 168.4,145.1 174.3,143.7 183.3,139.4 196.1,125.4 214.5,139.9 249.7,162.4 294.4,178.0 410.2,168.8"/>
+<polyline data-series="modelllm" class="modelllm" points="163.7,148.8 163.7,148.8 163.7,148.9 163.8,149.0 163.9,149.3 164.2,149.8 164.7,149.1 165.4,150.6 168.4,146.2 173.3,137.4 181.8,134.3 195.1,122.3 213.8,146.4 248.7,166.3 290.0,176.9 397.9,173.3 620.7,179.6"/>
+<polyline data-series="onblind" class="onblind" points="249.2,162.2 252.9,147.0 260.2,150.9 262.7,152.3 269.4,148.1 283.6,155.0 289.5,155.7 325.6,149.0 344.2,146.1 371.4,145.4"/>
+</svg></section>
 <section><h2>By kind of bug</h2><div class="smalls"><figure><figcaption>Easy bugs (in tests the patch edits)</figcaption><svg viewBox="0 0 320 240" role="img" aria-label="Easy bugs (in tests the patch edits)" class="chart">
 <line x1="46.0" y1="204.0" x2="46.0" y2="14.0" class="grid"/>
 <text x="46.0" y="220.0" class="tick" text-anchor="middle">0%</text>
@@ -191,34 +249,34 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <text x="40.0" y="37.0" class="tick" text-anchor="end">90%</text>
 <line x1="46.0" y1="14.0" x2="306.0" y2="14.0" class="grid"/>
 <text x="40.0" y="18.0" class="tick" text-anchor="end">100%</text>
-<polyline class="blind" points="70.7,59.0 72.2,58.6 72.7,58.6 73.0,58.6 76.5,57.2 76.8,57.2 77.4,57.2 78.2,57.2 79.7,57.2 82.8,55.7 84.9,55.7 85.6,55.7 86.0,55.6 87.0,55.6 91.6,55.5 99.6,52.3 108.1,50.9 108.3,50.9 111.5,45.4 115.1,45.4 116.7,45.4 118.2,45.4 119.7,45.4 121.3,42.7 126.2,42.7 126.8,42.7 128.1,42.7 130.0,42.7 131.3,42.7 132.6,42.6 133.0,42.6 140.8,41.6 142.6,41.6 153.3,40.0 154.4,40.0 155.3,40.0 157.3,40.0 174.8,36.5 177.4,36.5 186.5,35.4 186.8,35.4 192.2,35.4 193.7,35.4 203.5,35.4 204.3,35.4 207.4,35.4 208.0,35.4 209.0,35.4 210.8,35.4 216.0,35.4 225.8,32.9 227.2,32.9 227.5,32.9 235.1,32.9 247.8,28.8 251.4,27.4 252.6,27.0 252.7,27.0 253.4,27.0 256.6,24.7 257.0,24.7 260.0,24.2 260.4,24.2 264.0,24.2 265.4,24.2 266.7,24.2 267.4,24.2 268.0,24.2 271.5,24.2 272.0,24.2"/>
-<polyline class="model" points="75.7,35.3 75.7,35.3 75.7,35.3 75.7,35.3 75.8,35.3 75.8,35.3 75.9,35.3 76.1,35.3 77.0,35.3 78.6,35.3 81.1,33.8 84.6,28.6 89.7,26.5 99.4,23.8 111.7,20.8 143.6,18.1 208.1,16.6"/>
-<polyline class="modelllm" points="75.7,35.3 75.7,35.3 75.7,35.3 75.7,35.3 75.7,35.3 75.8,35.3 76.0,35.3 76.1,35.3 77.0,35.3 78.3,35.3 80.7,33.4 84.3,29.3 89.5,28.0 99.1,25.2 110.5,23.3 140.2,19.4 201.6,18.1"/>
-<polyline class="oracle" points="70.7,59.0 70.7,59.0 70.7,52.2 70.7,38.7 70.7,34.2 70.8,29.8 71.0,19.6 71.1,17.8 71.1,15.5 71.1,14.3 71.1,14.1 71.1,14.0 71.5,14.0"/>
-<polyline class="onblind" points="99.3,34.9 100.3,34.9 102.3,34.9 103.0,34.9 104.8,34.9 108.7,34.9 110.4,34.9 120.3,33.6 125.4,28.1 132.9,28.1"/>
-<polyline class="blind train" points="65.7,72.4 67.2,64.7 67.7,64.7 68.0,64.7 71.6,63.0 71.9,63.0 72.4,63.0 73.3,63.0 74.8,63.0 77.9,59.1 80.1,59.1 80.8,59.1 81.2,59.1 82.2,59.0 86.9,58.1 95.0,56.1 103.7,43.4 103.9,43.4 107.2,40.8 110.7,39.6 112.4,39.6 113.9,38.7 115.4,38.7 117.0,35.9 122.0,35.6 122.7,35.6 123.9,35.6 125.9,35.6 127.2,35.6 128.5,35.6 129.0,35.6 136.9,35.2 138.7,35.1 149.6,34.7 150.7,34.7 151.6,34.7 153.7,34.7 171.5,28.8 174.1,28.2 183.3,26.9 183.7,26.9 189.1,26.8 190.6,26.8 200.6,26.4 201.4,26.4 204.6,26.4 205.1,26.4 206.1,26.2 208.0,26.2 213.3,26.0 223.2,25.5 224.6,25.4 224.9,25.4 232.7,23.9 245.6,23.9 249.2,22.3 250.4,22.3 250.6,22.3 251.3,22.3 254.6,18.2 255.0,18.2 257.9,14.0 258.4,14.0 262.1,14.0 263.5,14.0 264.7,14.0 265.5,14.0 266.1,14.0 269.7,14.0 270.2,14.0"/>
-<polyline class="oracle train" points="65.7,72.4 65.7,72.4 65.7,62.5 65.7,50.5 65.8,44.6 66.0,27.1 66.2,16.7 66.2,14.6 66.2,14.2 66.3,14.1 66.3,14.0 66.3,14.0 67.6,14.0"/>
-<polyline class="model train" points="68.7,45.4 68.7,45.4 68.7,45.2 68.7,45.0 68.8,44.4 68.8,44.3 69.0,44.3 69.1,44.3 69.9,44.3 71.3,43.6 73.2,41.4 76.0,38.3 79.8,37.2 88.3,31.1 98.6,23.0 125.7,17.3 185.1,14.3"/>
-<polyline class="modelllm train" points="68.7,45.4 68.7,45.4 68.7,45.4 68.7,44.8 68.8,44.3 68.8,44.3 68.9,44.1 69.1,43.2 69.5,42.5 70.4,39.8 71.8,39.7 74.5,37.5 77.9,33.8 85.4,29.3 94.5,24.1 119.0,16.7 175.0,14.3"/>
-<polyline class="onblind train" points="100.1,34.1 101.1,34.1 103.0,34.1 103.7,34.1 105.6,34.1 109.3,34.1 110.9,34.1 120.9,32.6 125.9,30.0 133.4,29.2"/>
-<line x1="306.0" y1="14.0" x2="306.0" y2="14.0" class="link train"/>
-<line x1="65.7" y1="72.4" x2="70.7" y2="59.0" class="link train"/>
-<line x1="68.7" y1="45.4" x2="75.7" y2="45.5" class="link train"/>
-<line x1="104.1" y1="30.5" x2="106.5" y2="21.6" class="link train"/>
-<line x1="187.4" y1="26.3" x2="197.5" y2="19.5" class="link train"/>
-<line x1="100.1" y1="34.1" x2="99.3" y2="34.9" class="link train"/>
-<circle cx="306.0" cy="14.0" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 100% of today's bugs at 100% of its cost</title></circle>
-<circle cx="70.7" cy="59.0" r="3.5" class="pt trivial"><title>trivial only (test set): 76% of today's bugs at 10% of its cost</title></circle>
-<circle cx="75.7" cy="45.5" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 83% of today's bugs at 11% of its cost</title></circle>
-<circle cx="106.5" cy="21.6" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 96% of today's bugs at 23% of its cost</title></circle>
-<circle cx="197.5" cy="19.5" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 97% of today's bugs at 58% of its cost</title></circle>
-<circle cx="99.3" cy="34.9" r="3.5" class="pt other"><title>+ principles (test set): 89% of today's bugs at 20% of its cost</title></circle>
-<circle cx="306.0" cy="14.0" r="3.5" class="pt today hollow train"><title>today&#x27;s matrix (training set): 100% of today's bugs at 100% of its cost</title></circle>
-<circle cx="65.7" cy="72.4" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 69% of today's bugs at 8% of its cost</title></circle>
-<circle cx="68.7" cy="45.4" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 83% of today's bugs at 9% of its cost</title></circle>
-<circle cx="104.1" cy="30.5" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 91% of today's bugs at 22% of its cost</title></circle>
-<circle cx="187.4" cy="26.3" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 94% of today's bugs at 54% of its cost</title></circle>
-<circle cx="100.1" cy="34.1" r="3.5" class="pt other hollow train"><title>+ principles (training set): 89% of today's bugs at 21% of its cost</title></circle>
+<polyline data-series="blind" class="blind" points="70.7,59.0 72.2,58.6 72.7,58.6 73.0,58.6 76.5,57.2 76.8,57.2 77.4,57.2 78.2,57.2 79.7,57.2 82.8,55.7 84.9,55.7 85.6,55.7 86.0,55.6 87.0,55.6 91.6,55.5 99.6,52.3 108.1,50.9 108.3,50.9 111.5,45.4 115.1,45.4 116.7,45.4 118.2,45.4 119.7,45.4 121.3,42.7 126.2,42.7 126.8,42.7 128.1,42.7 130.0,42.7 131.3,42.7 132.6,42.6 133.0,42.6 140.8,41.6 142.6,41.6 153.3,40.0 154.4,40.0 155.3,40.0 157.3,40.0 174.8,36.5 177.4,36.5 186.5,35.4 186.8,35.4 192.2,35.4 193.7,35.4 203.5,35.4 204.3,35.4 207.4,35.4 208.0,35.4 209.0,35.4 210.8,35.4 216.0,35.4 225.8,32.9 227.2,32.9 227.5,32.9 235.1,32.9 247.8,28.8 251.4,27.4 252.6,27.0 252.7,27.0 253.4,27.0 256.6,24.7 257.0,24.7 260.0,24.2 260.4,24.2 264.0,24.2 265.4,24.2 266.7,24.2 267.4,24.2 268.0,24.2 271.5,24.2 272.0,24.2"/>
+<polyline data-series="model" class="model" points="75.7,35.3 75.7,35.3 75.7,35.3 75.7,35.3 75.8,35.3 75.8,35.3 75.9,35.3 76.1,35.3 77.0,35.3 78.6,35.3 81.1,33.8 84.6,28.6 89.7,26.5 99.4,23.8 111.7,20.8 143.6,18.1 208.1,16.6"/>
+<polyline data-series="modelllm" class="modelllm" points="75.7,35.3 75.7,35.3 75.7,35.3 75.7,35.3 75.7,35.3 75.8,35.3 76.0,35.3 76.1,35.3 77.0,35.3 78.3,35.3 80.7,33.4 84.3,29.3 89.5,28.0 99.1,25.2 110.5,23.3 140.2,19.4 201.6,18.1"/>
+<polyline data-series="oracle" class="oracle" points="70.7,59.0 70.7,59.0 70.7,52.2 70.7,38.7 70.7,34.2 70.8,29.8 71.0,19.6 71.1,17.8 71.1,15.5 71.1,14.3 71.1,14.1 71.1,14.0 71.5,14.0"/>
+<polyline data-series="onblind" class="onblind" points="99.3,34.9 100.3,34.9 102.3,34.9 103.0,34.9 104.8,34.9 108.7,34.9 110.4,34.9 120.3,33.6 125.4,28.1 132.9,28.1"/>
+<polyline data-series="blind" class="blind train" points="65.7,72.4 67.2,64.7 67.7,64.7 68.0,64.7 71.6,63.0 71.9,63.0 72.4,63.0 73.3,63.0 74.8,63.0 77.9,59.1 80.1,59.1 80.8,59.1 81.2,59.1 82.2,59.0 86.9,58.1 95.0,56.1 103.7,43.4 103.9,43.4 107.2,40.8 110.7,39.6 112.4,39.6 113.9,38.7 115.4,38.7 117.0,35.9 122.0,35.6 122.7,35.6 123.9,35.6 125.9,35.6 127.2,35.6 128.5,35.6 129.0,35.6 136.9,35.2 138.7,35.1 149.6,34.7 150.7,34.7 151.6,34.7 153.7,34.7 171.5,28.8 174.1,28.2 183.3,26.9 183.7,26.9 189.1,26.8 190.6,26.8 200.6,26.4 201.4,26.4 204.6,26.4 205.1,26.4 206.1,26.2 208.0,26.2 213.3,26.0 223.2,25.5 224.6,25.4 224.9,25.4 232.7,23.9 245.6,23.9 249.2,22.3 250.4,22.3 250.6,22.3 251.3,22.3 254.6,18.2 255.0,18.2 257.9,14.0 258.4,14.0 262.1,14.0 263.5,14.0 264.7,14.0 265.5,14.0 266.1,14.0 269.7,14.0 270.2,14.0"/>
+<polyline data-series="oracle" class="oracle train" points="65.7,72.4 65.7,72.4 65.7,62.5 65.7,50.5 65.8,44.6 66.0,27.1 66.2,16.7 66.2,14.6 66.2,14.2 66.3,14.1 66.3,14.0 66.3,14.0 67.6,14.0"/>
+<polyline data-series="model" class="model train" points="68.7,45.4 68.7,45.4 68.7,45.2 68.7,45.0 68.8,44.4 68.8,44.3 69.0,44.3 69.1,44.3 69.9,44.3 71.3,43.6 73.2,41.4 76.0,38.3 79.8,37.2 88.3,31.1 98.6,23.0 125.7,17.3 185.1,14.3"/>
+<polyline data-series="modelllm" class="modelllm train" points="68.7,45.4 68.7,45.4 68.7,45.4 68.7,44.8 68.8,44.3 68.8,44.3 68.9,44.1 69.1,43.2 69.5,42.5 70.4,39.8 71.8,39.7 74.5,37.5 77.9,33.8 85.4,29.3 94.5,24.1 119.0,16.7 175.0,14.3"/>
+<polyline data-series="onblind" class="onblind train" points="100.1,34.1 101.1,34.1 103.0,34.1 103.7,34.1 105.6,34.1 109.3,34.1 110.9,34.1 120.9,32.6 125.9,30.0 133.4,29.2"/>
+<line x1="306.0" y1="14.0" x2="306.0" y2="14.0" class="link train" data-series="points"/>
+<line x1="65.7" y1="72.4" x2="70.7" y2="59.0" class="link train" data-series="points"/>
+<line x1="68.7" y1="45.4" x2="75.7" y2="45.5" class="link train" data-series="points"/>
+<line x1="104.1" y1="30.5" x2="106.5" y2="21.6" class="link train" data-series="points"/>
+<line x1="187.4" y1="26.3" x2="197.5" y2="19.5" class="link train" data-series="points"/>
+<line x1="100.1" y1="34.1" x2="99.3" y2="34.9" class="link train" data-series="points"/>
+<circle data-series="points" cx="306.0" cy="14.0" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 100% of today's bugs at 100% of its cost</title></circle>
+<circle data-series="points" cx="70.7" cy="59.0" r="3.5" class="pt trivial"><title>trivial only (test set): 76% of today's bugs at 10% of its cost</title></circle>
+<circle data-series="points" cx="75.7" cy="45.5" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 83% of today's bugs at 11% of its cost</title></circle>
+<circle data-series="points" cx="106.5" cy="21.6" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 96% of today's bugs at 23% of its cost</title></circle>
+<circle data-series="points" cx="197.5" cy="19.5" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 97% of today's bugs at 58% of its cost</title></circle>
+<circle data-series="points" cx="99.3" cy="34.9" r="3.5" class="pt other"><title>+ principles (test set): 89% of today's bugs at 20% of its cost</title></circle>
+<circle data-series="points" cx="306.0" cy="14.0" r="3.5" class="pt today hollow train"><title>today&#x27;s matrix (training set): 100% of today's bugs at 100% of its cost</title></circle>
+<circle data-series="points" cx="65.7" cy="72.4" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 69% of today's bugs at 8% of its cost</title></circle>
+<circle data-series="points" cx="68.7" cy="45.4" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 83% of today's bugs at 9% of its cost</title></circle>
+<circle data-series="points" cx="104.1" cy="30.5" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 91% of today's bugs at 22% of its cost</title></circle>
+<circle data-series="points" cx="187.4" cy="26.3" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 94% of today's bugs at 54% of its cost</title></circle>
+<circle data-series="points" cx="100.1" cy="34.1" r="3.5" class="pt other hollow train"><title>+ principles (training set): 89% of today's bugs at 21% of its cost</title></circle>
 </svg></figure><figure><figcaption>Hard bugs</figcaption><svg viewBox="0 0 320 240" role="img" aria-label="Hard bugs" class="chart">
 <line x1="46.0" y1="204.0" x2="46.0" y2="14.0" class="grid"/>
 <text x="46.0" y="220.0" class="tick" text-anchor="middle">0%</text>
@@ -244,34 +302,34 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <text x="40.0" y="37.0" class="tick" text-anchor="end">90%</text>
 <line x1="46.0" y1="14.0" x2="306.0" y2="14.0" class="grid"/>
 <text x="40.0" y="18.0" class="tick" text-anchor="end">100%</text>
-<polyline class="blind" points="70.7,186.8 72.2,173.8 72.7,169.4 73.0,169.4 76.5,153.3 76.8,153.3 77.4,153.3 78.2,153.3 79.7,147.6 82.8,138.5 84.9,138.5 85.6,138.5 86.0,133.4 87.0,123.1 91.6,106.9 99.6,84.8 108.1,76.3 108.3,72.2 111.5,72.2 115.1,69.8 116.7,69.2 118.2,69.2 119.7,69.0 121.3,64.9 126.2,63.3 126.8,60.6 128.1,60.6 130.0,60.4 131.3,60.4 132.6,58.3 133.0,58.3 140.8,47.1 142.6,46.4 153.3,43.6 154.4,43.6 155.3,43.6 157.3,41.5 174.8,31.0 177.4,30.7 186.5,30.2 186.8,30.2 192.2,28.9 193.7,28.9 203.5,28.9 204.3,28.9 207.4,28.9 208.0,28.8 209.0,28.8 210.8,28.8 216.0,27.3 225.8,26.6 227.2,26.6 227.5,26.6 235.1,26.4 247.8,22.5 251.4,22.5 252.6,22.5 252.7,22.5 253.4,22.5 256.6,21.2 257.0,21.1 260.0,21.1 260.4,21.1 264.0,21.1 265.4,21.1 266.7,19.0 267.4,19.0 268.0,19.0 271.5,19.0 272.0,18.6"/>
-<polyline class="model" points="75.7,155.7 75.7,155.7 75.7,155.7 75.7,155.7 75.8,155.7 75.8,155.7 75.9,155.7 76.1,155.5 77.0,148.5 78.6,146.0 81.1,138.7 84.6,129.0 89.7,116.0 99.4,104.3 111.7,97.5 143.6,62.5 208.1,46.5"/>
-<polyline class="modelllm" points="75.7,155.7 75.7,155.7 75.7,155.7 75.7,155.7 75.7,155.7 75.8,155.7 76.0,154.4 76.1,154.4 77.0,149.2 78.3,142.6 80.7,132.5 84.3,123.1 89.5,115.8 99.1,98.5 110.5,87.6 140.2,63.5 201.6,48.0"/>
-<polyline class="oracle" points="70.7,186.8 70.7,179.8 70.7,134.2 70.7,115.2 70.7,81.0 70.8,50.5 71.0,22.3 71.1,19.4 71.1,18.4 71.1,18.1 71.1,18.1 71.1,18.1 71.5,18.1"/>
-<polyline class="onblind" points="99.3,88.7 100.3,76.0 102.3,75.8 103.0,75.8 104.8,70.1 108.7,65.9 110.4,65.9 120.3,59.2 125.4,53.2 132.9,47.3"/>
-<polyline class="blind train" points="65.7,165.7 67.2,156.8 67.7,148.1 68.0,145.6 71.6,125.7 71.9,123.8 72.4,121.5 73.3,117.9 74.8,111.9 77.9,100.7 80.1,95.1 80.8,93.3 81.2,92.4 82.2,90.7 86.9,83.1 95.0,70.0 103.7,61.2 103.9,60.9 107.2,58.1 110.7,53.0 112.4,51.4 113.9,51.0 115.4,49.0 117.0,47.3 122.0,41.8 122.7,41.3 123.9,40.4 125.9,39.1 127.2,38.3 128.5,37.5 129.0,37.2 136.9,33.4 138.7,32.5 149.6,28.2 150.7,27.8 151.6,27.4 153.7,26.6 171.5,23.6 174.1,22.8 183.3,21.1 183.7,21.0 189.1,19.9 190.6,19.6 200.6,17.8 201.4,17.7 204.6,17.2 205.1,17.1 206.1,17.1 208.0,16.9 213.3,16.3 223.2,15.7 224.6,15.7 224.9,15.7 232.7,15.5 245.6,14.6 249.2,14.4 250.4,14.3 250.6,14.3 251.3,14.2 254.6,14.2 255.0,14.2 257.9,14.2 258.4,14.2 262.1,14.1 263.5,14.0 264.7,14.0 265.5,14.0 266.1,14.0 269.7,14.0 270.2,14.0"/>
-<polyline class="oracle train" points="65.7,165.7 65.7,159.1 65.7,123.7 65.7,87.6 65.8,55.6 66.0,33.7 66.2,17.8 66.2,14.9 66.2,14.1 66.3,14.0 66.3,14.0 66.3,14.0 67.6,14.0"/>
-<polyline class="model train" points="68.7,134.9 68.7,134.9 68.7,132.6 68.7,131.4 68.8,129.7 68.8,126.5 69.0,123.2 69.1,121.7 69.9,115.2 71.3,111.1 73.2,98.8 76.0,90.6 79.8,76.7 88.3,64.5 98.6,52.1 125.7,35.5 185.1,27.2"/>
-<polyline class="modelllm train" points="68.7,134.9 68.7,134.9 68.7,132.6 68.7,130.6 68.8,126.8 68.8,126.2 68.9,122.7 69.1,121.0 69.5,114.7 70.4,104.0 71.8,96.8 74.5,86.9 77.9,79.7 85.4,61.2 94.5,55.2 119.0,43.6 175.0,29.1"/>
-<polyline class="onblind train" points="100.1,87.1 101.1,76.8 103.0,71.5 103.7,67.9 105.6,63.6 109.3,56.5 110.9,54.1 120.9,45.8 125.9,41.9 133.4,35.5"/>
-<line x1="306.0" y1="14.0" x2="306.0" y2="14.0" class="link train"/>
-<line x1="65.7" y1="165.7" x2="70.7" y2="186.8" class="link train"/>
-<line x1="68.7" y1="134.9" x2="75.7" y2="155.7" class="link train"/>
-<line x1="104.1" y1="84.9" x2="106.5" y2="102.6" class="link train"/>
-<line x1="187.4" y1="29.9" x2="197.5" y2="39.5" class="link train"/>
-<line x1="100.1" y1="87.1" x2="99.3" y2="88.7" class="link train"/>
-<circle cx="306.0" cy="14.0" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 100% of today's bugs at 100% of its cost</title></circle>
-<circle cx="70.7" cy="186.8" r="3.5" class="pt trivial"><title>trivial only (test set): 9% of today's bugs at 10% of its cost</title></circle>
-<circle cx="75.7" cy="155.7" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 25% of today's bugs at 11% of its cost</title></circle>
-<circle cx="106.5" cy="102.6" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 53% of today's bugs at 23% of its cost</title></circle>
-<circle cx="197.5" cy="39.5" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 87% of today's bugs at 58% of its cost</title></circle>
-<circle cx="99.3" cy="88.7" r="3.5" class="pt other"><title>+ principles (test set): 61% of today's bugs at 20% of its cost</title></circle>
-<circle cx="306.0" cy="14.0" r="3.5" class="pt today hollow train"><title>today&#x27;s matrix (training set): 100% of today's bugs at 100% of its cost</title></circle>
-<circle cx="65.7" cy="165.7" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 20% of today's bugs at 8% of its cost</title></circle>
-<circle cx="68.7" cy="134.9" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 36% of today's bugs at 9% of its cost</title></circle>
-<circle cx="104.1" cy="84.9" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 63% of today's bugs at 22% of its cost</title></circle>
-<circle cx="187.4" cy="29.9" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 92% of today's bugs at 54% of its cost</title></circle>
-<circle cx="100.1" cy="87.1" r="3.5" class="pt other hollow train"><title>+ principles (training set): 62% of today's bugs at 21% of its cost</title></circle>
+<polyline data-series="blind" class="blind" points="70.7,186.8 72.2,173.8 72.7,169.4 73.0,169.4 76.5,153.3 76.8,153.3 77.4,153.3 78.2,153.3 79.7,147.6 82.8,138.5 84.9,138.5 85.6,138.5 86.0,133.4 87.0,123.1 91.6,106.9 99.6,84.8 108.1,76.3 108.3,72.2 111.5,72.2 115.1,69.8 116.7,69.2 118.2,69.2 119.7,69.0 121.3,64.9 126.2,63.3 126.8,60.6 128.1,60.6 130.0,60.4 131.3,60.4 132.6,58.3 133.0,58.3 140.8,47.1 142.6,46.4 153.3,43.6 154.4,43.6 155.3,43.6 157.3,41.5 174.8,31.0 177.4,30.7 186.5,30.2 186.8,30.2 192.2,28.9 193.7,28.9 203.5,28.9 204.3,28.9 207.4,28.9 208.0,28.8 209.0,28.8 210.8,28.8 216.0,27.3 225.8,26.6 227.2,26.6 227.5,26.6 235.1,26.4 247.8,22.5 251.4,22.5 252.6,22.5 252.7,22.5 253.4,22.5 256.6,21.2 257.0,21.1 260.0,21.1 260.4,21.1 264.0,21.1 265.4,21.1 266.7,19.0 267.4,19.0 268.0,19.0 271.5,19.0 272.0,18.6"/>
+<polyline data-series="model" class="model" points="75.7,155.7 75.7,155.7 75.7,155.7 75.7,155.7 75.8,155.7 75.8,155.7 75.9,155.7 76.1,155.5 77.0,148.5 78.6,146.0 81.1,138.7 84.6,129.0 89.7,116.0 99.4,104.3 111.7,97.5 143.6,62.5 208.1,46.5"/>
+<polyline data-series="modelllm" class="modelllm" points="75.7,155.7 75.7,155.7 75.7,155.7 75.7,155.7 75.7,155.7 75.8,155.7 76.0,154.4 76.1,154.4 77.0,149.2 78.3,142.6 80.7,132.5 84.3,123.1 89.5,115.8 99.1,98.5 110.5,87.6 140.2,63.5 201.6,48.0"/>
+<polyline data-series="oracle" class="oracle" points="70.7,186.8 70.7,179.8 70.7,134.2 70.7,115.2 70.7,81.0 70.8,50.5 71.0,22.3 71.1,19.4 71.1,18.4 71.1,18.1 71.1,18.1 71.1,18.1 71.5,18.1"/>
+<polyline data-series="onblind" class="onblind" points="99.3,88.7 100.3,76.0 102.3,75.8 103.0,75.8 104.8,70.1 108.7,65.9 110.4,65.9 120.3,59.2 125.4,53.2 132.9,47.3"/>
+<polyline data-series="blind" class="blind train" points="65.7,165.7 67.2,156.8 67.7,148.1 68.0,145.6 71.6,125.7 71.9,123.8 72.4,121.5 73.3,117.9 74.8,111.9 77.9,100.7 80.1,95.1 80.8,93.3 81.2,92.4 82.2,90.7 86.9,83.1 95.0,70.0 103.7,61.2 103.9,60.9 107.2,58.1 110.7,53.0 112.4,51.4 113.9,51.0 115.4,49.0 117.0,47.3 122.0,41.8 122.7,41.3 123.9,40.4 125.9,39.1 127.2,38.3 128.5,37.5 129.0,37.2 136.9,33.4 138.7,32.5 149.6,28.2 150.7,27.8 151.6,27.4 153.7,26.6 171.5,23.6 174.1,22.8 183.3,21.1 183.7,21.0 189.1,19.9 190.6,19.6 200.6,17.8 201.4,17.7 204.6,17.2 205.1,17.1 206.1,17.1 208.0,16.9 213.3,16.3 223.2,15.7 224.6,15.7 224.9,15.7 232.7,15.5 245.6,14.6 249.2,14.4 250.4,14.3 250.6,14.3 251.3,14.2 254.6,14.2 255.0,14.2 257.9,14.2 258.4,14.2 262.1,14.1 263.5,14.0 264.7,14.0 265.5,14.0 266.1,14.0 269.7,14.0 270.2,14.0"/>
+<polyline data-series="oracle" class="oracle train" points="65.7,165.7 65.7,159.1 65.7,123.7 65.7,87.6 65.8,55.6 66.0,33.7 66.2,17.8 66.2,14.9 66.2,14.1 66.3,14.0 66.3,14.0 66.3,14.0 67.6,14.0"/>
+<polyline data-series="model" class="model train" points="68.7,134.9 68.7,134.9 68.7,132.6 68.7,131.4 68.8,129.7 68.8,126.5 69.0,123.2 69.1,121.7 69.9,115.2 71.3,111.1 73.2,98.8 76.0,90.6 79.8,76.7 88.3,64.5 98.6,52.1 125.7,35.5 185.1,27.2"/>
+<polyline data-series="modelllm" class="modelllm train" points="68.7,134.9 68.7,134.9 68.7,132.6 68.7,130.6 68.8,126.8 68.8,126.2 68.9,122.7 69.1,121.0 69.5,114.7 70.4,104.0 71.8,96.8 74.5,86.9 77.9,79.7 85.4,61.2 94.5,55.2 119.0,43.6 175.0,29.1"/>
+<polyline data-series="onblind" class="onblind train" points="100.1,87.1 101.1,76.8 103.0,71.5 103.7,67.9 105.6,63.6 109.3,56.5 110.9,54.1 120.9,45.8 125.9,41.9 133.4,35.5"/>
+<line x1="306.0" y1="14.0" x2="306.0" y2="14.0" class="link train" data-series="points"/>
+<line x1="65.7" y1="165.7" x2="70.7" y2="186.8" class="link train" data-series="points"/>
+<line x1="68.7" y1="134.9" x2="75.7" y2="155.7" class="link train" data-series="points"/>
+<line x1="104.1" y1="84.9" x2="106.5" y2="102.6" class="link train" data-series="points"/>
+<line x1="187.4" y1="29.9" x2="197.5" y2="39.5" class="link train" data-series="points"/>
+<line x1="100.1" y1="87.1" x2="99.3" y2="88.7" class="link train" data-series="points"/>
+<circle data-series="points" cx="306.0" cy="14.0" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 100% of today's bugs at 100% of its cost</title></circle>
+<circle data-series="points" cx="70.7" cy="186.8" r="3.5" class="pt trivial"><title>trivial only (test set): 9% of today's bugs at 10% of its cost</title></circle>
+<circle data-series="points" cx="75.7" cy="155.7" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 25% of today's bugs at 11% of its cost</title></circle>
+<circle data-series="points" cx="106.5" cy="102.6" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 53% of today's bugs at 23% of its cost</title></circle>
+<circle data-series="points" cx="197.5" cy="39.5" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 87% of today's bugs at 58% of its cost</title></circle>
+<circle data-series="points" cx="99.3" cy="88.7" r="3.5" class="pt other"><title>+ principles (test set): 61% of today's bugs at 20% of its cost</title></circle>
+<circle data-series="points" cx="306.0" cy="14.0" r="3.5" class="pt today hollow train"><title>today&#x27;s matrix (training set): 100% of today's bugs at 100% of its cost</title></circle>
+<circle data-series="points" cx="65.7" cy="165.7" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 20% of today's bugs at 8% of its cost</title></circle>
+<circle data-series="points" cx="68.7" cy="134.9" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 36% of today's bugs at 9% of its cost</title></circle>
+<circle data-series="points" cx="104.1" cy="84.9" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 63% of today's bugs at 22% of its cost</title></circle>
+<circle data-series="points" cx="187.4" cy="29.9" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 92% of today's bugs at 54% of its cost</title></circle>
+<circle data-series="points" cx="100.1" cy="87.1" r="3.5" class="pt other hollow train"><title>+ principles (training set): 62% of today's bugs at 21% of its cost</title></circle>
 </svg></figure><figure><figcaption>Bugs also on the series</figcaption><svg viewBox="0 0 320 240" role="img" aria-label="Bugs also on the series" class="chart">
 <line x1="46.0" y1="204.0" x2="46.0" y2="14.0" class="grid"/>
 <text x="46.0" y="220.0" class="tick" text-anchor="middle">0%</text>
@@ -297,34 +355,34 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <text x="40.0" y="37.0" class="tick" text-anchor="end">90%</text>
 <line x1="46.0" y1="14.0" x2="306.0" y2="14.0" class="grid"/>
 <text x="40.0" y="18.0" class="tick" text-anchor="end">100%</text>
-<polyline class="blind" points="70.7,139.7 72.2,130.3 72.7,130.3 73.0,130.3 76.5,120.8 76.8,120.8 77.4,120.8 78.2,120.8 79.7,120.8 82.8,111.3 84.9,111.3 85.6,111.3 86.0,106.3 87.0,106.3 91.6,73.1 99.6,60.5 108.1,55.7 108.3,55.7 111.5,51.0 115.1,51.0 116.7,51.0 118.2,51.0 119.7,51.0 121.3,51.0 126.2,51.0 126.8,51.0 128.1,51.0 130.0,51.0 131.3,51.0 132.6,51.0 133.0,51.0 140.8,41.0 142.6,41.0 153.3,38.1 154.4,38.1 155.3,38.1 157.3,38.1 174.8,33.3 177.4,33.3 186.5,29.8 186.8,29.8 192.2,29.8 193.7,29.8 203.5,29.8 204.3,29.8 207.4,29.8 208.0,29.8 209.0,29.8 210.8,29.8 216.0,29.8 225.8,26.2 227.2,26.2 227.5,26.2 235.1,26.2 247.8,16.8 251.4,16.8 252.6,16.8 252.7,16.8 253.4,16.8 256.6,15.2 257.0,15.2 260.0,15.2 260.4,15.2 264.0,15.2 265.4,15.2 266.7,15.2 267.4,15.2 268.0,15.2 271.5,15.2 272.0,15.2"/>
-<polyline class="model" points="75.7,92.1 75.7,92.1 75.7,92.1 75.7,92.1 75.8,92.1 75.8,92.1 75.9,92.1 76.1,92.1 77.0,92.1 78.6,92.1 81.1,84.9 84.6,70.7 89.7,64.8 99.4,57.7 111.7,51.4 143.6,37.2 208.1,30.5"/>
-<polyline class="modelllm" points="75.7,92.1 75.7,92.1 75.7,92.1 75.7,92.1 75.7,92.1 75.8,92.1 76.0,92.1 76.1,92.1 77.0,92.1 78.3,92.1 80.7,82.6 84.3,70.7 89.5,70.7 99.1,66.8 110.5,62.0 140.2,34.8 201.6,31.6"/>
-<polyline class="oracle" points="70.7,139.7 70.7,139.7 70.7,125.5 70.7,111.3 70.7,67.5 70.8,53.3 71.0,15.1 71.1,15.1 71.1,14.3 71.1,14.0 71.1,14.0 71.1,14.0 71.5,14.0"/>
-<polyline class="onblind" points="99.3,58.1 100.3,53.4 102.3,53.4 103.0,53.4 104.8,53.4 108.7,53.4 110.4,53.4 120.3,53.4 125.4,48.6 132.9,48.6"/>
-<polyline class="blind train" points="65.7,130.7 67.2,116.9 67.7,114.7 68.0,114.7 71.6,101.4 71.9,101.2 72.4,101.2 73.3,99.0 74.8,95.3 77.9,91.0 80.1,88.0 80.8,88.0 81.2,87.1 82.2,87.1 86.9,86.5 95.0,78.0 103.7,67.1 103.9,67.1 107.2,66.2 110.7,62.6 112.4,60.3 113.9,59.0 115.4,59.0 117.0,58.3 122.0,49.7 122.7,48.4 123.9,46.7 125.9,45.9 127.2,45.9 128.5,44.1 129.0,44.1 136.9,41.2 138.7,40.0 149.6,38.9 150.7,38.1 151.6,37.2 153.7,37.2 171.5,31.2 174.1,27.7 183.3,25.6 183.7,25.6 189.1,24.7 190.6,24.7 200.6,23.9 201.4,23.9 204.6,23.9 205.1,23.3 206.1,23.3 208.0,23.3 213.3,22.2 223.2,17.5 224.6,17.5 224.9,17.5 232.7,17.4 245.6,17.4 249.2,15.8 250.4,15.8 250.6,15.8 251.3,15.5 254.6,15.0 255.0,14.9 257.9,14.0 258.4,14.0 262.1,14.0 263.5,14.0 264.7,14.0 265.5,14.0 266.1,14.0 269.7,14.0 270.2,14.0"/>
-<polyline class="oracle train" points="65.7,130.7 65.7,124.2 65.7,92.3 65.7,73.4 65.8,54.4 66.0,30.2 66.2,17.8 66.2,14.6 66.2,14.1 66.3,14.1 66.3,14.0 66.3,14.0 67.6,14.0"/>
-<polyline class="model train" points="68.7,102.8 68.7,102.8 68.7,100.2 68.7,97.7 68.8,97.2 68.8,95.0 69.0,94.6 69.1,93.7 69.9,84.4 71.3,78.2 73.2,66.3 76.0,57.3 79.8,51.4 88.3,45.3 98.6,37.4 125.7,24.4 185.1,18.0"/>
-<polyline class="modelllm train" points="68.7,102.8 68.7,102.8 68.7,100.2 68.7,97.7 68.8,95.1 68.8,95.1 68.9,93.0 69.1,90.0 69.5,81.4 70.4,71.5 71.8,67.7 74.5,56.2 77.9,53.7 85.4,41.3 94.5,34.4 119.0,24.9 175.0,19.2"/>
-<polyline class="onblind train" points="100.1,65.5 101.1,59.9 103.0,59.9 103.7,59.9 105.6,56.5 109.3,51.9 110.9,51.6 120.9,48.2 125.9,46.2 133.4,41.2"/>
-<line x1="306.0" y1="14.0" x2="306.0" y2="14.0" class="link train"/>
-<line x1="65.7" y1="130.7" x2="70.7" y2="139.7" class="link train"/>
-<line x1="68.7" y1="102.8" x2="75.7" y2="92.1" class="link train"/>
-<line x1="104.1" y1="51.4" x2="106.5" y2="59.5" class="link train"/>
-<line x1="187.4" y1="27.8" x2="197.5" y2="26.4" class="link train"/>
-<line x1="100.1" y1="65.5" x2="99.3" y2="58.1" class="link train"/>
-<circle cx="306.0" cy="14.0" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 100% of today's bugs at 100% of its cost</title></circle>
-<circle cx="70.7" cy="139.7" r="3.5" class="pt trivial"><title>trivial only (test set): 34% of today's bugs at 10% of its cost</title></circle>
-<circle cx="75.7" cy="92.1" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 59% of today's bugs at 11% of its cost</title></circle>
-<circle cx="106.5" cy="59.5" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 76% of today's bugs at 23% of its cost</title></circle>
-<circle cx="197.5" cy="26.4" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 93% of today's bugs at 58% of its cost</title></circle>
-<circle cx="99.3" cy="58.1" r="3.5" class="pt other"><title>+ principles (test set): 77% of today's bugs at 20% of its cost</title></circle>
-<circle cx="306.0" cy="14.0" r="3.5" class="pt today hollow train"><title>today&#x27;s matrix (training set): 100% of today's bugs at 100% of its cost</title></circle>
-<circle cx="65.7" cy="130.7" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 39% of today's bugs at 8% of its cost</title></circle>
-<circle cx="68.7" cy="102.8" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 53% of today's bugs at 9% of its cost</title></circle>
-<circle cx="104.1" cy="51.4" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 80% of today's bugs at 22% of its cost</title></circle>
-<circle cx="187.4" cy="27.8" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 93% of today's bugs at 54% of its cost</title></circle>
-<circle cx="100.1" cy="65.5" r="3.5" class="pt other hollow train"><title>+ principles (training set): 73% of today's bugs at 21% of its cost</title></circle>
+<polyline data-series="blind" class="blind" points="70.7,139.7 72.2,130.3 72.7,130.3 73.0,130.3 76.5,120.8 76.8,120.8 77.4,120.8 78.2,120.8 79.7,120.8 82.8,111.3 84.9,111.3 85.6,111.3 86.0,106.3 87.0,106.3 91.6,73.1 99.6,60.5 108.1,55.7 108.3,55.7 111.5,51.0 115.1,51.0 116.7,51.0 118.2,51.0 119.7,51.0 121.3,51.0 126.2,51.0 126.8,51.0 128.1,51.0 130.0,51.0 131.3,51.0 132.6,51.0 133.0,51.0 140.8,41.0 142.6,41.0 153.3,38.1 154.4,38.1 155.3,38.1 157.3,38.1 174.8,33.3 177.4,33.3 186.5,29.8 186.8,29.8 192.2,29.8 193.7,29.8 203.5,29.8 204.3,29.8 207.4,29.8 208.0,29.8 209.0,29.8 210.8,29.8 216.0,29.8 225.8,26.2 227.2,26.2 227.5,26.2 235.1,26.2 247.8,16.8 251.4,16.8 252.6,16.8 252.7,16.8 253.4,16.8 256.6,15.2 257.0,15.2 260.0,15.2 260.4,15.2 264.0,15.2 265.4,15.2 266.7,15.2 267.4,15.2 268.0,15.2 271.5,15.2 272.0,15.2"/>
+<polyline data-series="model" class="model" points="75.7,92.1 75.7,92.1 75.7,92.1 75.7,92.1 75.8,92.1 75.8,92.1 75.9,92.1 76.1,92.1 77.0,92.1 78.6,92.1 81.1,84.9 84.6,70.7 89.7,64.8 99.4,57.7 111.7,51.4 143.6,37.2 208.1,30.5"/>
+<polyline data-series="modelllm" class="modelllm" points="75.7,92.1 75.7,92.1 75.7,92.1 75.7,92.1 75.7,92.1 75.8,92.1 76.0,92.1 76.1,92.1 77.0,92.1 78.3,92.1 80.7,82.6 84.3,70.7 89.5,70.7 99.1,66.8 110.5,62.0 140.2,34.8 201.6,31.6"/>
+<polyline data-series="oracle" class="oracle" points="70.7,139.7 70.7,139.7 70.7,125.5 70.7,111.3 70.7,67.5 70.8,53.3 71.0,15.1 71.1,15.1 71.1,14.3 71.1,14.0 71.1,14.0 71.1,14.0 71.5,14.0"/>
+<polyline data-series="onblind" class="onblind" points="99.3,58.1 100.3,53.4 102.3,53.4 103.0,53.4 104.8,53.4 108.7,53.4 110.4,53.4 120.3,53.4 125.4,48.6 132.9,48.6"/>
+<polyline data-series="blind" class="blind train" points="65.7,130.7 67.2,116.9 67.7,114.7 68.0,114.7 71.6,101.4 71.9,101.2 72.4,101.2 73.3,99.0 74.8,95.3 77.9,91.0 80.1,88.0 80.8,88.0 81.2,87.1 82.2,87.1 86.9,86.5 95.0,78.0 103.7,67.1 103.9,67.1 107.2,66.2 110.7,62.6 112.4,60.3 113.9,59.0 115.4,59.0 117.0,58.3 122.0,49.7 122.7,48.4 123.9,46.7 125.9,45.9 127.2,45.9 128.5,44.1 129.0,44.1 136.9,41.2 138.7,40.0 149.6,38.9 150.7,38.1 151.6,37.2 153.7,37.2 171.5,31.2 174.1,27.7 183.3,25.6 183.7,25.6 189.1,24.7 190.6,24.7 200.6,23.9 201.4,23.9 204.6,23.9 205.1,23.3 206.1,23.3 208.0,23.3 213.3,22.2 223.2,17.5 224.6,17.5 224.9,17.5 232.7,17.4 245.6,17.4 249.2,15.8 250.4,15.8 250.6,15.8 251.3,15.5 254.6,15.0 255.0,14.9 257.9,14.0 258.4,14.0 262.1,14.0 263.5,14.0 264.7,14.0 265.5,14.0 266.1,14.0 269.7,14.0 270.2,14.0"/>
+<polyline data-series="oracle" class="oracle train" points="65.7,130.7 65.7,124.2 65.7,92.3 65.7,73.4 65.8,54.4 66.0,30.2 66.2,17.8 66.2,14.6 66.2,14.1 66.3,14.1 66.3,14.0 66.3,14.0 67.6,14.0"/>
+<polyline data-series="model" class="model train" points="68.7,102.8 68.7,102.8 68.7,100.2 68.7,97.7 68.8,97.2 68.8,95.0 69.0,94.6 69.1,93.7 69.9,84.4 71.3,78.2 73.2,66.3 76.0,57.3 79.8,51.4 88.3,45.3 98.6,37.4 125.7,24.4 185.1,18.0"/>
+<polyline data-series="modelllm" class="modelllm train" points="68.7,102.8 68.7,102.8 68.7,100.2 68.7,97.7 68.8,95.1 68.8,95.1 68.9,93.0 69.1,90.0 69.5,81.4 70.4,71.5 71.8,67.7 74.5,56.2 77.9,53.7 85.4,41.3 94.5,34.4 119.0,24.9 175.0,19.2"/>
+<polyline data-series="onblind" class="onblind train" points="100.1,65.5 101.1,59.9 103.0,59.9 103.7,59.9 105.6,56.5 109.3,51.9 110.9,51.6 120.9,48.2 125.9,46.2 133.4,41.2"/>
+<line x1="306.0" y1="14.0" x2="306.0" y2="14.0" class="link train" data-series="points"/>
+<line x1="65.7" y1="130.7" x2="70.7" y2="139.7" class="link train" data-series="points"/>
+<line x1="68.7" y1="102.8" x2="75.7" y2="92.1" class="link train" data-series="points"/>
+<line x1="104.1" y1="51.4" x2="106.5" y2="59.5" class="link train" data-series="points"/>
+<line x1="187.4" y1="27.8" x2="197.5" y2="26.4" class="link train" data-series="points"/>
+<line x1="100.1" y1="65.5" x2="99.3" y2="58.1" class="link train" data-series="points"/>
+<circle data-series="points" cx="306.0" cy="14.0" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 100% of today's bugs at 100% of its cost</title></circle>
+<circle data-series="points" cx="70.7" cy="139.7" r="3.5" class="pt trivial"><title>trivial only (test set): 34% of today's bugs at 10% of its cost</title></circle>
+<circle data-series="points" cx="75.7" cy="92.1" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 59% of today's bugs at 11% of its cost</title></circle>
+<circle data-series="points" cx="106.5" cy="59.5" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 76% of today's bugs at 23% of its cost</title></circle>
+<circle data-series="points" cx="197.5" cy="26.4" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 93% of today's bugs at 58% of its cost</title></circle>
+<circle data-series="points" cx="99.3" cy="58.1" r="3.5" class="pt other"><title>+ principles (test set): 77% of today's bugs at 20% of its cost</title></circle>
+<circle data-series="points" cx="306.0" cy="14.0" r="3.5" class="pt today hollow train"><title>today&#x27;s matrix (training set): 100% of today's bugs at 100% of its cost</title></circle>
+<circle data-series="points" cx="65.7" cy="130.7" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 39% of today's bugs at 8% of its cost</title></circle>
+<circle data-series="points" cx="68.7" cy="102.8" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 53% of today's bugs at 9% of its cost</title></circle>
+<circle data-series="points" cx="104.1" cy="51.4" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 80% of today's bugs at 22% of its cost</title></circle>
+<circle data-series="points" cx="187.4" cy="27.8" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 93% of today's bugs at 54% of its cost</title></circle>
+<circle data-series="points" cx="100.1" cy="65.5" r="3.5" class="pt other hollow train"><title>+ principles (training set): 73% of today's bugs at 21% of its cost</title></circle>
 </svg></figure><figure><figcaption>Patchsets with every bug caught</figcaption><svg viewBox="0 0 320 240" role="img" aria-label="Patchsets with every bug caught" class="chart">
 <line x1="46.0" y1="204.0" x2="46.0" y2="14.0" class="grid"/>
 <text x="46.0" y="220.0" class="tick" text-anchor="middle">0%</text>
@@ -350,34 +408,34 @@ ul.notes { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80
 <text x="40.0" y="37.0" class="tick" text-anchor="end">90%</text>
 <line x1="46.0" y1="14.0" x2="306.0" y2="14.0" class="grid"/>
 <text x="40.0" y="18.0" class="tick" text-anchor="end">100%</text>
-<polyline class="blind" points="70.7,131.2 72.2,127.5 72.7,126.6 73.0,126.6 76.5,122.3 76.8,122.3 77.4,122.3 78.2,122.3 79.7,121.2 82.8,119.8 84.9,119.8 85.6,119.8 86.0,118.9 87.0,116.3 91.6,108.0 99.6,98.7 108.1,96.2 108.3,94.5 111.5,92.6 115.1,92.2 116.7,92.0 118.2,92.0 119.7,92.0 121.3,89.5 126.2,88.6 126.8,86.7 128.1,86.7 130.0,86.7 131.3,86.7 132.6,86.2 133.0,86.2 140.8,80.3 142.6,79.6 153.3,78.1 154.4,78.1 155.3,78.1 157.3,77.3 174.8,73.7 177.4,73.7 186.5,73.1 186.8,73.1 192.2,72.3 193.7,72.3 203.5,72.3 204.3,72.3 207.4,72.3 208.0,72.3 209.0,72.3 210.8,72.3 216.0,72.0 225.8,69.9 227.2,69.9 227.5,69.9 235.1,69.0 247.8,64.5 251.4,64.5 252.6,64.2 252.7,64.2 253.4,64.2 256.6,62.9 257.0,62.9 260.0,62.8 260.4,62.8 264.0,62.8 265.4,62.8 266.7,62.4 267.4,62.4 268.0,62.4 271.5,62.4 272.0,61.6"/>
-<polyline class="model" points="75.7,104.3 75.7,104.3 75.7,104.3 75.7,104.3 75.8,104.3 75.8,104.3 75.9,104.3 76.1,104.3 77.0,103.5 78.6,100.9 81.1,99.0 84.6,95.8 89.7,91.2 99.4,86.1 111.7,83.5 143.6,71.5 208.1,66.1"/>
-<polyline class="modelllm" points="75.7,104.3 75.7,104.3 75.7,104.3 75.7,104.3 75.7,104.3 75.8,104.3 76.0,104.3 76.1,104.3 77.0,103.5 78.3,99.2 80.7,97.2 84.3,92.4 89.5,89.2 99.1,84.8 110.5,80.5 140.2,72.7 201.6,67.5"/>
-<polyline class="oracle" points="70.7,131.2 70.7,129.5 70.7,115.0 70.7,104.5 70.7,89.4 70.8,73.1 71.0,59.9 71.1,57.9 71.1,56.1 71.1,55.3 71.1,55.2 71.1,55.1 71.5,55.1"/>
-<polyline class="onblind" points="99.3,85.8 100.3,83.2 102.3,83.0 103.0,83.0 104.8,81.8 108.7,81.0 110.4,81.0 120.3,78.0 125.4,74.3 132.9,72.6"/>
-<polyline class="blind train" points="65.7,134.7 67.2,125.8 67.7,123.7 68.0,123.2 71.6,115.8 71.9,114.2 72.4,113.4 73.3,112.9 74.8,110.5 77.9,107.9 80.1,107.0 80.8,106.3 81.2,105.9 82.2,105.2 86.9,101.9 95.0,96.5 103.7,88.0 103.9,88.0 107.2,86.2 110.7,85.0 112.4,84.8 113.9,84.2 115.4,83.6 117.0,81.3 122.0,79.8 122.7,79.1 123.9,78.9 125.9,77.9 127.2,77.6 128.5,77.1 129.0,76.9 136.9,73.8 138.7,71.4 149.6,69.8 150.7,69.7 151.6,69.7 153.7,69.5 171.5,62.9 174.1,62.2 183.3,59.5 183.7,59.5 189.1,58.4 190.6,58.3 200.6,57.7 201.4,57.3 204.6,57.1 205.1,57.1 206.1,56.9 208.0,56.7 213.3,56.1 223.2,53.5 224.6,53.4 224.9,53.4 232.7,52.0 245.6,51.3 249.2,50.7 250.4,50.7 250.6,50.7 251.3,50.7 254.6,49.0 255.0,49.0 257.9,47.2 258.4,47.1 262.1,46.8 263.5,46.8 264.7,46.8 265.5,46.8 266.1,46.8 269.7,46.8 270.2,46.8"/>
-<polyline class="oracle train" points="65.7,134.7 65.7,133.7 65.7,118.6 65.7,104.6 65.8,90.6 66.0,66.7 66.2,51.5 66.2,48.0 66.2,47.1 66.3,46.9 66.3,46.8 66.3,46.8 67.6,46.8"/>
-<polyline class="model train" points="68.7,108.1 68.7,108.1 68.7,107.0 68.7,106.5 68.8,105.7 68.8,105.0 69.0,104.6 69.1,104.1 69.9,100.1 71.3,98.5 73.2,92.8 76.0,89.5 79.8,85.0 88.3,78.1 98.6,69.6 125.7,58.2 185.1,52.1"/>
-<polyline class="modelllm train" points="68.7,108.1 68.7,108.1 68.7,107.1 68.7,106.4 68.8,105.2 68.8,105.1 68.9,104.1 69.1,102.6 69.5,100.8 70.4,97.3 71.8,94.6 74.5,90.3 77.9,86.4 85.4,77.4 94.5,70.1 119.0,60.4 175.0,52.8"/>
-<polyline class="onblind train" points="100.1,91.0 101.1,88.0 103.0,86.6 103.7,85.5 105.6,83.1 109.3,82.2 110.9,80.3 120.9,75.5 125.9,73.5 133.4,69.3"/>
-<line x1="306.0" y1="46.8" x2="306.0" y2="54.3" class="link train"/>
-<line x1="65.7" y1="134.7" x2="70.7" y2="131.2" class="link train"/>
-<line x1="68.7" y1="108.1" x2="75.7" y2="110.7" class="link train"/>
-<line x1="104.1" y1="80.9" x2="106.5" y2="84.1" class="link train"/>
-<line x1="187.4" y1="62.3" x2="197.5" y2="67.0" class="link train"/>
-<line x1="100.1" y1="91.0" x2="99.3" y2="85.8" class="link train"/>
-<circle cx="306.0" cy="54.3" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 79% of today's bugs at 100% of its cost</title></circle>
-<circle cx="70.7" cy="131.2" r="3.5" class="pt trivial"><title>trivial only (test set): 38% of today's bugs at 10% of its cost</title></circle>
-<circle cx="75.7" cy="110.7" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 49% of today's bugs at 11% of its cost</title></circle>
-<circle cx="106.5" cy="84.1" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 63% of today's bugs at 23% of its cost</title></circle>
-<circle cx="197.5" cy="67.0" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 72% of today's bugs at 58% of its cost</title></circle>
-<circle cx="99.3" cy="85.8" r="3.5" class="pt other"><title>+ principles (test set): 62% of today's bugs at 20% of its cost</title></circle>
-<circle cx="306.0" cy="46.8" r="3.5" class="pt today hollow train"><title>today&#x27;s matrix (training set): 83% of today's bugs at 100% of its cost</title></circle>
-<circle cx="65.7" cy="134.7" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 36% of today's bugs at 8% of its cost</title></circle>
-<circle cx="68.7" cy="108.1" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 50% of today's bugs at 9% of its cost</title></circle>
-<circle cx="104.1" cy="80.9" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 65% of today's bugs at 22% of its cost</title></circle>
-<circle cx="187.4" cy="62.3" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 75% of today's bugs at 54% of its cost</title></circle>
-<circle cx="100.1" cy="91.0" r="3.5" class="pt other hollow train"><title>+ principles (training set): 59% of today's bugs at 21% of its cost</title></circle>
+<polyline data-series="blind" class="blind" points="70.7,131.2 72.2,127.5 72.7,126.6 73.0,126.6 76.5,122.3 76.8,122.3 77.4,122.3 78.2,122.3 79.7,121.2 82.8,119.8 84.9,119.8 85.6,119.8 86.0,118.9 87.0,116.3 91.6,108.0 99.6,98.7 108.1,96.2 108.3,94.5 111.5,92.6 115.1,92.2 116.7,92.0 118.2,92.0 119.7,92.0 121.3,89.5 126.2,88.6 126.8,86.7 128.1,86.7 130.0,86.7 131.3,86.7 132.6,86.2 133.0,86.2 140.8,80.3 142.6,79.6 153.3,78.1 154.4,78.1 155.3,78.1 157.3,77.3 174.8,73.7 177.4,73.7 186.5,73.1 186.8,73.1 192.2,72.3 193.7,72.3 203.5,72.3 204.3,72.3 207.4,72.3 208.0,72.3 209.0,72.3 210.8,72.3 216.0,72.0 225.8,69.9 227.2,69.9 227.5,69.9 235.1,69.0 247.8,64.5 251.4,64.5 252.6,64.2 252.7,64.2 253.4,64.2 256.6,62.9 257.0,62.9 260.0,62.8 260.4,62.8 264.0,62.8 265.4,62.8 266.7,62.4 267.4,62.4 268.0,62.4 271.5,62.4 272.0,61.6"/>
+<polyline data-series="model" class="model" points="75.7,104.3 75.7,104.3 75.7,104.3 75.7,104.3 75.8,104.3 75.8,104.3 75.9,104.3 76.1,104.3 77.0,103.5 78.6,100.9 81.1,99.0 84.6,95.8 89.7,91.2 99.4,86.1 111.7,83.5 143.6,71.5 208.1,66.1"/>
+<polyline data-series="modelllm" class="modelllm" points="75.7,104.3 75.7,104.3 75.7,104.3 75.7,104.3 75.7,104.3 75.8,104.3 76.0,104.3 76.1,104.3 77.0,103.5 78.3,99.2 80.7,97.2 84.3,92.4 89.5,89.2 99.1,84.8 110.5,80.5 140.2,72.7 201.6,67.5"/>
+<polyline data-series="oracle" class="oracle" points="70.7,131.2 70.7,129.5 70.7,115.0 70.7,104.5 70.7,89.4 70.8,73.1 71.0,59.9 71.1,57.9 71.1,56.1 71.1,55.3 71.1,55.2 71.1,55.1 71.5,55.1"/>
+<polyline data-series="onblind" class="onblind" points="99.3,85.8 100.3,83.2 102.3,83.0 103.0,83.0 104.8,81.8 108.7,81.0 110.4,81.0 120.3,78.0 125.4,74.3 132.9,72.6"/>
+<polyline data-series="blind" class="blind train" points="65.7,134.7 67.2,125.8 67.7,123.7 68.0,123.2 71.6,115.8 71.9,114.2 72.4,113.4 73.3,112.9 74.8,110.5 77.9,107.9 80.1,107.0 80.8,106.3 81.2,105.9 82.2,105.2 86.9,101.9 95.0,96.5 103.7,88.0 103.9,88.0 107.2,86.2 110.7,85.0 112.4,84.8 113.9,84.2 115.4,83.6 117.0,81.3 122.0,79.8 122.7,79.1 123.9,78.9 125.9,77.9 127.2,77.6 128.5,77.1 129.0,76.9 136.9,73.8 138.7,71.4 149.6,69.8 150.7,69.7 151.6,69.7 153.7,69.5 171.5,62.9 174.1,62.2 183.3,59.5 183.7,59.5 189.1,58.4 190.6,58.3 200.6,57.7 201.4,57.3 204.6,57.1 205.1,57.1 206.1,56.9 208.0,56.7 213.3,56.1 223.2,53.5 224.6,53.4 224.9,53.4 232.7,52.0 245.6,51.3 249.2,50.7 250.4,50.7 250.6,50.7 251.3,50.7 254.6,49.0 255.0,49.0 257.9,47.2 258.4,47.1 262.1,46.8 263.5,46.8 264.7,46.8 265.5,46.8 266.1,46.8 269.7,46.8 270.2,46.8"/>
+<polyline data-series="oracle" class="oracle train" points="65.7,134.7 65.7,133.7 65.7,118.6 65.7,104.6 65.8,90.6 66.0,66.7 66.2,51.5 66.2,48.0 66.2,47.1 66.3,46.9 66.3,46.8 66.3,46.8 67.6,46.8"/>
+<polyline data-series="model" class="model train" points="68.7,108.1 68.7,108.1 68.7,107.0 68.7,106.5 68.8,105.7 68.8,105.0 69.0,104.6 69.1,104.1 69.9,100.1 71.3,98.5 73.2,92.8 76.0,89.5 79.8,85.0 88.3,78.1 98.6,69.6 125.7,58.2 185.1,52.1"/>
+<polyline data-series="modelllm" class="modelllm train" points="68.7,108.1 68.7,108.1 68.7,107.1 68.7,106.4 68.8,105.2 68.8,105.1 68.9,104.1 69.1,102.6 69.5,100.8 70.4,97.3 71.8,94.6 74.5,90.3 77.9,86.4 85.4,77.4 94.5,70.1 119.0,60.4 175.0,52.8"/>
+<polyline data-series="onblind" class="onblind train" points="100.1,91.0 101.1,88.0 103.0,86.6 103.7,85.5 105.6,83.1 109.3,82.2 110.9,80.3 120.9,75.5 125.9,73.5 133.4,69.3"/>
+<line x1="306.0" y1="46.8" x2="306.0" y2="54.3" class="link train" data-series="points"/>
+<line x1="65.7" y1="134.7" x2="70.7" y2="131.2" class="link train" data-series="points"/>
+<line x1="68.7" y1="108.1" x2="75.7" y2="110.7" class="link train" data-series="points"/>
+<line x1="104.1" y1="80.9" x2="106.5" y2="84.1" class="link train" data-series="points"/>
+<line x1="187.4" y1="62.3" x2="197.5" y2="67.0" class="link train" data-series="points"/>
+<line x1="100.1" y1="91.0" x2="99.3" y2="85.8" class="link train" data-series="points"/>
+<circle data-series="points" cx="306.0" cy="54.3" r="3.5" class="pt today"><title>today&#x27;s matrix (test set): 79% of today's bugs at 100% of its cost</title></circle>
+<circle data-series="points" cx="70.7" cy="131.2" r="3.5" class="pt trivial"><title>trivial only (test set): 38% of today's bugs at 10% of its cost</title></circle>
+<circle data-series="points" cx="75.7" cy="110.7" r="3.5" class="pt edited"><title>+ edited test scripts (test set): 49% of today's bugs at 11% of its cost</title></circle>
+<circle data-series="points" cx="106.5" cy="84.1" r="3.5" class="pt table"><title>+ directory history, 20% (test set): 63% of today's bugs at 23% of its cost</title></circle>
+<circle data-series="points" cx="197.5" cy="67.0" r="3.5" class="pt table"><title>+ directory history, 5% (test set): 72% of today's bugs at 58% of its cost</title></circle>
+<circle data-series="points" cx="99.3" cy="85.8" r="3.5" class="pt other"><title>+ principles (test set): 62% of today's bugs at 20% of its cost</title></circle>
+<circle data-series="points" cx="306.0" cy="46.8" r="3.5" class="pt today hollow train"><title>today&#x27;s matrix (training set): 83% of today's bugs at 100% of its cost</title></circle>
+<circle data-series="points" cx="65.7" cy="134.7" r="3.5" class="pt trivial hollow train"><title>trivial only (training set): 36% of today's bugs at 8% of its cost</title></circle>
+<circle data-series="points" cx="68.7" cy="108.1" r="3.5" class="pt edited hollow train"><title>+ edited test scripts (training set): 50% of today's bugs at 9% of its cost</title></circle>
+<circle data-series="points" cx="104.1" cy="80.9" r="3.5" class="pt table hollow train"><title>+ directory history, 20% (training set): 65% of today's bugs at 22% of its cost</title></circle>
+<circle data-series="points" cx="187.4" cy="62.3" r="3.5" class="pt table hollow train"><title>+ directory history, 5% (training set): 75% of today's bugs at 54% of its cost</title></circle>
+<circle data-series="points" cx="100.1" cy="91.0" r="3.5" class="pt other hollow train"><title>+ principles (training set): 59% of today's bugs at 21% of its cost</title></circle>
 </svg></figure></div></section>
 <section><h2>Every predictor</h2><div class='scroll'><table><thead><tr><th>Predictor</th><th>Split</th><th>Bugs vs today, per change</th><th>Per bug</th><th>Hard bugs</th><th>All bugs caught</th><th>Test cost</th><th>Session h / build</th><th>LLM $ / patch</th></tr></thead><tbody>
 <tr class='test'><td>today&#x27;s matrix</td><td>test set</td><td class='n'>100% <span class='ci'>(100% to 100%)</span></td><td class='n'>100%</td><td class='n'>100%</td><td class='n'>79%</td><td class='n'>100%</td><td class='n'>133</td><td class='n'></td></tr>
@@ -552,5 +610,12 @@ Results log: <code>eval/results/log.jsonl</code>.</p></section>
     try { localStorage.setItem("show-train", box.checked ? "1" : "0"); } catch (e) {}
   });
   apply();
+  document.querySelectorAll("[data-toggle]").forEach(function (cb) {
+    cb.addEventListener("change", function () {
+      document.querySelectorAll('[data-series="' + cb.dataset.toggle + '"]').forEach(function (el) {
+        el.style.display = cb.checked ? "" : "none";
+      });
+    });
+  });
 })();
 </script>

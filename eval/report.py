@@ -60,18 +60,26 @@ def frontier(points: list[tuple[float, float, str]]) -> list[tuple[float, float,
 	return out
 
 
-def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> str:
-	"""Share of today's catches (y) against share of today's cost (x)."""
+def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False,
+	  x_max: float = 1.0, y_min: float = 0.0) -> str:
+	"""Share of today's catches (y) against share of today's cost (x), over
+	[0, x_max] by [y_min, 1]."""
 	pad_l, pad_b, pad_t, pad_r = (46, 36, 14, 14) if small else (56, 46, 18, 18)
 	pw, ph = w - pad_l - pad_r, h - pad_t - pad_b
-	X = lambda v: pad_l + pw * min(max(v, 0), 1)  # noqa: E731
-	Y = lambda v: pad_t + ph * (1 - min(max(v, 0), 1))  # noqa: E731
+	X = lambda v: pad_l + pw * min(max(v, 0), x_max) / x_max  # noqa: E731
+	Y = lambda v: pad_t + ph * (1 - (min(max(v, y_min), 1) - y_min) / (1 - y_min))  # noqa: E731
 	s = [f'<svg viewBox="0 0 {w} {h}" role="img" aria-label="{esc(title)}" class="chart">']
-	for gx in (0, 0.1, 0.25, 0.5, 0.75, 1):
-		s.append(f'<line x1="{X(gx):.1f}" y1="{Y(0):.1f}" x2="{X(gx):.1f}" y2="{Y(1):.1f}" class="grid"/>')
-		s.append(f'<text x="{X(gx):.1f}" y="{Y(0) + 16:.1f}" class="tick" text-anchor="middle">{int(gx * 100)}%</text>')
-	for gy in (0, 0.25, 0.5, 0.75, 0.9, 1):
-		s.append(f'<line x1="{X(0):.1f}" y1="{Y(gy):.1f}" x2="{X(1):.1f}" y2="{Y(gy):.1f}" class="grid"/>')
+	xt = [t for t in (0, 0.1, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.75, 1) if t <= x_max]
+	if x_max == 1.0:
+		xt = [0, 0.1, 0.25, 0.5, 0.75, 1]
+	for gx in xt:
+		s.append(f'<line x1="{X(gx):.1f}" y1="{Y(y_min):.1f}" x2="{X(gx):.1f}" y2="{Y(1):.1f}" class="grid"/>')
+		s.append(f'<text x="{X(gx):.1f}" y="{Y(y_min) + 16:.1f}" class="tick" text-anchor="middle">{int(gx * 100)}%</text>')
+	yt = [t for t in (0, 0.25, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.9, 1) if t >= y_min]
+	if y_min == 0:
+		yt = [0, 0.25, 0.5, 0.75, 0.9, 1]
+	for gy in yt:
+		s.append(f'<line x1="{X(0):.1f}" y1="{Y(gy):.1f}" x2="{X(x_max):.1f}" y2="{Y(gy):.1f}" class="grid"/>')
 		s.append(f'<text x="{X(0) - 6:.1f}" y="{Y(gy) + 4:.1f}" class="tick" text-anchor="end">{int(gy * 100)}%</text>')
 	if not small:
 		for i, (ty, tx) in enumerate(TARGETS):
@@ -79,8 +87,8 @@ def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> 
 				 f'class="target t{i}"/>')
 		s.append(f'<text x="{X(0.25) - 4:.1f}" y="{Y(0.9) - 6:.1f}" class="tlabel" text-anchor="end">90% at 25%</text>')
 		s.append(f'<text x="{X(0.10) - 4:.1f}" y="{Y(0.95) - 6:.1f}" class="tlabel" text-anchor="end">95/10</text>')
-		s.append(f'<text x="{X(0.5):.1f}" y="{h - 6}" class="axis" text-anchor="middle">share of today\'s test cost</text>')
-		s.append(f'<text transform="translate(14 {Y(0.5):.1f}) rotate(-90)" class="axis" text-anchor="middle">'
+		s.append(f'<text x="{X(x_max / 2):.1f}" y="{h - 6}" class="axis" text-anchor="middle">share of today\'s test cost</text>')
+		s.append(f'<text transform="translate(14 {Y((1 + y_min) / 2):.1f}) rotate(-90)" class="axis" text-anchor="middle">'
 			 f'share of today\'s bugs caught</text>')
 	for r in rows:
 		cls_name = CURVES.get(r.get("predictor"))
@@ -89,12 +97,8 @@ def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> 
 		cpts = sorted((p["cost_share"], p.get(key)) for p in r["curve"]
 			      if p.get("cost_share") is not None and p.get(key) is not None)
 		if len(cpts) > 1:
-			s.append(f'<polyline class="{cls_name}{" train" if r["split"] == "train" else ""}" points="'
-				 + " ".join(f"{X(a):.1f},{Y(b):.1f}" for a, b in cpts) + '"/>')
-		if not small and r["split"] == "test" and cpts:
-			a, b = CURVE_LABEL_AT[r["predictor"]](cpts)
-			s.append(f'<text x="{X(a) + 6:.1f}" y="{Y(b) + 16:.1f}" class="clabel {cls_name}">'
-				 f'{esc(CURVE_LABELS[r["predictor"]])}</text>')
+			s.append(f'<polyline data-series="{cls_name}" class="{cls_name}{" train" if r["split"] == "train" else ""}" '
+				 'points="' + " ".join(f"{X(a):.1f},{Y(b):.1f}" for a, b in cpts if a <= x_max * 1.02) + '"/>')
 	rows = [r for r in rows if r.get("predictor") not in CURVES]
 	pts = []
 	pos = {}
@@ -105,10 +109,10 @@ def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> 
 	for (name, split), (px, py) in pos.items():
 		if split == "train" and (name, "test") in pos:
 			tx, ty = pos[(name, "test")]
-			s.append(f'<line x1="{px:.1f}" y1="{py:.1f}" x2="{tx:.1f}" y2="{ty:.1f}" class="link train"/>')
+			s.append(f'<line x1="{px:.1f}" y1="{py:.1f}" x2="{tx:.1f}" y2="{ty:.1f}" class="link train" data-series="points"/>')
 	for r in rows:
 		x, y = r.get("cost_share"), r.get(key)
-		if x is None or y is None:
+		if x is None or y is None or x > x_max:
 			continue
 		fam = FAMILIES.get(r["predictor"].split("-")[0], "other")
 		hollow = r["split"] == "train"
@@ -116,12 +120,12 @@ def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> 
 		if not small and key == "recall_vs_full" and not hollow:
 			if "cost_share" in ci:
 				a, b = ci["cost_share"]
-				s.append(f'<line x1="{X(a):.1f}" y1="{Y(y):.1f}" x2="{X(b):.1f}" y2="{Y(y):.1f}" class="ci {fam}"/>')
+				s.append(f'<line x1="{X(a):.1f}" y1="{Y(y):.1f}" x2="{X(b):.1f}" y2="{Y(y):.1f}" class="ci {fam}" data-series="points"/>')
 			if "recall_vs_full" in ci:
 				a, b = ci["recall_vs_full"]
-				s.append(f'<line x1="{X(x):.1f}" y1="{Y(a):.1f}" x2="{X(x):.1f}" y2="{Y(b):.1f}" class="ci {fam}"/>')
+				s.append(f'<line x1="{X(x):.1f}" y1="{Y(a):.1f}" x2="{X(x):.1f}" y2="{Y(b):.1f}" class="ci {fam}" data-series="points"/>')
 		title = r.get("title") or r["predictor"]
-		s.append(f'<circle cx="{X(x):.1f}" cy="{Y(y):.1f}" r="{3.5 if small else 5}" '
+		s.append(f'<circle data-series="points" cx="{X(x):.1f}" cy="{Y(y):.1f}" r="{3.5 if small else 5}" '
 			 f'class="pt {fam}{" hollow train" if hollow else ""}"><title>{esc(title)} '
 			 f'({"training set" if hollow else "test set"}): {pct(y)} of today\'s bugs at '
 			 f'{pct(x)} of its cost</title></circle>')
@@ -141,8 +145,74 @@ def chart(rows: list[dict], key: str, title: str, w=640, h=420, small=False) -> 
 				if not any(box[0] < q[2] and q[0] < box[2] and box[1] < q[3] and q[1] < box[3] for q in placed):
 					break
 			placed.append(box)
-			s.append(f'<text x="{cx + dx:.1f}" y="{cy + dy:.1f}" class="plabel" text-anchor="{anchor}">'
+			s.append(f'<text x="{cx + dx:.1f}" y="{cy + dy:.1f}" class="plabel" data-series="points" text-anchor="{anchor}">'
 				 f'{esc(n)}</text>')
+	s.append("</svg>")
+	return "\n".join(s)
+
+
+SERIES = [  # data-series, swatch colour, legend text
+	("blind", "today", "patch-blind baseline: the same tests for every patch, best value first"),
+	("oracle", "edited", "oracle: each patch's own cheapest catches, the ceiling"),
+	("onblind", "other", "principles on a blind base"),
+	("model", "table", "learned model: principles and history as features"),
+	("modelllm", "fg", "the same with an LLM's reading of each patch as features too"),
+	("points", "muted", "single selections (trivial, edited scripts, principles, directory history)"),
+]
+
+
+def gain_chart(rows: list[dict], w=640, h=320, x_max=0.6) -> str:
+	"""Each test-set curve and point minus the patch-blind curve at the same cost:
+	how far above the null line a selection is."""
+	blind = next((r for r in rows if r["predictor"] == "ranked" and r["split"] == "test"), None)
+	if not blind:
+		return ""
+	bp = sorted((p["cost_share"], p["recall_vs_full"]) for p in blind["curve"]
+		    if p.get("cost_share") is not None and p.get("recall_vs_full") is not None)
+
+	def base(x):
+		lo = max(((a, b) for a, b in bp if a <= x), default=bp[0])
+		hi = min(((a, b) for a, b in bp if a >= x), default=bp[-1])
+		if hi[0] == lo[0]:
+			return lo[1]
+		return lo[1] + (hi[1] - lo[1]) * (x - lo[0]) / (hi[0] - lo[0])
+	y_lo, y_hi = -0.15, 0.25
+	pad_l, pad_b, pad_t, pad_r = 56, 46, 18, 18
+	pw, ph = w - pad_l - pad_r, h - pad_t - pad_b
+	X = lambda v: pad_l + pw * min(max(v, 0), x_max) / x_max  # noqa: E731
+	Y = lambda v: pad_t + ph * (1 - (min(max(v, y_lo), y_hi) - y_lo) / (y_hi - y_lo))  # noqa: E731
+	s = [f'<svg viewBox="0 0 {w} {h}" role="img" aria-label="gain over the patch-blind baseline" class="chart">']
+	for gx in (0, 0.1, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6):
+		s.append(f'<line x1="{X(gx):.1f}" y1="{Y(y_lo):.1f}" x2="{X(gx):.1f}" y2="{Y(y_hi):.1f}" class="grid"/>')
+		s.append(f'<text x="{X(gx):.1f}" y="{Y(y_lo) + 16:.1f}" class="tick" text-anchor="middle">{int(gx * 100)}%</text>')
+	for gy in (-0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15, 0.2, 0.25):
+		s.append(f'<line x1="{X(0):.1f}" y1="{Y(gy):.1f}" x2="{X(x_max):.1f}" y2="{Y(gy):.1f}" '
+			 f'class="{"zero" if gy == 0 else "grid"}"/>')
+		s.append(f'<text x="{X(0) - 6:.1f}" y="{Y(gy) + 4:.1f}" class="tick" text-anchor="end">{gy * 100:+.0f}</text>')
+	s.append(f'<text x="{X(x_max) - 4:.1f}" y="{Y(0) - 6:.1f}" class="clabel blind" text-anchor="end">patch-blind</text>')
+	s.append(f'<text x="{X(x_max / 2):.1f}" y="{h - 6}" class="axis" text-anchor="middle">share of today\'s test cost</text>')
+	s.append(f'<text transform="translate(14 {Y(0.05):.1f}) rotate(-90)" class="axis" text-anchor="middle">'
+		 'points above patch-blind</text>')
+	lo_x = bp[0][0]
+	for r in rows:
+		if r["split"] != "test" or r["predictor"] in ("ranked", "oracle", "value", "full"):
+			continue
+		if r.get("curve"):
+			ser = CURVES.get(r["predictor"])
+			pts = sorted((p["cost_share"], p["recall_vs_full"] - base(p["cost_share"])) for p in r["curve"]
+				     if p.get("cost_share") is not None and p.get("recall_vs_full") is not None
+				     and lo_x <= p["cost_share"] <= x_max)
+			if len(pts) > 1:
+				s.append(f'<polyline data-series="{ser}" class="{ser}" points="'
+					 + " ".join(f"{X(a):.1f},{Y(b):.1f}" for a, b in pts) + '"/>')
+		elif r.get("cost_share") is not None and lo_x <= r["cost_share"] <= x_max:
+			d = r["recall_vs_full"] - base(r["cost_share"])
+			fam = FAMILIES.get(r["predictor"].split("-")[0], "other")
+			title = r.get("title") or r["predictor"]
+			s.append(f'<circle data-series="points" cx="{X(r["cost_share"]):.1f}" cy="{Y(d):.1f}" r="5" '
+				 f'class="pt {fam}"><title>{esc(title)}: {d * 100:+.0f} points at {pct(r["cost_share"])}</title></circle>')
+			s.append(f'<text data-series="points" x="{X(r["cost_share"]) + 8:.1f}" y="{Y(d) + 4:.1f}" '
+				 f'class="plabel">{esc(title)}</text>')
 	s.append("</svg>")
 	return "\n".join(s)
 
@@ -319,7 +389,11 @@ section { background: var(--panel); border: 1px solid var(--grid); border-radius
 .toggle { display: inline-flex; gap: 6px; align-items: center; font: 13px var(--body); margin-top: 10px;
   cursor: pointer; }
 main:not(.show-train) .train { display: none; }
-.legend i.dot { background: var(--fg); } .legend i.line { width: 16px; height: 2px; border-radius: 0; background: var(--today); vertical-align: 3px; } .legend i.ring { border: 2px solid var(--fg); width: 6px; height: 6px; }
+.legend i.dot { background: var(--fg); }
+.toggles { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; }
+.toggles .toggle { margin-top: 0; font-size: 12px; }
+.toggles i.swatch { display: inline-block; width: 16px; height: 3px; vertical-align: 3px; }
+.chart .zero { stroke: var(--today); stroke-width: 1.5; } .legend i.line { width: 16px; height: 2px; border-radius: 0; background: var(--today); vertical-align: 3px; } .legend i.ring { border: 2px solid var(--fg); width: 6px; height: 6px; }
 dl.key { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 14px 0 0; font-size: 13px; }
 dl.key dt { font-weight: 600; } dl.key dd { margin: 0; color: var(--muted); min-width: 0; }
 @media (max-width: 560px) { dl.key { grid-template-columns: 1fr; } dl.key dd { margin-bottom: 6px; } }
@@ -361,22 +435,15 @@ def main() -> None:
 		[r for r in test if r["predictor"] in ("oracle", "principles-on-blind")]
 	val = last.get(("value", "all"))
 	both = test + train
-	legend = ("<label class='toggle'><input type='checkbox' id='show-train'> Show the training set</label>"
-		  "<div class='legend'><span><i class='dot'></i><i class='line solid'></i>test set: filled points, "
+	legend = ("<div class='legend'><span><i class='dot'></i><i class='line solid'></i>test set: filled points, "
 		  "solid lines (the results)</span>"
 		  "<span class='train'><i class='ring'></i><i class='line dotted'></i>training set: hollow points, "
 		  "dotted lines (the data the rules were fitted to; the gap to the test set is overfitting and drift)"
-		  "</span></div><div class='legend'>"
-		  "<span><i class='line'></i>patch-blind baseline: the same tests for every patch, best value first</span>"
-		  "<span><i class='line' style='background:var(--edited)'></i>oracle: each patch's own cheapest "
-		  "catches, the ceiling</span>"
-		  "<span><i class='line' style='background:var(--other)'></i>principles on a blind base</span>"
-		  "<span><i class='line' style='background:var(--table)'></i>learned model: principles and "
-		  "history as features</span>"
-		  "<span><i class='line' style='background:var(--fg)'></i>the same with an LLM's reading of each "
-		  "patch as features too</span>"
-		  "<span>whiskers: 95% interval</span>"
-		  "</div>")
+		  "</span><span>whiskers: 95% interval</span></div>"
+		  "<div class='toggles'><label class='toggle'><input type='checkbox' id='show-train'> training set</label>"
+		  + "".join(f"<label class='toggle'><input type='checkbox' data-toggle='{ser}' checked>"
+			    f"<i class='swatch' style='background:var(--{col})'></i>{esc(text)}</label>"
+			    for ser, col, text in SERIES) + "</div>")
 	seen = set()
 	key_rows = []
 	for r in test:
@@ -401,8 +468,13 @@ def main() -> None:
 {headline(test, manifest)}
 </header>
 <section><h2>Bugs caught against test cost</h2>
-{chart(both, "recall_vs_full", "bugs caught against cost")}
+<p class="muted">Cost up to 60% and bugs from 40% shown; today's matrix is 100% at 100%.</p>
+{chart(both, "recall_vs_full", "bugs caught against cost", 720, 480, x_max=0.6, y_min=0.4)}
 {legend}</section>
+<section><h2>Gain over the patch-blind baseline</h2>
+<p class="muted">Each selection's share of today's bugs minus what the same tests for every patch catch at
+the same cost, on the test set. Above zero, reading the patch is paying for itself.</p>
+{gain_chart(test)}</section>
 <section><h2>By kind of bug</h2><div class="smalls">{smalls}</div></section>
 <section><h2>Every predictor</h2>{table([r for r in test + train if not r.get("curve") and r["predictor"] != "value"])}</section>
 <section><h2>Bugs per session hour, by test set</h2>{value_table(val, costs_builds())}</section>
@@ -423,6 +495,13 @@ Results log: <code>eval/results/log.jsonl</code>.</p></section>
     try {{ localStorage.setItem("show-train", box.checked ? "1" : "0"); }} catch (e) {{}}
   }});
   apply();
+  document.querySelectorAll("[data-toggle]").forEach(function (cb) {{
+    cb.addEventListener("change", function () {{
+      document.querySelectorAll('[data-series="' + cb.dataset.toggle + '"]').forEach(function (el) {{
+        el.style.display = cb.checked ? "" : "none";
+      }});
+    }});
+  }});
 }})();
 </script>
 """
