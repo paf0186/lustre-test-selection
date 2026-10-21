@@ -277,6 +277,34 @@ def patches(args, db) -> None:
 	db.commit()
 
 
+def contents(args, db) -> None:
+	"""What each patchset without it changes: Rainshadow reads it from Gerrit."""
+	cl = Client()
+	keys = [list(k) for k in db.execute("SELECT change, patchset FROM patchset WHERE files IS NULL ORDER BY 1, 2")]
+	print(f"  {len(keys)} patchsets without contents", file=sys.stderr)
+	filled = 0
+	for i in range(0, len(keys), 500):
+		chunk = keys[i:i + 500]
+		stalled = 0
+		while True:
+			r = cl.call("/sync/patches", body={"keys": chunk, "limit": 300, "seconds": 70})
+			stalled = stalled + 1 if r["missing_after"] >= r["missing_before"] else 0
+			if r["missing_after"] == 0 or stalled >= 3:
+				break
+		d = cl.call("/export/patchsets", body={"keys": chunk, "limit": 2000})
+		for p in d["rows"]:
+			if p.get("files") is None:
+				continue
+			db.execute("UPDATE patchset SET files=?, n_files=?, scripts=?, test_parameters=?, gerrit_kind=?, "
+				   "series=?, series_size=?, subject=? WHERE change=? AND patchset=?",
+				   (json.dumps(p["files"]), len(p["files"]), json.dumps(p["scripts"]) if p.get("scripts") else None,
+				    p.get("test_parameters"), p.get("kind"), p.get("series"), p.get("series_size"),
+				    p.get("subject"), p["change"], p["patchset"]))
+			filled += 1
+		db.commit()
+		print(f"  contents {i + len(chunk)}/{len(keys)}: {filled} filled", file=sys.stderr)
+
+
 def rank(change: int, patchset: int, seed: str) -> float:
 	"""A key's place in [0, 1), the same on every run with the same seed."""
 	h = hashlib.sha256(f"{seed}:{change}/{patchset}".encode()).digest()
@@ -390,11 +418,12 @@ def main() -> None:
 	sm.add_argument("--seed", default="lustre-test-selection")
 	sm.add_argument("--no-sessions", action="store_true")
 	sm.add_argument("--no-patches", action="store_true")
+	sub.add_parser("contents", help="have Rainshadow read the contents of patchsets that lack them")
 	sub.add_parser("stats")
 	args = ap.parse_args()
 	db = connect(args.db)
 	{"fetch": fetch, "load": load, "sessions": sessions, "patches": patches, "sample": sample,
-	 "stats": stats}[args.cmd](args, db)
+	 "contents": contents, "stats": stats}[args.cmd](args, db)
 
 
 if __name__ == "__main__":
