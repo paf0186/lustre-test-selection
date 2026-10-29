@@ -62,7 +62,7 @@ def order_table(order, n, cases, costs):
 	actual = sum(c["cost"]["actual"] for c in sampled)
 	fulls = [full(c) for c in cases]
 	m = metrics([(c, grade(c, "trivial", costs), f) for c, f in zip(cases, fulls)])
-	rows = [{"k": 0, "set": "trivial and subtest-change sessions alone", "cls": "", "minutes": None,
+	rows = [{"k": 0, "set": "trivial and subtest-change sessions alone", "cls": "", "minutes": None, "today": None,
 		 "new_session": False, "gain": None,
 		 "share": sum(grade(c, "trivial", costs)["cost_s"] for c in sampled) / actual, "catch": m["recall_vs_full"]}]
 	running = set()
@@ -76,7 +76,9 @@ def order_table(order, n, cases, costs):
 			running.add(step["cls"])
 		rows.append({"k": k, "set": step.get("script") or f"testgroup={step['group']}", "cls": step["cls"],
 			     "minutes": step["secs"] / 60, "new_session": new or bool(step.get("group")),
-			     "gain": step["gain"], "share": share, "catch": m["recall_vs_full"]})
+			     "gain": step["gain"], "share": share, "catch": m["recall_vs_full"],
+			     "today": (costs["matrix_share"].get(f"{step['script']}|{step['cls']}", 0.0) if not step.get("group")
+				       else (1.0 if step["group"] in costs.get("matrix_groups", []) else 0.0))})
 	return rows
 
 
@@ -351,21 +353,22 @@ def md(d) -> str:
 	w("## The order test sets are added in\n")
 	w("The patch-blind base ranked greedily: each step adds the test set that catches the most bugs not yet "
 	  "caught per second it adds (its run time, plus a session's setup when its configuration has none "
-	  "yet).  Only test sets the review matrix runs (the review groups of the last 30 days) are candidates.  "
+	  "yet).  Only test sets that ran on at least half the full review builds of the last 30 days are candidates (*runs today*); a group Autotest runs only now and then, such as review-dne-part-9, is out.  "
 	  f"Ranked on all {meta['cases']:,} patchsets.  **The line marks the budget: the first {n} run on every "
 	  "patch.**\n")
-	w("| # | test set | configuration | minutes | adds | cost so far | bugs so far |")
-	w("|---|---|---|---|---|---|---|")
+	w("| # | test set | configuration | minutes | runs today | adds | cost so far | bugs so far |")
+	w("|---|---|---|---|---|---|---|---|")
 	for r in d["rows"]:
 		if r["k"] == 0:
-			w(f"| 0 | *{r['set']}* | | | | {r['share']:.0%} | {r['catch']:.0%} |")
+			w(f"| 0 | *{r['set']}* | | | | | {r['share']:.0%} | {r['catch']:.0%} |")
 			continue
 		mins = f"{r['minutes']:.0f}" + (" + setup" if r["new_session"] and not r["set"].startswith("testgroup") else "")
-		w(f"| {r['k']} | {r['set']} | {r['cls']} | {mins} | {r['gain']:.1%} | {r['share']:.0%} | "
+		w(f"| {r['k']} | {r['set']} | {r['cls']} | {mins} | {r['today']:.0%} | {r['gain']:.1%} | {r['share']:.0%} | "
 		  f"{r['catch']:.0%} |")
 		if r["k"] == n:
-			w("| | **budget: the base stops here** | | | | | |")
-	w("\n*adds*: the share of the history's bugs this step catches that earlier steps did not.  *cost so far* "
+			w("| | **budget: the base stops here** | | | | | | |")
+	w("\n*runs today*: the share of full review builds (those running review-dne-part-1) in the last 30 days "
+	  "that ran it; a test set needs 50% to be a candidate.  *adds*: the share of the history's bugs this step catches that earlier steps did not.  *cost so far* "
 	  "is on the random sample; *bugs so far* on the history it was ranked on, so it flatters the order "
 	  "(the chart above is held out).\n")
 
@@ -540,22 +543,23 @@ a{color:var(--accent)}
 
 	w('<section><h2>The order test sets are added in</h2><p class="small prose">Ranked greedily: each step adds the '
 	  "test set catching the most bugs not yet caught per second it adds (its run time, plus a session's setup when "
-	  "its configuration has none yet). Candidates are the test sets the review matrix ran in the last 30 days. "
+	  "its configuration has none yet). Candidates are the test sets that ran on at least half the full review builds of the "
+	  "last 30 days (<i>runs today</i>); a group Autotest runs only now and then, such as review-dne-part-9, is out. "
 	  f"<b>The red line is the budget: the first {n} run on every patch.</b> <i>Adds</i> is the share of the history's "
 	  "bugs a step catches that earlier steps did not; <i>bugs so far</i> is on the history it was ranked on, so it "
 	  "flatters the order. The chart above is held out.</p>")
-	w('<div class="scroll"><table><tr><th>#</th><th>test set</th><th>configuration</th><th>minutes</th><th>adds</th>'
+	w('<div class="scroll"><table><tr><th>#</th><th>test set</th><th>configuration</th><th>minutes</th><th>runs today</th><th>adds</th>'
 	  "<th>cost so far</th><th>bugs so far</th></tr>")
 	top = max(r["gain"] or 0 for r in d["rows"]) or 1
 	for r in d["rows"]:
 		if r["k"] == 0:
-			w(f"<tr><td class=\"num\">0</td><td colspan=\"4\"><i>{esc(r['set'])}</i></td>"
+			w(f"<tr><td class=\"num\">0</td><td colspan=\"5\"><i>{esc(r['set'])}</i></td>"
 			  f"<td class=\"num\">{r['share']:.0%}</td><td class=\"num\">{r['catch']:.0%}</td></tr>")
 			continue
 		cls = "cut" if r["k"] == n else ("after" if r["k"] > n else "")
 		setup = " <span class=\"chip\">+ setup</span>" if r["new_session"] and not r["set"].startswith("testgroup") else ""
 		w(f"<tr class=\"{cls}\"><td class=\"num\">{r['k']}</td><td>{esc(r['set'])}</td><td>{esc(r['cls'])}</td>"
-		  f"<td class=\"num\">{r['minutes']:.0f}{setup}</td>"
+		  f"<td class=\"num\">{r['minutes']:.0f}{setup}</td><td class=\"num\">{r['today']:.0%}</td>"
 		  f"<td class=\"num\"><span class=\"bar\" style=\"width:{60 * r['gain'] / top:.0f}px\"></span>{r['gain']:.1%}</td>"
 		  f"<td class=\"num\">{r['share']:.0%}</td><td class=\"num\">{r['catch']:.0%}</td></tr>")
 	w("</table></div></section>")

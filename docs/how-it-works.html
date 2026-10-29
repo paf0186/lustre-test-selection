@@ -43,11 +43,11 @@ a{color:var(--accent)}
 </style>
 <main>
 <header class="prose"><h1>How test selection works</h1>
-<p class="lede">What <code>testsel.py</code> asks CI to run for a Lustre patchset, and why. Generated from the model trained 2026-10-21 on 4,142 patchsets; every number here is computed.</p></header>
+<p class="lede">What <code>testsel.py</code> asks CI to run for a Lustre patchset, and why. Generated from the model trained 2026-10-29 on 4,142 patchsets; every number here is computed.</p></header>
 <section class="big">
-<div><b>86%</b><br><span>of the bugs today's testing catches</span></div>
+<div><b>85%</b><br><span>of the bugs today's testing catches</span></div>
 <div><b>28%</b><br><span>of today's session time</span></div>
-<div><b>17</b><br><span>test sets in the patch-blind base</span></div>
+<div><b>15</b><br><span>test sets in the patch-blind base</span></div>
 <div><b>17</b><br><span>code areas with mandatory test sets</span></div>
 </section>
 <p class="small">Held out: 1,201 patchsets of 605 changes in the test months, 923 bugs, with the order fitted on the other months.</p>
@@ -55,7 +55,7 @@ a{color:var(--accent)}
 <li><b>Needs no testing.</b> Documentation only (<code>Documentation/</code>, <code>lustre/doc/</code>, <code>contrib/</code>, <code>*.md</code>, <code>*.txt</code>, <code>README</code>, <code>LICENSE</code>, <code>ChangeLog</code>), or a patchset whose code Gerrit says is unchanged from the last one (only the commit message changed; the code was tested already): <code>trivial</code> alone, nothing else.</li>
 <li><b>Mandatory test sets.</b> Each code area in the table below has test sets that belong to it.  A patch touching the area runs them, whatever the history or the budget says.  Test scripts are not an area&#x27;s code (<code>sanity-hsm.sh</code> does not make a patch an HSM patch): the next rule covers them.</li>
 <li><b>Edited tests.</b> A patch that changes only test functions of test scripts (no helpers, not <code>test-framework.sh</code>, <code>cfg/</code> or <code>functions.sh</code>) runs just those tests: <code>testlist=&lt;script&gt; env=ONLY=&quot;&lt;tests&gt;&quot;</code>.  Any other change to a test script runs the whole script.</li>
-<li><b>The patch-blind base.</b> The first 17 test sets of the order below, the same for every patch: the most that keeps <code>trivial</code> plus the base within 25% of today&#x27;s session time.  Skipped when the patch changes only test scripts: it cannot break Lustre&#x27;s code, only those scripts.</li>
+<li><b>The patch-blind base.</b> The first 15 test sets of the order below, the same for every patch: the most that keeps <code>trivial</code> plus the base within 25% of today&#x27;s session time.  Skipped when the patch changes only test scripts: it cannot break Lustre&#x27;s code, only those scripts.</li>
 <li><b>History.</b> Every test set that caught a bug on the last faulty patchset of the same change runs again.  Older history re-runs tests for bugs since fixed (E7).</li>
 </ol><p class="small">A test set picked twice runs once; test sets in one configuration share a session. <code>trivial</code> always runs, and Autotest still runs its subtest-change sessions for edited tests.</p></section>
 <section><h2>Bugs caught against cost</h2>
@@ -97,14 +97,14 @@ a{color:var(--accent)}
 <text x="402.0" y="414" text-anchor="middle" fill="var(--ink)">session time, share of what each patchset runs today</text>
 <text transform="translate(16 199.0) rotate(-90)" text-anchor="middle" fill="var(--ink)">bugs caught, share of what today's testing catches</text>
 <path d="M232.5,328.0 L232.5,299.9 L232.6,218.8 L232.9,156.5 L233.1,115.1 L233.7,53.8 L234.1,30.8 L234.4,23.3 L234.5,20.6 L234.7,20.2 L234.7,20.0 L234.7,20.0 L243.2,20.0" fill="none" stroke="var(--oracle)" stroke-width="2" stroke-linejoin="round"/>
-<path d="M232.5,328.0 L241.9,310.6 L244.8,307.4 L246.1,307.4 L249.6,290.0 L252.7,289.2 L259.6,279.5 L271.8,272.4 L282.1,262.6 L306.4,243.0 L362.1,204.0 L367.2,199.2 L375.9,190.8 L376.8,190.8 L436.1,157.0 L466.1,144.3 L466.9,141.9 L469.5,137.7 L477.8,135.8 L496.3,130.8 L496.4,130.8 L550.4,124.3 L573.2,116.3 L577.9,110.4 L581.2,110.0 L615.0,103.5 L623.4,101.0 L638.4,96.5 L649.6,96.1 L650.9,96.1 L655.4,95.6" fill="none" stroke="var(--blind)" stroke-width="2.5" stroke-linejoin="round"/>
-<path d="M293.7,226.4 L298.0,218.3 L300.5,215.1 L301.5,215.1 L304.4,202.5 L307.1,201.7 L312.4,200.1 L322.7,194.4 L331.4,185.2 L351.0,178.1 L390.4,147.1 L394.6,144.1 L401.2,136.3 L402.0,136.3 L453.3,115.1 L479.1,111.6 L479.7,109.2 L482.0,105.6 L488.9,103.6 L503.9,100.2 L503.9,100.2 L548.8,97.2 L568.1,92.7 L572.2,89.0 L575.0,88.6 L603.8,83.4 L611.1,81.8 L622.4,80.9 L632.0,80.9 L633.2,80.9 L637.1,80.4" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round"/>
+<path d="M232.5,328.0 L241.9,310.6 L243.2,310.6 L246.0,309.5 L270.4,288.5 L277.2,278.8 L287.5,269.0 L299.8,261.1 L355.5,222.0 L360.5,217.3 L369.2,208.9 L428.5,174.9 L432.0,159.1 L435.1,159.1 L465.2,146.3 L466.0,143.9 L468.6,139.8 L476.9,137.8 L495.4,132.8 L495.5,132.8 L549.4,126.3 L572.3,118.3 L575.5,118.0 L609.3,111.4 L617.7,108.9 L632.7,104.4 L643.9,104.0 L645.2,104.0 L649.8,103.6 L676.5,101.8 L679.6,101.8" fill="none" stroke="var(--blind)" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M293.7,226.4 L298.0,218.3 L299.0,218.3 L301.4,217.2 L321.1,209.5 L326.3,208.0 L335.0,198.8 L345.3,192.3 L384.8,161.2 L388.9,158.2 L395.5,150.4 L446.8,129.3 L449.8,117.2 L452.5,117.2 L478.3,113.7 L478.9,111.3 L481.2,107.6 L488.1,105.6 L503.1,102.1 L503.1,102.1 L548.0,99.1 L567.3,94.7 L570.1,94.3 L599.0,89.2 L606.2,87.6 L617.6,86.6 L627.1,86.6 L628.3,86.6 L632.2,86.1 L654.6,84.5 L657.2,84.5" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round"/>
 <circle cx="439.6" cy="79.7" r="6" fill="none" stroke="var(--goal)" stroke-width="2"/>
 <text x="448.6" y="71.7" fill="var(--goal)">goal 90% at 25%</text>
 <circle cx="214.2" cy="79.7" r="6" fill="none" stroke="var(--goal)" stroke-width="2"/>
 <text x="223.2" y="71.7" fill="var(--goal)">goal 90% at 10%</text>
-<circle cx="482.0" cy="105.6" r="5.5" fill="var(--accent)"/>
-<text x="491.0" y="121.6" fill="var(--accent)" font-weight="600">shipped: 86% at 28%</text>
+<circle cx="478.9" cy="111.3" r="5.5" fill="var(--accent)"/>
+<text x="487.9" y="127.3" fill="var(--accent)" font-weight="600">shipped: 85% at 28%</text>
 <line x1="64" y1="436" x2="90" y2="436" stroke="var(--accent)" stroke-width="3"/>
 <text x="96" y="440" fill="var(--ink)">this selection</text>
 <line x1="284" y1="436" x2="310" y2="436" stroke="var(--blind)" stroke-width="2.5"/>
@@ -119,8 +119,8 @@ a{color:var(--accent)}
 <h3>What each step adds</h3><p class="small">Gain over the patch-blind line, in points of bugs caught, averaged over 15 to 40% of cost; 95% intervals over changes. Each row includes the ones above it. Registrations and results: <code>eval/EXPERIMENTS.md</code>.</p><div class="scroll"><table><tr><th>step (cumulative)</th><th>cross-validation</th><th>held-out months</th></tr>
 <tr><td><b>E4</b> trivial, edited scripts whole, the blind base, all history</td><td class="num">+1.7 <span class="small">(-0.4 to +4.0)</span></td><td class="num">+2.8 <span class="small">(+0.9 to +5.2)</span></td></tr>
 <tr><td><b>E6</b> + mandatory test sets; ONLY= for edited tests</td><td class="num">+2.8 <span class="small">(+0.2 to +5.4)</span></td><td class="num">+3.8 <span class="small">(+1.3 to +6.8)</span></td></tr>
-<tr><td><b>E7</b> history from the last faulty patchset only</td><td class="num">+3.6 <span class="small">(+1.5 to +6.2)</span></td><td class="num">+4.5 <span class="small">(+2.1 to +7.6)</span></td></tr>
-<tr><td><b>E8</b> test-only patches skip the base; test scripts are no area&#x27;s code</td><td class="num">+4.5 <span class="small">(+1.9 to +6.7)</span></td><td class="num">+5.2 <span class="small">(+2.6 to +8.1)</span></td></tr>
+<tr><td><b>E7</b> history from the last faulty patchset only</td><td class="num">+3.5 <span class="small">(+1.4 to +6.0)</span></td><td class="num">+4.6 <span class="small">(+2.1 to +7.7)</span></td></tr>
+<tr><td><b>E8</b> test-only patches skip the base; test scripts are no area&#x27;s code</td><td class="num">+4.3 <span class="small">(+1.9 to +6.6)</span></td><td class="num">+5.2 <span class="small">(+2.8 to +8.3)</span></td></tr>
 </table></div>
 </section>
 <section><h2>Mandatory test sets</h2><p class="small prose">From <code>eval/predictors/principles.toml</code>. A file matches by path prefix, or by substring. They run in a DNE ldiskfs custom session unless the rule names other configurations. Exempt only when the patch needs no testing.</p>
@@ -151,9 +151,9 @@ a{color:var(--accent)}
 <li><b>Budget:</b> the base is cut where <code>trivial</code> plus the base would pass 25% of today's time. Mandatory sets, edited tests and history come on top.</li></ul>
 <h3>The patch-blind base, priced</h3><div class="scroll"><table><tr><th>configuration</th><th>test sets</th><th>minutes</th></tr>
 <tr><td>review-ldiskfs</td><td><code>trivial</code></td><td class="num">276</td></tr>
-<tr><td>ldiskfs-dne</td><td>lnet-selftest mds-survey parallel-scale-nfsv3 racer sanity sanity-dom sanity-ec sanity-flr sanity-hsm sanity-lfsck sanity-lnet sanity-pfl sanity-sec sanityn</td><td class="num">754</td></tr>
+<tr><td>ldiskfs-dne</td><td>lnet-selftest mds-survey sanity sanity-dom sanity-ec sanity-flr sanity-hsm sanity-lfsck sanity-lnet sanity-pfl sanity-sec sanityn</td><td class="num">720</td></tr>
 <tr><td>zfs</td><td>sanity-flr sanity-lsnapshot sanity-quota</td><td class="num">150</td></tr>
-<tr><td><b>total</b></td><td class="small">today: 118.2 hours</td><td class="num"><b>1181</b> (19.7 h)</td></tr></table></div>
+<tr><td><b>total</b></td><td class="small">today: 118.2 hours</td><td class="num"><b>1147</b> (19.1 h)</td></tr></table></div>
 <h3>Configurations</h3><div class="scroll"><table><tr><th>configuration</th><th>Test-Parameters keys</th><th>what it is</th></tr>
 <tr><td>ldiskfs-dne</td><td>(default)</td><td>ldiskfs, 2 MDS with 4 MDTs, 8 OSTs: a custom session&#x27;s default (review-dne-part-N, review-ldiskfs-dne)</td></tr>
 <tr><td>zfs-dne</td><td><code>fstype=zfs</code></td><td>ZFS, 2 MDS with 4 MDTs (review-dne-zfs-part-N)</td></tr>
@@ -166,56 +166,54 @@ a{color:var(--accent)}
 <tr><td>ldiskfs-dne-selinux-ssk</td><td>testgroup= only</td><td>SELinux and shared-secret keys, DNE (review-dne-selinux-ssk-part-N): testgroup= only, which runs the group&#x27;s suites</td></tr>
 <tr><td>ldiskfs-dne-ipv6</td><td>testgroup= only</td><td>IPv6, DNE (review-dne-ipv6): testgroup= only</td></tr>
 </table></div></section>
-<section><h2>The order test sets are added in</h2><p class="small prose">Ranked greedily: each step adds the test set catching the most bugs not yet caught per second it adds (its run time, plus a session's setup when its configuration has none yet). Candidates are the test sets the review matrix ran in the last 30 days. <b>The red line is the budget: the first 17 run on every patch.</b> <i>Adds</i> is the share of the history's bugs a step catches that earlier steps did not; <i>bugs so far</i> is on the history it was ranked on, so it flatters the order. The chart above is held out.</p>
-<div class="scroll"><table><tr><th>#</th><th>test set</th><th>configuration</th><th>minutes</th><th>adds</th><th>cost so far</th><th>bugs so far</th></tr>
-<tr><td class="num">0</td><td colspan="4"><i>trivial and subtest-change sessions alone</i></td><td class="num">10%</td><td class="num">49%</td></tr>
-<tr class=""><td class="num">1</td><td>sanity-flr</td><td>zfs</td><td class="num">12 <span class="chip">+ setup</span></td><td class="num"><span class="bar" style="width:30px"></span>2.6%</td><td class="num">11%</td><td class="num">53%</td></tr>
-<tr class=""><td class="num">2</td><td>sanity-lsnapshot</td><td>zfs</td><td class="num">3</td><td class="num"><span class="bar" style="width:6px"></span>0.5%</td><td class="num">11%</td><td class="num">53%</td></tr>
-<tr class=""><td class="num">3</td><td>sanity-dom</td><td>ldiskfs-dne</td><td class="num">16 <span class="chip">+ setup</span></td><td class="num"><span class="bar" style="width:13px"></span>1.1%</td><td class="num">11%</td><td class="num">55%</td></tr>
-<tr class=""><td class="num">4</td><td>sanity-flr</td><td>ldiskfs-dne</td><td class="num">20</td><td class="num"><span class="bar" style="width:13px"></span>1.1%</td><td class="num">12%</td><td class="num">56%</td></tr>
-<tr class=""><td class="num">5</td><td>mds-survey</td><td>ldiskfs-dne</td><td class="num">4</td><td class="num"><span class="bar" style="width:2px"></span>0.2%</td><td class="num">12%</td><td class="num">56%</td></tr>
-<tr class=""><td class="num">6</td><td>racer</td><td>ldiskfs-dne</td><td class="num">13</td><td class="num"><span class="bar" style="width:7px"></span>0.6%</td><td class="num">12%</td><td class="num">57%</td></tr>
-<tr class=""><td class="num">7</td><td>sanity-lnet</td><td>ldiskfs-dne</td><td class="num">31</td><td class="num"><span class="bar" style="width:11px"></span>1.0%</td><td class="num">12%</td><td class="num">58%</td></tr>
-<tr class=""><td class="num">8</td><td>lnet-selftest</td><td>ldiskfs-dne</td><td class="num">6</td><td class="num"><span class="bar" style="width:2px"></span>0.2%</td><td class="num">13%</td><td class="num">58%</td></tr>
-<tr class=""><td class="num">9</td><td>sanity-hsm</td><td>ldiskfs-dne</td><td class="num">46</td><td class="num"><span class="bar" style="width:13px"></span>1.2%</td><td class="num">13%</td><td class="num">60%</td></tr>
-<tr class=""><td class="num">10</td><td>sanityn</td><td>ldiskfs-dne</td><td class="num">110</td><td class="num"><span class="bar" style="width:29px"></span>2.5%</td><td class="num">15%</td><td class="num">63%</td></tr>
-<tr class=""><td class="num">11</td><td>sanity-ec</td><td>ldiskfs-dne</td><td class="num">23</td><td class="num"><span class="bar" style="width:6px"></span>0.5%</td><td class="num">15%</td><td class="num">64%</td></tr>
-<tr class=""><td class="num">12</td><td>sanity-pfl</td><td>ldiskfs-dne</td><td class="num">39</td><td class="num"><span class="bar" style="width:10px"></span>0.8%</td><td class="num">16%</td><td class="num">65%</td></tr>
-<tr class=""><td class="num">13</td><td>sanity</td><td>ldiskfs-dne</td><td class="num">250</td><td class="num"><span class="bar" style="width:60px"></span>5.2%</td><td class="num">19%</td><td class="num">71%</td></tr>
-<tr class=""><td class="num">14</td><td>sanity-sec</td><td>ldiskfs-dne</td><td class="num">98</td><td class="num"><span class="bar" style="width:22px"></span>1.9%</td><td class="num">21%</td><td class="num">74%</td></tr>
-<tr class=""><td class="num">15</td><td>parallel-scale-nfsv3</td><td>ldiskfs-dne</td><td class="num">21</td><td class="num"><span class="bar" style="width:4px"></span>0.4%</td><td class="num">21%</td><td class="num">74%</td></tr>
-<tr class=""><td class="num">16</td><td>sanity-quota</td><td>zfs</td><td class="num">113</td><td class="num"><span class="bar" style="width:21px"></span>1.8%</td><td class="num">22%</td><td class="num">76%</td></tr>
-<tr class="cut"><td class="num">17</td><td>sanity-lfsck</td><td>ldiskfs-dne</td><td class="num">55</td><td class="num"><span class="bar" style="width:10px"></span>0.9%</td><td class="num">23%</td><td class="num">77%</td></tr>
-<tr class="after"><td class="num">18</td><td>testgroup=review-dne-selinux-ssk-part-2</td><td>ldiskfs-dne-selinux-ssk</td><td class="num">272</td><td class="num"><span class="bar" style="width:33px"></span>2.9%</td><td class="num">27%</td><td class="num">81%</td></tr>
-<tr class="after"><td class="num">19</td><td>lustre-rsync-test</td><td>ldiskfs-dne</td><td class="num">14</td><td class="num"><span class="bar" style="width:2px"></span>0.2%</td><td class="num">27%</td><td class="num">81%</td></tr>
-<tr class="after"><td class="num">20</td><td>obdfilter-survey</td><td>ldiskfs-dne</td><td class="num">4</td><td class="num"><span class="bar" style="width:0px"></span>0.0%</td><td class="num">27%</td><td class="num">81%</td></tr>
-<tr class="after"><td class="num">21</td><td>sanity-pcc</td><td>ldiskfs-dne</td><td class="num">64</td><td class="num"><span class="bar" style="width:7px"></span>0.6%</td><td class="num">28%</td><td class="num">82%</td></tr>
-<tr class="after"><td class="num">22</td><td>ost-pools</td><td>ldiskfs-dne</td><td class="num">37</td><td class="num"><span class="bar" style="width:4px"></span>0.3%</td><td class="num">29%</td><td class="num">82%</td></tr>
-<tr class="after"><td class="num">23</td><td>sanity-scrub</td><td>ldiskfs-dne</td><td class="num">68</td><td class="num"><span class="bar" style="width:6px"></span>0.5%</td><td class="num">30%</td><td class="num">83%</td></tr>
-<tr class="after"><td class="num">24</td><td>replay-vbr</td><td>ldiskfs-dne</td><td class="num">38</td><td class="num"><span class="bar" style="width:3px"></span>0.3%</td><td class="num">30%</td><td class="num">83%</td></tr>
-<tr class="after"><td class="num">25</td><td>pjdfstest</td><td>zfs-dne</td><td class="num">22 <span class="chip">+ setup</span></td><td class="num"><span class="bar" style="width:4px"></span>0.3%</td><td class="num">31%</td><td class="num">84%</td></tr>
-<tr class="after"><td class="num">26</td><td>sanity</td><td>zfs-dne</td><td class="num">243</td><td class="num"><span class="bar" style="width:21px"></span>1.8%</td><td class="num">34%</td><td class="num">86%</td></tr>
-<tr class="after"><td class="num">27</td><td>mmp</td><td>zfs-dne</td><td class="num">0</td><td class="num"><span class="bar" style="width:0px"></span>0.0%</td><td class="num">34%</td><td class="num">86%</td></tr>
-<tr class="after"><td class="num">28</td><td>replay-single</td><td>zfs-dne</td><td class="num">152</td><td class="num"><span class="bar" style="width:11px"></span>1.0%</td><td class="num">36%</td><td class="num">87%</td></tr>
-<tr class="after"><td class="num">29</td><td>replay-ost-single</td><td>ldiskfs-dne</td><td class="num">13</td><td class="num"><span class="bar" style="width:1px"></span>0.1%</td><td class="num">36%</td><td class="num">87%</td></tr>
-<tr class="after"><td class="num">30</td><td>lustre-rsync-test</td><td>zfs-dne</td><td class="num">14</td><td class="num"><span class="bar" style="width:1px"></span>0.1%</td><td class="num">37%</td><td class="num">88%</td></tr>
-<tr class="after"><td class="num">31</td><td>sanity-quota</td><td>ldiskfs-dne</td><td class="num">147</td><td class="num"><span class="bar" style="width:10px"></span>0.8%</td><td class="num">39%</td><td class="num">89%</td></tr>
-<tr class="after"><td class="num">32</td><td>sanity-dom</td><td>zfs-dne</td><td class="num">15</td><td class="num"><span class="bar" style="width:1px"></span>0.1%</td><td class="num">39%</td><td class="num">89%</td></tr>
-<tr class="after"><td class="num">33</td><td>sanityn</td><td>zfs-dne</td><td class="num">97</td><td class="num"><span class="bar" style="width:6px"></span>0.5%</td><td class="num">40%</td><td class="num">89%</td></tr>
-<tr class="after"><td class="num">34</td><td>replay-dual</td><td>ldiskfs-dne</td><td class="num">50</td><td class="num"><span class="bar" style="width:3px"></span>0.3%</td><td class="num">41%</td><td class="num">90%</td></tr>
-<tr class="after"><td class="num">35</td><td>sanity-sec</td><td>ldiskfs-arm</td><td class="num">79 <span class="chip">+ setup</span></td><td class="num"><span class="bar" style="width:6px"></span>0.5%</td><td class="num">42%</td><td class="num">90%</td></tr>
-<tr class="after"><td class="num">36</td><td>sanity-flr</td><td>zfs-dne</td><td class="num">20</td><td class="num"><span class="bar" style="width:1px"></span>0.1%</td><td class="num">43%</td><td class="num">90%</td></tr>
-<tr class="after"><td class="num">37</td><td>sanity-lfsck</td><td>zfs-dne</td><td class="num">50</td><td class="num"><span class="bar" style="width:2px"></span>0.2%</td><td class="num">43%</td><td class="num">91%</td></tr>
-<tr class="after"><td class="num">38</td><td>conf-sanity</td><td>ldiskfs-dne</td><td class="num">546</td><td class="num"><span class="bar" style="width:25px"></span>2.2%</td><td class="num">51%</td><td class="num">93%</td></tr>
-<tr class="after"><td class="num">39</td><td>sanity-pcc</td><td>zfs-dne</td><td class="num">61</td><td class="num"><span class="bar" style="width:3px"></span>0.2%</td><td class="num">52%</td><td class="num">94%</td></tr>
-<tr class="after"><td class="num">40</td><td>sanity-hsm</td><td>zfs-dne</td><td class="num">47</td><td class="num"><span class="bar" style="width:2px"></span>0.2%</td><td class="num">53%</td><td class="num">94%</td></tr>
-<tr class="after"><td class="num">41</td><td>sanity-sec</td><td>zfs-dne</td><td class="num">103</td><td class="num"><span class="bar" style="width:4px"></span>0.3%</td><td class="num">54%</td><td class="num">94%</td></tr>
-<tr class="after"><td class="num">42</td><td>replay-ost-single</td><td>zfs</td><td class="num">13</td><td class="num"><span class="bar" style="width:0px"></span>0.0%</td><td class="num">54%</td><td class="num">94%</td></tr>
-<tr class="after"><td class="num">43</td><td>parallel-scale</td><td>ldiskfs-dne</td><td class="num">41</td><td class="num"><span class="bar" style="width:1px"></span>0.1%</td><td class="num">55%</td><td class="num">95%</td></tr>
-<tr class="after"><td class="num">44</td><td>testgroup=review-dne-selinux-ssk-part-1</td><td>ldiskfs-dne-selinux-ssk</td><td class="num">296</td><td class="num"><span class="bar" style="width:10px"></span>0.9%</td><td class="num">59%</td><td class="num">96%</td></tr>
-<tr class="after"><td class="num">45</td><td>recovery-small</td><td>zfs-dne</td><td class="num">110</td><td class="num"><span class="bar" style="width:3px"></span>0.3%</td><td class="num">61%</td><td class="num">96%</td></tr>
-<tr class="after"><td class="num">46</td><td>sanity-sec</td><td>ldiskfs-ubuntu</td><td class="num">98 <span class="chip">+ setup</span></td><td class="num"><span class="bar" style="width:4px"></span>0.3%</td><td class="num">62%</td><td class="num">96%</td></tr>
-<tr class="after"><td class="num">47</td><td>sanity-lnet</td><td>ldiskfs-ubuntu</td><td class="num">33</td><td class="num"><span class="bar" style="width:1px"></span>0.1%</td><td class="num">63%</td><td class="num">97%</td></tr>
+<section><h2>The order test sets are added in</h2><p class="small prose">Ranked greedily: each step adds the test set catching the most bugs not yet caught per second it adds (its run time, plus a session's setup when its configuration has none yet). Candidates are the test sets that ran on at least half the full review builds of the last 30 days (<i>runs today</i>); a group Autotest runs only now and then, such as review-dne-part-9, is out. <b>The red line is the budget: the first 15 run on every patch.</b> <i>Adds</i> is the share of the history's bugs a step catches that earlier steps did not; <i>bugs so far</i> is on the history it was ranked on, so it flatters the order. The chart above is held out.</p>
+<div class="scroll"><table><tr><th>#</th><th>test set</th><th>configuration</th><th>minutes</th><th>runs today</th><th>adds</th><th>cost so far</th><th>bugs so far</th></tr>
+<tr><td class="num">0</td><td colspan="5"><i>trivial and subtest-change sessions alone</i></td><td class="num">10%</td><td class="num">49%</td></tr>
+<tr class=""><td class="num">1</td><td>sanity-flr</td><td>zfs</td><td class="num">12 <span class="chip">+ setup</span></td><td class="num">100%</td><td class="num"><span class="bar" style="width:30px"></span>2.6%</td><td class="num">11%</td><td class="num">53%</td></tr>
+<tr class=""><td class="num">2</td><td>sanity-lsnapshot</td><td>zfs</td><td class="num">3</td><td class="num">99%</td><td class="num"><span class="bar" style="width:6px"></span>0.5%</td><td class="num">11%</td><td class="num">53%</td></tr>
+<tr class=""><td class="num">3</td><td>sanity-dom</td><td>ldiskfs-dne</td><td class="num">16 <span class="chip">+ setup</span></td><td class="num">99%</td><td class="num"><span class="bar" style="width:13px"></span>1.1%</td><td class="num">11%</td><td class="num">55%</td></tr>
+<tr class=""><td class="num">4</td><td>sanity-flr</td><td>ldiskfs-dne</td><td class="num">20</td><td class="num">99%</td><td class="num"><span class="bar" style="width:13px"></span>1.1%</td><td class="num">12%</td><td class="num">56%</td></tr>
+<tr class=""><td class="num">5</td><td>mds-survey</td><td>ldiskfs-dne</td><td class="num">4</td><td class="num">99%</td><td class="num"><span class="bar" style="width:2px"></span>0.2%</td><td class="num">12%</td><td class="num">56%</td></tr>
+<tr class=""><td class="num">6</td><td>sanity-lnet</td><td>ldiskfs-dne</td><td class="num">31</td><td class="num">99%</td><td class="num"><span class="bar" style="width:11px"></span>1.0%</td><td class="num">12%</td><td class="num">57%</td></tr>
+<tr class=""><td class="num">7</td><td>lnet-selftest</td><td>ldiskfs-dne</td><td class="num">6</td><td class="num">99%</td><td class="num"><span class="bar" style="width:2px"></span>0.2%</td><td class="num">12%</td><td class="num">58%</td></tr>
+<tr class=""><td class="num">8</td><td>sanity-hsm</td><td>ldiskfs-dne</td><td class="num">46</td><td class="num">99%</td><td class="num"><span class="bar" style="width:13px"></span>1.2%</td><td class="num">13%</td><td class="num">59%</td></tr>
+<tr class=""><td class="num">9</td><td>sanityn</td><td>ldiskfs-dne</td><td class="num">110</td><td class="num">100%</td><td class="num"><span class="bar" style="width:31px"></span>2.7%</td><td class="num">15%</td><td class="num">63%</td></tr>
+<tr class=""><td class="num">10</td><td>sanity-ec</td><td>ldiskfs-dne</td><td class="num">23</td><td class="num">99%</td><td class="num"><span class="bar" style="width:6px"></span>0.5%</td><td class="num">15%</td><td class="num">63%</td></tr>
+<tr class=""><td class="num">11</td><td>sanity-pfl</td><td>ldiskfs-dne</td><td class="num">39</td><td class="num">99%</td><td class="num"><span class="bar" style="width:10px"></span>0.8%</td><td class="num">15%</td><td class="num">64%</td></tr>
+<tr class=""><td class="num">12</td><td>sanity</td><td>ldiskfs-dne</td><td class="num">250</td><td class="num">100%</td><td class="num"><span class="bar" style="width:60px"></span>5.3%</td><td class="num">19%</td><td class="num">71%</td></tr>
+<tr class=""><td class="num">13</td><td>sanity-sec</td><td>ldiskfs-dne</td><td class="num">98</td><td class="num">99%</td><td class="num"><span class="bar" style="width:22px"></span>1.9%</td><td class="num">20%</td><td class="num">73%</td></tr>
+<tr class=""><td class="num">14</td><td>sanity-lfsck</td><td>ldiskfs-dne</td><td class="num">55</td><td class="num">99%</td><td class="num"><span class="bar" style="width:10px"></span>0.9%</td><td class="num">21%</td><td class="num">74%</td></tr>
+<tr class="cut"><td class="num">15</td><td>sanity-quota</td><td>zfs</td><td class="num">113</td><td class="num">100%</td><td class="num"><span class="bar" style="width:21px"></span>1.8%</td><td class="num">23%</td><td class="num">77%</td></tr>
+<tr class="after"><td class="num">16</td><td>testgroup=review-dne-selinux-ssk-part-2</td><td>ldiskfs-dne-selinux-ssk</td><td class="num">272</td><td class="num">100%</td><td class="num"><span class="bar" style="width:33px"></span>2.9%</td><td class="num">26%</td><td class="num">80%</td></tr>
+<tr class="after"><td class="num">17</td><td>lustre-rsync-test</td><td>ldiskfs-dne</td><td class="num">14</td><td class="num">100%</td><td class="num"><span class="bar" style="width:2px"></span>0.2%</td><td class="num">27%</td><td class="num">81%</td></tr>
+<tr class="after"><td class="num">18</td><td>sanity-pcc</td><td>ldiskfs-dne</td><td class="num">64</td><td class="num">99%</td><td class="num"><span class="bar" style="width:7px"></span>0.6%</td><td class="num">28%</td><td class="num">81%</td></tr>
+<tr class="after"><td class="num">19</td><td>ost-pools</td><td>ldiskfs-dne</td><td class="num">37</td><td class="num">100%</td><td class="num"><span class="bar" style="width:4px"></span>0.3%</td><td class="num">28%</td><td class="num">82%</td></tr>
+<tr class="after"><td class="num">20</td><td>sanity-scrub</td><td>ldiskfs-dne</td><td class="num">68</td><td class="num">99%</td><td class="num"><span class="bar" style="width:6px"></span>0.5%</td><td class="num">29%</td><td class="num">82%</td></tr>
+<tr class="after"><td class="num">21</td><td>replay-vbr</td><td>ldiskfs-dne</td><td class="num">38</td><td class="num">100%</td><td class="num"><span class="bar" style="width:3px"></span>0.3%</td><td class="num">30%</td><td class="num">83%</td></tr>
+<tr class="after"><td class="num">22</td><td>pjdfstest</td><td>zfs-dne</td><td class="num">22 <span class="chip">+ setup</span></td><td class="num">99%</td><td class="num"><span class="bar" style="width:4px"></span>0.3%</td><td class="num">30%</td><td class="num">83%</td></tr>
+<tr class="after"><td class="num">23</td><td>sanity</td><td>zfs-dne</td><td class="num">243</td><td class="num">99%</td><td class="num"><span class="bar" style="width:21px"></span>1.8%</td><td class="num">34%</td><td class="num">85%</td></tr>
+<tr class="after"><td class="num">24</td><td>mmp</td><td>zfs-dne</td><td class="num">0</td><td class="num">99%</td><td class="num"><span class="bar" style="width:0px"></span>0.0%</td><td class="num">34%</td><td class="num">85%</td></tr>
+<tr class="after"><td class="num">25</td><td>replay-single</td><td>zfs-dne</td><td class="num">152</td><td class="num">100%</td><td class="num"><span class="bar" style="width:11px"></span>1.0%</td><td class="num">36%</td><td class="num">87%</td></tr>
+<tr class="after"><td class="num">26</td><td>replay-ost-single</td><td>ldiskfs-dne</td><td class="num">13</td><td class="num">99%</td><td class="num"><span class="bar" style="width:1px"></span>0.1%</td><td class="num">36%</td><td class="num">87%</td></tr>
+<tr class="after"><td class="num">27</td><td>lustre-rsync-test</td><td>zfs-dne</td><td class="num">14</td><td class="num">100%</td><td class="num"><span class="bar" style="width:1px"></span>0.1%</td><td class="num">36%</td><td class="num">87%</td></tr>
+<tr class="after"><td class="num">28</td><td>sanity-quota</td><td>ldiskfs-dne</td><td class="num">147</td><td class="num">99%</td><td class="num"><span class="bar" style="width:9px"></span>0.8%</td><td class="num">38%</td><td class="num">88%</td></tr>
+<tr class="after"><td class="num">29</td><td>sanity-dom</td><td>zfs-dne</td><td class="num">15</td><td class="num">99%</td><td class="num"><span class="bar" style="width:1px"></span>0.1%</td><td class="num">38%</td><td class="num">88%</td></tr>
+<tr class="after"><td class="num">30</td><td>sanityn</td><td>zfs-dne</td><td class="num">97</td><td class="num">100%</td><td class="num"><span class="bar" style="width:6px"></span>0.5%</td><td class="num">40%</td><td class="num">89%</td></tr>
+<tr class="after"><td class="num">31</td><td>replay-dual</td><td>ldiskfs-dne</td><td class="num">50</td><td class="num">100%</td><td class="num"><span class="bar" style="width:3px"></span>0.3%</td><td class="num">41%</td><td class="num">89%</td></tr>
+<tr class="after"><td class="num">32</td><td>sanity-sec</td><td>ldiskfs-arm</td><td class="num">79 <span class="chip">+ setup</span></td><td class="num">98%</td><td class="num"><span class="bar" style="width:6px"></span>0.5%</td><td class="num">42%</td><td class="num">90%</td></tr>
+<tr class="after"><td class="num">33</td><td>sanity-flr</td><td>zfs-dne</td><td class="num">20</td><td class="num">99%</td><td class="num"><span class="bar" style="width:1px"></span>0.1%</td><td class="num">42%</td><td class="num">90%</td></tr>
+<tr class="after"><td class="num">34</td><td>sanity-lfsck</td><td>zfs-dne</td><td class="num">50</td><td class="num">99%</td><td class="num"><span class="bar" style="width:2px"></span>0.2%</td><td class="num">43%</td><td class="num">90%</td></tr>
+<tr class="after"><td class="num">35</td><td>conf-sanity</td><td>ldiskfs-dne</td><td class="num">546</td><td class="num">96%</td><td class="num"><span class="bar" style="width:25px"></span>2.2%</td><td class="num">51%</td><td class="num">93%</td></tr>
+<tr class="after"><td class="num">36</td><td>sanity-pcc</td><td>zfs-dne</td><td class="num">61</td><td class="num">100%</td><td class="num"><span class="bar" style="width:3px"></span>0.2%</td><td class="num">51%</td><td class="num">93%</td></tr>
+<tr class="after"><td class="num">37</td><td>sanity-hsm</td><td>zfs-dne</td><td class="num">47</td><td class="num">99%</td><td class="num"><span class="bar" style="width:2px"></span>0.2%</td><td class="num">52%</td><td class="num">93%</td></tr>
+<tr class="after"><td class="num">38</td><td>sanity-sec</td><td>zfs-dne</td><td class="num">103</td><td class="num">99%</td><td class="num"><span class="bar" style="width:4px"></span>0.3%</td><td class="num">54%</td><td class="num">94%</td></tr>
+<tr class="after"><td class="num">39</td><td>replay-ost-single</td><td>zfs</td><td class="num">13</td><td class="num">100%</td><td class="num"><span class="bar" style="width:0px"></span>0.0%</td><td class="num">54%</td><td class="num">94%</td></tr>
+<tr class="after"><td class="num">40</td><td>testgroup=review-dne-selinux-ssk-part-1</td><td>ldiskfs-dne-selinux-ssk</td><td class="num">296</td><td class="num">100%</td><td class="num"><span class="bar" style="width:10px"></span>0.9%</td><td class="num">58%</td><td class="num">95%</td></tr>
+<tr class="after"><td class="num">41</td><td>recovery-small</td><td>zfs-dne</td><td class="num">110</td><td class="num">100%</td><td class="num"><span class="bar" style="width:3px"></span>0.3%</td><td class="num">60%</td><td class="num">95%</td></tr>
+<tr class="after"><td class="num">42</td><td>sanity-sec</td><td>ldiskfs-ubuntu</td><td class="num">98 <span class="chip">+ setup</span></td><td class="num">97%</td><td class="num"><span class="bar" style="width:4px"></span>0.3%</td><td class="num">61%</td><td class="num">96%</td></tr>
+<tr class="after"><td class="num">43</td><td>sanity-lnet</td><td>ldiskfs-ubuntu</td><td class="num">33</td><td class="num">98%</td><td class="num"><span class="bar" style="width:1px"></span>0.1%</td><td class="num">62%</td><td class="num">96%</td></tr>
+<tr class="after"><td class="num">44</td><td>sanity</td><td>ldiskfs-arm</td><td class="num">232</td><td class="num">98%</td><td class="num"><span class="bar" style="width:5px"></span>0.4%</td><td class="num">65%</td><td class="num">96%</td></tr>
+<tr class="after"><td class="num">45</td><td>sanity-ec</td><td>zfs-dne</td><td class="num">23</td><td class="num">99%</td><td class="num"><span class="bar" style="width:0px"></span>0.0%</td><td class="num">65%</td><td class="num">96%</td></tr>
 </table></div></section>
 <section><h2>Examples</h2><p class="small">Held-out patchsets, one of each kind the rules treat differently.</p><div class="ex">
 <div><h3>documentation only</h3><p class="small"><code>58593/3</code> LU-13726 build: fix checkpatch fix matching<br>contrib/scripts/spelling.txt, contrib/scripts/checkpatch.pl</p>
@@ -233,25 +231,25 @@ Test-Parameters: testlist=sanity-flr env=ONLY=&quot;36&quot;</pre>
 <p class="small">5.8 hours, 5.4 of them the trivial and subtest-change sessions as they ran on that build. Today's run took 11.2.</p></div>
 <div><h3>changes HSM code</h3><p class="small"><code>69619/1</code> LU-20118 hsm: return EINVAL when archive ID requires HS_EXISTS<br>lustre/tests/sanity-hsm.sh, lustre/mdt/mdt_hsm.c</p>
 <pre>Test-Parameters: trivial
-Test-Parameters: testlist=lnet-selftest,mds-survey,parallel-scale-nfsv3,racer,sanity,sanity-dom,sanity-ec,sanity-flr,sanity-hsm,sanity-lfsck,sanity-lnet,sanity-pfl,sanity-sec,sanityn
+Test-Parameters: testlist=lnet-selftest,mds-survey,sanity,sanity-dom,sanity-ec,sanity-flr,sanity-hsm,sanity-lfsck,sanity-lnet,sanity-pfl,sanity-sec,sanityn
 Test-Parameters: fstype=zfs mdscount=1 mdtcount=1 ostcount=2 testlist=sanity-flr,sanity-lsnapshot,sanity-quota</pre>
-<ul><li>hsm must run sanity-hsm: lustre/mdt/mdt_hsm.c</li><li>the first 17 test sets of the patch-blind order</li></ul>
-<p class="small">36.1 hours, 21.1 of them the trivial and subtest-change sessions as they ran on that build. Today's run took 176.3.</p></div>
+<ul><li>hsm must run sanity-hsm: lustre/mdt/mdt_hsm.c</li><li>the first 15 test sets of the patch-blind order</li></ul>
+<p class="small">35.6 hours, 21.1 of them the trivial and subtest-change sessions as they ran on that build. Today's run took 176.3.</p></div>
 <div><h3>changes code with a must list</h3><p class="small"><code>37246/17</code> LU-13139 obdclass: collect stats for OSD methods<br>lustre/lod/lproc_lod.c, lustre/obdclass/dt_object.c, lustre/lod/lod_object.c, lustre/osd-zfs/osd_lproc.c and 3 more</p>
 <pre>Test-Parameters: trivial
 Test-Parameters: mdscount=1 mdtcount=1 ostcount=7 testlist=sanity-scrub
-Test-Parameters: testlist=lnet-selftest,mds-survey,parallel-scale-nfsv3,racer,sanity,sanity-dom,sanity-ec,sanity-flr,sanity-hsm,sanity-lfsck,sanity-lnet,sanity-pfl,sanity-quota,sanity-scrub,sanity-sec,sanityn
+Test-Parameters: testlist=lnet-selftest,mds-survey,sanity,sanity-dom,sanity-ec,sanity-flr,sanity-hsm,sanity-lfsck,sanity-lnet,sanity-pfl,sanity-quota,sanity-scrub,sanity-sec,sanityn
 Test-Parameters: fstype=zfs mdscount=1 mdtcount=1 ostcount=2 testlist=sanity-flr,sanity-lsnapshot,sanity-quota
 Test-Parameters: fstype=zfs testlist=sanity-quota</pre>
-<ul><li>layouts must run sanity-pfl, sanity-flr: lustre/lod/lproc_lod.c</li><li>quota must run sanity-quota: lustre/quota/qmt_dev.c</li><li>ldiskfs must run sanity-scrub: lustre/osd-ldiskfs/osd_lproc.c</li><li>the first 17 test sets of the patch-blind order</li></ul>
-<p class="small">39.7 hours, 17.0 of them the trivial and subtest-change sessions as they ran on that build. Today's run took 133.7.</p></div>
+<ul><li>layouts must run sanity-pfl, sanity-flr: lustre/lod/lproc_lod.c</li><li>quota must run sanity-quota: lustre/quota/qmt_dev.c</li><li>ldiskfs must run sanity-scrub: lustre/osd-ldiskfs/osd_lproc.c</li><li>the first 15 test sets of the patch-blind order</li></ul>
+<p class="small">39.1 hours, 17.0 of them the trivial and subtest-change sessions as they ran on that build. Today's run took 133.7.</p></div>
 <div><h3>caught on an earlier patchset</h3><p class="small"><code>35287/29</code> LU-12550 ldlm: contention detection<br>lustre/utils/wirecheck.c, lustre/obdclass/class_obd.c, lustre/include/lustre_export.h, lustre/utils/wiretest.c and 14 more</p>
 <pre>Test-Parameters: trivial
-Test-Parameters: testlist=lnet-selftest,mds-survey,parallel-scale-nfsv3,racer,sanity,sanity-dom,sanity-ec,sanity-flr,sanity-hsm,sanity-lfsck,sanity-lnet,sanity-pfl,sanity-sec,sanityn
+Test-Parameters: testlist=lnet-selftest,mds-survey,sanity,sanity-dom,sanity-ec,sanity-flr,sanity-hsm,sanity-lfsck,sanity-lnet,sanity-pfl,sanity-sec,sanityn
 Test-Parameters: fstype=zfs mdscount=1 mdtcount=1 ostcount=2 testlist=sanity-flr,sanity-lsnapshot,sanity-quota
 Test-Parameters: fstype=zfs testlist=sanityn</pre>
-<ul><li>the first 17 test sets of the patch-blind order</li><li>caught a bug on the last faulty patchset: sanityn|ldiskfs-dne, sanityn|zfs-dne (6 faulty patchsets in all)</li></ul>
-<p class="small">22.2 hours, 5.1 of them the trivial and subtest-change sessions as they ran on that build. Today's run took 131.7.</p></div>
+<ul><li>the first 15 test sets of the patch-blind order</li><li>caught a bug on the last faulty patchset: sanityn|ldiskfs-dne, sanityn|zfs-dne (6 faulty patchsets in all)</li></ul>
+<p class="small">21.6 hours, 5.1 of them the trivial and subtest-change sessions as they ran on that build. Today's run took 131.7.</p></div>
 </div></section>
 <section><h2>Patch risk</h2><p class="prose">A separate score: how likely the patch is to carry a bug CI would catch. A logistic model on patch signals (<code>signals/</code>), fitted to the population (base rate 19%). <b>High</b> from the 85th percentile of patches (a score of 33%), <b>medium</b> from the 50th (12%), <b>low</b> below. It does not change the selection; it is for routing review.</p>
 <div class="scroll"><table><tr><th>signal</th><th>weight</th><th>what it measures</th></tr>

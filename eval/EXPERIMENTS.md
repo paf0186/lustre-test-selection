@@ -238,3 +238,17 @@ selections, and only their cost); both +0.6 (+0.3 to +0.9) and +0.6 (+0.3 to
 +0.9).  The policy's gain over the blind line is now +4.5 (+1.9 to +6.7) in
 cross-validation and +5.2 (+2.6 to +8.1) in the lockbox.
 
+
+Amendment (2026-10-29): the matrix as first defined was wrong.  It took the
+scripts a review group runs in most of its sessions, without asking whether
+the group runs on most builds; review-dne-part-9 (racer, parallel-scale,
+parallel-scale-nfsv3, obdfilter-survey) fell from 50 to 90% of full builds
+before August to 9 to 16% since, and review-ldiskfs-dne-arm runs on 28%, so
+their scripts passed although Autotest no longer runs them by default.  The
+matrix is now the pairs that ran on at least half the full review builds
+(those running review-dne-part-1) of the last 30 days.  Rerun: allowing the
+blind base outside it gains +0.0 (-0.4 to +0.4) in cross-validation and +1.2
+(+0.1 to +2.6) in the lockbox, under the 2-point bar, so the filter stays at
+that price.  With it the base is 15 test sets at the 25% budget, and the
+policy's gain over the (now filtered) blind line is +4.3 (+1.9 to +6.6) in
+cross-validation and +5.2 (+2.8 to +8.3) in the lockbox.

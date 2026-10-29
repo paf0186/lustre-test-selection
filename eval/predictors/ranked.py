@@ -24,6 +24,8 @@ def candidates(costs: dict, classes: dict, matrix_only: bool = True) -> dict[str
 			out[key] = {"script": script, "cls": cls, "secs": secs, "keys": [key]}
 	for group, suites in costs["group_suites"].items():
 		cls = costs["group_class"].get(group)
+		if matrix is not None and group not in (costs.get("matrix_groups") or [group]):
+			continue
 		if cls in classes and classes[cls][0] is None and suites:
 			out[f"group:{group}"] = {"group": group, "cls": cls,
 						 "secs": costs["session_s"].get(group, 0),
