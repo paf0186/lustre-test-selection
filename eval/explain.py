@@ -174,7 +174,7 @@ def efficacy(cases, costs):
 			     "hours_build": r["hours_per_build"], "share_hours": r["share_hours"], "bugs": r["bugs"],
 			     "share_bugs": r["share_bugs"], "share_only": r["share_only"],
 			     "per_1000h": r["per_1000h"] or 0.0, "per_1000h_hi": 1000 * hi / window_h})
-	rows.sort(key=lambda r: (r["per_1000h_hi"], r["per_1000h"]))
+	rows.sort(key=lambda r: (r["per_1000h"], r["per_1000h_hi"]))
 	return {"rows": rows, "changes": v["changes"], "since": costs["since"], "builds": costs["review_builds"]}
 
 
@@ -396,8 +396,7 @@ def md(d) -> str:
 
 	ef = d["efficacy"]
 	w("## Efficacy of each test set\n")
-	w(f"Every test set as review builds run it today, sorted by *at most* (least effective, with evidence enough to "
-	  "say so, first): bugs caught per 1,000 session "
+	w(f"Every test set as review builds run it today, least efficient first: bugs caught per 1,000 session "
 	  f"hours, over the {ef['changes']:,} faulty changes and {ef['builds']:,} review builds since {ef['since']}.  "
 	  "*at most* is the 95% upper bound on that rate: a low bound means a test set is poor for its time, "
 	  "not just unlucky.  *bugs* counts bugs it failed on; *only it* is the share of all changes' bugs no other "
@@ -405,13 +404,13 @@ def md(d) -> str:
 	  "always-run sessions.  *runs today* is the share of full review builds (those running review-dne-part-1) of the "
 	  "last 30 days; review-ldiskfs-dne and its aarch64 twin run on other builds, so they show 0%.  The page version "
 	  "sorts by any column.\n")
-	w("| test set | where | runs today | hours per build | share of hours | bugs | share of bugs | only it | "
-	  "per 1,000 h | at most |")
+	w("| bugs per 1,000 h | at most | test set | where | runs today | hours per build | share of hours | bugs | "
+	  "share of bugs | only it |")
 	w("|---|---|---|---|---|---|---|---|---|---|")
 	for r in ef["rows"]:
 		today = f"{r['today']:.0%}" if r["today"] is not None else "0%"
-		w(f"| {r['script']} | {r['where']} | {today} | {r['hours_build']:.2f} | {r['share_hours']:.1%} | {r['bugs']} | "
-		  f"{r['share_bugs']:.1%} | {r['share_only']:.1%} | {r['per_1000h']:.1f} | {r['per_1000h_hi']:.1f} |")
+		w(f"| **{r['per_1000h']:.1f}** | {r['per_1000h_hi']:.1f} | {r['script']} | {r['where']} | {today} | "
+		  f"{r['hours_build']:.2f} | {r['share_hours']:.1%} | {r['bugs']} | {r['share_bugs']:.1%} | {r['share_only']:.1%} |")
 	w("")
 	w("## Examples\n")
 	w("Held-out patchsets, one of each kind the rules treat differently.\n")
@@ -504,7 +503,7 @@ table.sortable th.sorted{color:var(--ink)}
 table.sortable th.asc::after{content:" \\25B2";font-size:.7em}
 table.sortable th.desc::after{content:" \\25BC";font-size:.7em}
 .filters{font-size:.88rem;margin:6px 0 10px}
-#ef td:nth-child(-n+2){white-space:nowrap}
+#ef td:nth-child(3),#ef td:nth-child(4){white-space:nowrap}
 </style>""")
 	w("<main>")
 	w('<header class="prose"><h1>How test selection works</h1>')
@@ -615,31 +614,30 @@ table.sortable th.desc::after{content:" \\25BC";font-size:.7em}
 	ef = d["efficacy"]
 	w('<section id="efficacy"><h2>Efficacy of each test set</h2><p class="small prose">Every test set as review builds '
 	  f'run it today: bugs caught per 1,000 session hours, over the {ef["changes"]:,} faulty changes and '
-	  f'{ef["builds"]:,} review builds since {esc(ef["since"])}. <b>Click a column to sort</b>. It opens sorted '
-	  "by <i>at most</i>, so the least effective test sets with evidence enough to say so come first. <i>At most</i> is the 95% upper bound on the rate: sorted by it, the top rows are test sets "
+	  f'{ef["builds"]:,} review builds since {esc(ef["since"])}. <b>Click a column to sort</b>; it opens least '
+	  "efficient first. <i>At most</i> is the 95% upper bound on the rate: sorted by it, the top rows are test sets "
 	  "that are poor for their time with confidence, not just unlucky. <i>Only it</i> is the share of all changes' "
 	  "bugs no other test set caught. Rows marked <span class=\"chip\">always</span> are the sessions every patch runs "
 	  "(<code>trivial</code> and subtest-change).</p>")
 	w('<div class="filters"><label><input type="checkbox" id="ef-matrix" checked> only the review matrix and always-run '
 	  'sessions</label></div>')
 	w('<div class="scroll"><table class="sortable" id="ef"><thead><tr>'
+	  '<th data-k="n" class="sorted asc">bugs per 1,000 h</th><th data-k="n">at most</th>'
 	  '<th data-k="s">test set</th><th data-k="s">where</th><th data-k="n">runs today</th>'
 	  '<th data-k="n">hours per build</th><th data-k="n">share of hours</th><th data-k="n">bugs</th>'
-	  '<th data-k="n">share of bugs</th><th data-k="n">only it</th><th data-k="n">per 1,000 h</th>'
-	  '<th data-k="n" class="sorted asc">at most</th></tr></thead><tbody>')
+	  '<th data-k="n">share of bugs</th><th data-k="n">only it</th></tr></thead><tbody>')
 	for r in ef["rows"]:
 		today = r["today"] or 0.0
 		inm = r["always"] or today >= 0.5
 		chip = ' <span class="chip">always</span>' if r["always"] else ""
-		w(f'<tr data-m="{int(inm)}"><td>{esc(r["script"])}</td><td>{esc(r["where"])}{chip}</td>'
+		w(f'<tr data-m="{int(inm)}"><td class="num" data-v="{r["per_1000h"]}"><b>{r["per_1000h"]:.1f}</b></td>'
+		  f'<td class="num" data-v="{r["per_1000h_hi"]:.3f}">{r["per_1000h_hi"]:.1f}</td><td>{esc(r["script"])}</td><td>{esc(r["where"])}{chip}</td>'
 		  f'<td class="num" data-v="{today:.3f}">{today:.0%}</td>'
 		  f'<td class="num" data-v="{r["hours_build"]}">{r["hours_build"]:.2f}</td>'
 		  f'<td class="num" data-v="{r["share_hours"]}">{r["share_hours"]:.1%}</td>'
 		  f'<td class="num" data-v="{r["bugs"]}">{r["bugs"]}</td>'
 		  f'<td class="num" data-v="{r["share_bugs"]}">{r["share_bugs"]:.1%}</td>'
-		  f'<td class="num" data-v="{r["share_only"]}">{r["share_only"]:.1%}</td>'
-		  f'<td class="num" data-v="{r["per_1000h"]}"><b>{r["per_1000h"]:.1f}</b></td>'
-		  f'<td class="num" data-v="{r["per_1000h_hi"]:.3f}">{r["per_1000h_hi"]:.1f}</td></tr>')
+		  f'<td class="num" data-v="{r["share_only"]}">{r["share_only"]:.1%}</td></tr>')
 	w("</tbody></table></div></section>")
 	w("""<script>
 (function () {
