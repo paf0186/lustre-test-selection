@@ -156,6 +156,28 @@ def evidence():
 	return [(e, what, got.get(name, {})) for _, name, e, what in LADDER]
 
 
+def efficacy(cases, costs):
+	"""Every test set as it runs today: its hours, the bugs it caught and how
+	many per 1,000 session hours, with a 95% upper bound on that rate."""
+	from scipy.stats import chi2
+	from score import value
+	v = value(cases, costs, "", "")
+	rows = []
+	for r in v["rows"]:
+		script, where = r["key"].split("|", 1)
+		window_h = r["hours_per_build"] * costs["review_builds"]
+		if window_h < 1:
+			continue
+		hi = chi2.ppf(0.95, 2 * (r["bugs"] + 1)) / 2
+		rows.append({"script": script, "where": where, "always": where.startswith("review"),
+			     "today": costs["matrix_share"].get(r["key"]) if not where.startswith("review") else 1.0,
+			     "hours_build": r["hours_per_build"], "share_hours": r["share_hours"], "bugs": r["bugs"],
+			     "share_bugs": r["share_bugs"], "share_only": r["share_only"],
+			     "per_1000h": r["per_1000h"] or 0.0, "per_1000h_hi": 1000 * hi / window_h})
+	rows.sort(key=lambda r: (r["per_1000h_hi"], r["per_1000h"]))
+	return {"rows": rows, "changes": v["changes"], "since": costs["since"], "builds": costs["review_builds"]}
+
+
 # -- the chart -------------------------------------------------------------------
 
 def svg_chart(cv, op, themed: bool) -> str:
@@ -228,7 +250,7 @@ def build(args) -> dict:
 		"today_h": sum(c["cost"]["actual"] for c in sampled) / len(sampled) / 3600,
 		"trivial_h": costs["session_s"].get("review-ldiskfs", 0) / 3600,
 		"rules": [r for r in load_rules() if r.get("must")], "narrow": [r for r in load_rules() if r.get("narrow")],
-		"examples": examples(cases, costs, policy, order, n), "risk": risk_table(meta), "evidence": evidence(),
+		"examples": examples(cases, costs, policy, order, n), "efficacy": efficacy(cases, costs), "risk": risk_table(meta), "evidence": evidence(),
 		"base_text": ranked.prediction(order, n, CLASSES), "population": len(sampled)}
 
 
@@ -372,6 +394,25 @@ def md(d) -> str:
 	  "is on the random sample; *bugs so far* on the history it was ranked on, so it flatters the order "
 	  "(the chart above is held out).\n")
 
+	ef = d["efficacy"]
+	w("## Efficacy of each test set\n")
+	w(f"Every test set as review builds run it today, sorted by *at most* (least effective, with evidence enough to "
+	  "say so, first): bugs caught per 1,000 session "
+	  f"hours, over the {ef['changes']:,} faulty changes and {ef['builds']:,} review builds since {ef['since']}.  "
+	  "*at most* is the 95% upper bound on that rate: a low bound means a test set is poor for its time, "
+	  "not just unlucky.  *bugs* counts bugs it failed on; *only it* is the share of all changes' bugs no other "
+	  "test set caught.  Rows whose configuration is a group (`review-ldiskfs`, `*-subtest-change`) are the "
+	  "always-run sessions.  *runs today* is the share of full review builds (those running review-dne-part-1) of the "
+	  "last 30 days; review-ldiskfs-dne and its aarch64 twin run on other builds, so they show 0%.  The page version "
+	  "sorts by any column.\n")
+	w("| test set | where | runs today | hours per build | share of hours | bugs | share of bugs | only it | "
+	  "per 1,000 h | at most |")
+	w("|---|---|---|---|---|---|---|---|---|---|")
+	for r in ef["rows"]:
+		today = f"{r['today']:.0%}" if r["today"] is not None else "0%"
+		w(f"| {r['script']} | {r['where']} | {today} | {r['hours_build']:.2f} | {r['share_hours']:.1%} | {r['bugs']} | "
+		  f"{r['share_bugs']:.1%} | {r['share_only']:.1%} | {r['per_1000h']:.1f} | {r['per_1000h_hi']:.1f} |")
+	w("")
 	w("## Examples\n")
 	w("Held-out patchsets, one of each kind the rules treat differently.\n")
 	for e in d["examples"]:
@@ -457,6 +498,13 @@ tr.after td{color:var(--mute)}
 .ex ul{margin:6px 0 0;padding-left:1.2em;font-size:.88rem}
 .small{font-size:.85rem;color:var(--mute)}
 a{color:var(--accent)}
+table.sortable th{cursor:pointer;user-select:none;white-space:nowrap}
+table.sortable th:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+table.sortable th.sorted{color:var(--ink)}
+table.sortable th.asc::after{content:" \\25B2";font-size:.7em}
+table.sortable th.desc::after{content:" \\25BC";font-size:.7em}
+.filters{font-size:.88rem;margin:6px 0 10px}
+#ef td:nth-child(-n+2){white-space:nowrap}
 </style>""")
 	w("<main>")
 	w('<header class="prose"><h1>How test selection works</h1>')
@@ -564,6 +612,71 @@ a{color:var(--accent)}
 		  f"<td class=\"num\">{r['share']:.0%}</td><td class=\"num\">{r['catch']:.0%}</td></tr>")
 	w("</table></div></section>")
 
+	ef = d["efficacy"]
+	w('<section id="efficacy"><h2>Efficacy of each test set</h2><p class="small prose">Every test set as review builds '
+	  f'run it today: bugs caught per 1,000 session hours, over the {ef["changes"]:,} faulty changes and '
+	  f'{ef["builds"]:,} review builds since {esc(ef["since"])}. <b>Click a column to sort</b>. It opens sorted '
+	  "by <i>at most</i>, so the least effective test sets with evidence enough to say so come first. <i>At most</i> is the 95% upper bound on the rate: sorted by it, the top rows are test sets "
+	  "that are poor for their time with confidence, not just unlucky. <i>Only it</i> is the share of all changes' "
+	  "bugs no other test set caught. Rows marked <span class=\"chip\">always</span> are the sessions every patch runs "
+	  "(<code>trivial</code> and subtest-change).</p>")
+	w('<div class="filters"><label><input type="checkbox" id="ef-matrix" checked> only the review matrix and always-run '
+	  'sessions</label></div>')
+	w('<div class="scroll"><table class="sortable" id="ef"><thead><tr>'
+	  '<th data-k="s">test set</th><th data-k="s">where</th><th data-k="n">runs today</th>'
+	  '<th data-k="n">hours per build</th><th data-k="n">share of hours</th><th data-k="n">bugs</th>'
+	  '<th data-k="n">share of bugs</th><th data-k="n">only it</th><th data-k="n">per 1,000 h</th>'
+	  '<th data-k="n" class="sorted asc">at most</th></tr></thead><tbody>')
+	for r in ef["rows"]:
+		today = r["today"] or 0.0
+		inm = r["always"] or today >= 0.5
+		chip = ' <span class="chip">always</span>' if r["always"] else ""
+		w(f'<tr data-m="{int(inm)}"><td>{esc(r["script"])}</td><td>{esc(r["where"])}{chip}</td>'
+		  f'<td class="num" data-v="{today:.3f}">{today:.0%}</td>'
+		  f'<td class="num" data-v="{r["hours_build"]}">{r["hours_build"]:.2f}</td>'
+		  f'<td class="num" data-v="{r["share_hours"]}">{r["share_hours"]:.1%}</td>'
+		  f'<td class="num" data-v="{r["bugs"]}">{r["bugs"]}</td>'
+		  f'<td class="num" data-v="{r["share_bugs"]}">{r["share_bugs"]:.1%}</td>'
+		  f'<td class="num" data-v="{r["share_only"]}">{r["share_only"]:.1%}</td>'
+		  f'<td class="num" data-v="{r["per_1000h"]}"><b>{r["per_1000h"]:.1f}</b></td>'
+		  f'<td class="num" data-v="{r["per_1000h_hi"]:.3f}">{r["per_1000h_hi"]:.1f}</td></tr>')
+	w("</tbody></table></div></section>")
+	w("""<script>
+(function () {
+  var t = document.getElementById("ef"), box = document.getElementById("ef-matrix");
+  if (!t) return;
+  var ths = t.tHead.rows[0].cells;
+  function val(row, i, num) {
+    var c = row.cells[i];
+    return num ? parseFloat(c.getAttribute("data-v")) : c.textContent.toLowerCase();
+  }
+  for (var i = 0; i < ths.length; i++) (function (i) {
+    var th = ths[i];
+    th.tabIndex = 0;
+    function sort() {
+      var asc = !(th.classList.contains("sorted") && th.classList.contains("asc"));
+      for (var j = 0; j < ths.length; j++) ths[j].classList.remove("sorted", "asc", "desc");
+      th.classList.add("sorted", asc ? "asc" : "desc");
+      var num = th.getAttribute("data-k") === "n", body = t.tBodies[0];
+      var rows = Array.prototype.slice.call(body.rows);
+      rows.sort(function (a, b) {
+        var x = val(a, i, num), y = val(b, i, num);
+        return (x < y ? -1 : x > y ? 1 : 0) * (asc ? 1 : -1);
+      });
+      rows.forEach(function (r) { body.appendChild(r); });
+    }
+    th.addEventListener("click", sort);
+    th.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); sort(); } });
+  })(i);
+  function filter() {
+    Array.prototype.forEach.call(t.tBodies[0].rows, function (r) {
+      r.hidden = box.checked && r.getAttribute("data-m") !== "1";
+    });
+  }
+  box.addEventListener("change", filter);
+  filter();
+})();
+</script>""")
 	w('<section><h2>Examples</h2><p class="small">Held-out patchsets, one of each kind the rules treat differently.</p>'
 	  '<div class="ex">')
 	for e in d["examples"]:
