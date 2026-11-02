@@ -1,0 +1,1798 @@
+{
+"# > # skipping out-of-space test on ost#": {
+"kind": "shape",
+"name": null
+},
+"# blocks not contiguous around hole": {
+"kind": "other",
+"name": null
+},
+"# does not exist": {
+"kind": "other",
+"name": null
+},
+"# does not exist in # layout (#)": {
+"kind": "other",
+"name": null
+},
+"# does not support additional options": {
+"kind": "other",
+"name": null
+},
+"# gid=# less than #|#": {
+"kind": "other",
+"name": null
+},
+"# groups already": {
+"kind": "other",
+"name": null
+},
+"# has no ipv#": {
+"kind": "config",
+"name": "ipv6"
+},
+"# is not installed": {
+"kind": "other",
+"name": null
+},
+"# mdt only": {
+"kind": "shape",
+"name": null
+},
+"# not built, skipping": {
+"kind": "other",
+"name": null
+},
+"# too small for #kb mds": {
+"kind": "shape",
+"name": null
+},
+"#g write used # > # sec, give up": {
+"kind": "other",
+"name": null
+},
+"$(basename #)": {
+"kind": "other",
+"name": null
+},
+"$(rsync --version | head -n#) does not support xattrs": {
+"kind": "tool",
+"name": "rsync"
+},
+"'permission_xattr' test - missing 'nobody' user/grp": {
+"kind": "other",
+"name": null
+},
+"'permission_xattr' test - missing setfattr command": {
+"kind": "tool",
+"name": "attr"
+},
+"(( # <= $((# * (# + #) / #)) && # >= $((# * (#": {
+"kind": "other",
+"name": null
+},
+"(( # >= $(version_code #-ddn#) )) || (( #": {
+"kind": "other",
+"name": null
+},
+"(( # >= $(version_code v#_#_#-#-gc#a#dea#) )) || (( $": {
+"kind": "other",
+"name": null
+},
+")) || skip": {
+"kind": "other",
+"name": null
+},
+"/etc/hosts is not writeable": {
+"kind": "other",
+"name": null
+},
+"active changelog user": {
+"kind": "other",
+"name": null
+},
+"alr keepalive message unsupported": {
+"kind": "feature",
+"name": "alr_keepalive"
+},
+"an open file # != #": {
+"kind": "other",
+"name": null
+},
+"backend fs doesn't support sparse files": {
+"kind": "other",
+"name": null
+},
+"bad chunk": {
+"kind": "other",
+"name": null
+},
+"bash completion scripts not found": {
+"kind": "tool",
+"name": "bash_completion"
+},
+"block_sums+=($(dd if=# bs=#m skip=# \\": {
+"kind": "other",
+"name": null
+},
+"block_sums+=($(dd if=# bs=#m skip=# count=# \\": {
+"kind": "other",
+"name": null
+},
+"buffered write # failed: $?": {
+"kind": "other",
+"name": null
+},
+"can not create symlink /usr/sbin/lctl": {
+"kind": "other",
+"name": null
+},
+"can't find suitable acl 'bin' #": {
+"kind": "other",
+"name": null
+},
+"can't find suitable acl 'daemon' #": {
+"kind": "other",
+"name": null
+},
+"can't get stripe info": {
+"kind": "other",
+"name": null
+},
+"cannot backup /etc/hosts to #": {
+"kind": "other",
+"name": null
+},
+"cannot create tracefs instance #": {
+"kind": "other",
+"name": null
+},
+"cannot find a nonexistent user on #": {
+"kind": "other",
+"name": null
+},
+"cannot mount tmpfs on #": {
+"kind": "other",
+"name": null
+},
+"cannot run in local mode or from build tree": {
+"kind": "shape",
+"name": null
+},
+"cannot run this test in local mode": {
+"kind": "shape",
+"name": null
+},
+"cannot set max_pages_per_rpc=#m": {
+"kind": "other",
+"name": null
+},
+"cannot use failure_mode=#, affected: #": {
+"kind": "shape",
+"name": null
+},
+"chattr did not support project quota": {
+"kind": "tool",
+"name": "chattr_project"
+},
+"check_iam not found": {
+"kind": "tool",
+"name": "check_iam"
+},
+"checkfiemap not runnable: $?": {
+"kind": "tool",
+"name": "checkfiemap"
+},
+"client does not have opencache parameter": {
+"kind": "feature",
+"name": "opencache"
+},
+"client does not support multiple modify rpcs in flight": {
+"kind": "feature",
+"name": "multi_mod_rpcs"
+},
+"client encryption not supported": {
+"kind": "feature",
+"name": "encryption"
+},
+"client not able to send multiple modify rpcs in parallel": {
+"kind": "feature",
+"name": "multi_mod_rpcs"
+},
+"client os does not support io_uring i/o engine": {
+"kind": "config",
+"name": "io_uring"
+},
+"client-only testing": {
+"kind": "config",
+"name": "no_client_only"
+},
+"clientonly mode": {
+"kind": "config",
+"name": "no_client_only"
+},
+"clients must be on different nodes": {
+"kind": "shape",
+"name": null
+},
+"clients need to be on different nodes than the servers": {
+"kind": "shape",
+"name": null
+},
+"cmp does not support -n": {
+"kind": "tool",
+"name": "cmp"
+},
+"conflicting test with ssk": {
+"kind": "config",
+"name": "no_ssk"
+},
+"connect flag # is not set": {
+"kind": "other",
+"name": null
+},
+"could not find cvs": {
+"kind": "tool",
+"name": "cvs"
+},
+"could not find getfattr": {
+"kind": "tool",
+"name": "attr"
+},
+"could not find setfattr": {
+"kind": "tool",
+"name": "attr"
+},
+"could not find wiretest": {
+"kind": "tool",
+"name": "wiretest"
+},
+"could not run under gss": {
+"kind": "config",
+"name": "no_gss"
+},
+"could not run with gss": {
+"kind": "config",
+"name": "no_gss"
+},
+"couldn't create on ost#": {
+"kind": "other",
+"name": null
+},
+"couldn't create on ost# (#)": {
+"kind": "other",
+"name": null
+},
+"couldn't find empty loop device": {
+"kind": "other",
+"name": null
+},
+"data=$(dd if=#/# bs=# count=# skip=$((# * #)) conv=notr": {
+"kind": "other",
+"name": null
+},
+"dd if=# bs=#m skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"dd if=# bs=#m skip=# count=# | cmp - # ||": {
+"kind": "other",
+"name": null
+},
+"dd if=# of=# bs=# count=# skip=# iflag=direct ||": {
+"kind": "other",
+"name": null
+},
+"dd if=# of=# bs=# count=# skip=#k \\": {
+"kind": "other",
+"name": null
+},
+"dd if=# of=# bs=#k skip=$((i*#)) seek=$((i*#)) \\": {
+"kind": "other",
+"name": null
+},
+"dd if=# of=# bs=#m count=# skip=#k iflag=skip_bytes \\": {
+"kind": "other",
+"name": null
+},
+"dd if=# of=/dev/null bs=#k skip=# count=# ||": {
+"kind": "other",
+"name": null
+},
+"dd if=#/# of=#/#_left bs=#m skip=# || return #": {
+"kind": "other",
+"name": null
+},
+"dd if=#/# of=/dev/null bs=#m skip=# count=#": {
+"kind": "other",
+"name": null
+},
+"do not replace_nids with mismatched versions": {
+"kind": "other",
+"name": null
+},
+"don't have skip orphan feature": {
+"kind": "feature",
+"name": "skip_orphan"
+},
+"dontneed ladvise is not supported": {
+"kind": "feature",
+"name": "ladvise"
+},
+"dump_cksum=$(dd if=# bs=# skip=# #>/dev/null | cksum)": {
+"kind": "other",
+"name": null
+},
+"ea_inode feature disabled": {
+"kind": "config",
+"name": "ldiskfs_ea_inode"
+},
+"enough iterations": {
+"kind": "other",
+"name": null
+},
+"error $?: checkfiemap failed": {
+"kind": "other",
+"name": null
+},
+"failed to restart nfsd": {
+"kind": "other",
+"name": null
+},
+"fallocate punch is not supported: #": {
+"kind": "feature",
+"name": "fallocate_punch"
+},
+"file creation error": {
+"kind": "other",
+"name": null
+},
+"filefrag missing logical ordering": {
+"kind": "tool",
+"name": "filefrag_lustre"
+},
+"filefrag missing lustre support": {
+"kind": "tool",
+"name": "filefrag_lustre"
+},
+"fileset feature is not supported": {
+"kind": "feature",
+"name": "fileset"
+},
+"filesystem space # > # limit": {
+"kind": "shape",
+"name": null
+},
+"find does not support -printf": {
+"kind": "tool",
+"name": "find"
+},
+"fio does not support io_uring i/o engine": {
+"kind": "tool",
+"name": "fio_io_uring"
+},
+"fio mmap i/o engine does not support thp": {
+"kind": "tool",
+"name": "fio_thp"
+},
+"format large mdt failed": {
+"kind": "other",
+"name": null
+},
+"if dd if=# of=# bs=#m skip=# count=# #>/dev/null; then": {
+"kind": "other",
+"name": null
+},
+"ignore wide striping situation": {
+"kind": "other",
+"name": null
+},
+"in local mode.": {
+"kind": "shape",
+"name": null
+},
+"inode cache not supported": {
+"kind": "feature",
+"name": "inode_cache"
+},
+"interface has no ipv#": {
+"kind": "config",
+"name": "ipv6"
+},
+"iozone missing": {
+"kind": "tool",
+"name": "iozone"
+},
+"iozone not found": {
+"kind": "tool",
+"name": "iozone"
+},
+"ip $(hostname -i) isn't nid #": {
+"kind": "other",
+"name": null
+},
+"jobid_var not found": {
+"kind": "feature",
+"name": "jobstats"
+},
+"jobstats is disabled": {
+"kind": "feature",
+"name": "jobstats"
+},
+"kernel does not support io_uring fully": {
+"kind": "config",
+"name": "io_uring"
+},
+"kfi doesn't support delay rules": {
+"kind": "config",
+"name": "no_kfi"
+},
+"kfi doesn't support drop rules": {
+"kind": "config",
+"name": "no_kfi"
+},
+"ladvise ioctl is not supported": {
+"kind": "feature",
+"name": "ladvise"
+},
+"large_dir option is not supported on mds": {
+"kind": "feature",
+"name": "large_dir"
+},
+"layout swap lock is not supported": {
+"kind": "feature",
+"name": "layout_swap_lock"
+},
+"ldiskfs module has not been loaded": {
+"kind": "config",
+"name": "ldiskfs"
+},
+"ldiskfs only": {
+"kind": "config",
+"name": "ldiskfs"
+},
+"ldiskfs only test": {
+"kind": "config",
+"name": "ldiskfs"
+},
+"lfs-setstripe man page not installed": {
+"kind": "tool",
+"name": "lustre_man_pages"
+},
+"limit is too small #": {
+"kind": "other",
+"name": null
+},
+"lnetctl net set does not support --lnd-timeout option": {
+"kind": "other",
+"name": null
+},
+"local got=$(dd if=# bs=#m skip=# \\": {
+"kind": "other",
+"name": null
+},
+"local got=$(dd if=# bs=#m skip=# count=# \\": {
+"kind": "other",
+"name": null
+},
+"local got_blk=$(dd if=# bs=#m skip=# \\": {
+"kind": "other",
+"name": null
+},
+"local mds": {
+"kind": "shape",
+"name": null
+},
+"local mode not supported": {
+"kind": "shape",
+"name": null
+},
+"local ost": {
+"kind": "shape",
+"name": null
+},
+"local ref=$(dd if=# bs=#m skip=# \\": {
+"kind": "other",
+"name": null
+},
+"local servers": {
+"kind": "shape",
+"name": null
+},
+"local sum_aligned=$(dd if=# bs=#m skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"local sum_aligned_after=$(dd if=# bs=#m skip=# count=# \\": {
+"kind": "other",
+"name": null
+},
+"local sum_boundary#=$(dd if=# bs=#m skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"local sum_boundary#_after=$(dd if=# bs=#m skip=# count=# #>/dev/null": {
+"kind": "other",
+"name": null
+},
+"local sum_boundary=$(dd if=# bs=#m skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"local sum_boundary_after=$(dd if=# bs=#m skip=# count=# #>/dev/null": {
+"kind": "other",
+"name": null
+},
+"local sum_comp#=$(dd if=# bs=#m skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"local sum_comp#_after=$(dd if=# bs=#m skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"local sum_comp#_after=$(dd if=# bs=#m skip=# count=# \\": {
+"kind": "other",
+"name": null
+},
+"local sum_last=$(dd if=# bs=#m skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"local sum_last_#m=$(dd if=# bs=#m skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"local sum_last_#m_after=$(dd if=# bs=#m skip=# count=# \\": {
+"kind": "other",
+"name": null
+},
+"local sum_middle=$(dd if=# bs=#m skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"local sum_middle_#m=$(dd if=# bs=#m skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"local sum_middle_#m_after=$(dd if=# bs=#m skip=# count=# \\": {
+"kind": "other",
+"name": null
+},
+"local sum_second=$(dd if=# bs=#m skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"local sum_small_unaligned=$(dd if=# bs=#k skip=# count=# \\": {
+"kind": "other",
+"name": null
+},
+"local sum_small_unaligned_after=$(dd if=# bs=#k skip=# count=# \\": {
+"kind": "other",
+"name": null
+},
+"local sum_span=$(dd if=# bs=#m skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"local sum_span_#_#=$(dd if=# bs=#m skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"local sum_span_#_#_after=$(dd if=# bs=#m skip=# count=# \\": {
+"kind": "other",
+"name": null
+},
+"local sum_span_after=$(dd if=# bs=#m skip=# count=# \\": {
+"kind": "other",
+"name": null
+},
+"local sum_unaligned_#k=$(dd if=# bs=#k skip=# count=# \\": {
+"kind": "other",
+"name": null
+},
+"local sum_unaligned_#k_after=$(dd if=# bs=#k skip=# count=# \\": {
+"kind": "other",
+"name": null
+},
+"local tail=$(dd if=# bs=#m skip=# count=# \\": {
+"kind": "other",
+"name": null
+},
+"loop devices does not work with nosvc option": {
+"kind": "config",
+"name": "real_devices"
+},
+"loop spilling testing for mds < #": {
+"kind": "other",
+"name": null
+},
+"lsm selinux module have to be disabled for this test": {
+"kind": "config",
+"name": "no_selinux"
+},
+"lu-# failure": {
+"kind": "other",
+"name": null
+},
+"lu-#: no implementation for zfs": {
+"kind": "config",
+"name": "ldiskfs"
+},
+"lu-#: no interop testing for oss cache": {
+"kind": "other",
+"name": null
+},
+"lu-#: unaligned aio is disabled and may not be re-enabled": {
+"kind": "other",
+"name": null
+},
+"man not available": {
+"kind": "tool",
+"name": "man"
+},
+"mds does not have the enable_resource_id_check flag": {
+"kind": "feature",
+"name": "resource_id_check"
+},
+"mds does not support changelog_size": {
+"kind": "feature",
+"name": "changelog_size"
+},
+"mds doesn't support rename stats": {
+"kind": "feature",
+"name": "rename_stats"
+},
+"mds lacks parallel rpc handling": {
+"kind": "feature",
+"name": "parallel_rpc"
+},
+"mds linux kernel does not support killable semaphore": {
+"kind": "other",
+"name": null
+},
+"mds-survey not found": {
+"kind": "tool",
+"name": "mds_survey"
+},
+"mdsrate not defined, skipping": {
+"kind": "tool",
+"name": "mdsrate"
+},
+"mdt < # allows setxattr on internal trusted xattrs": {
+"kind": "other",
+"name": null
+},
+"mdt does not support seek_hole": {
+"kind": "feature",
+"name": "seek_hole"
+},
+"mdt# and mdt# should be on the same node": {
+"kind": "shape",
+"name": null
+},
+"mdt# should be on another node": {
+"kind": "shape",
+"name": null
+},
+"mdt# too small: #": {
+"kind": "shape",
+"name": null
+},
+"mdtest not found": {
+"kind": "tool",
+"name": "mdtest"
+},
+"mdts needs to be on diff hosts for hard fail mode": {
+"kind": "shape",
+"name": null
+},
+"meta_bg already set": {
+"kind": "other",
+"name": null
+},
+"mgs configured with version # need #": {
+"kind": "other",
+"name": null
+},
+"mgs must be on different node or combined": {
+"kind": "shape",
+"name": null
+},
+"mgs without ir support": {
+"kind": "feature",
+"name": "imperative_recovery"
+},
+"miprun not defined, skipping": {
+"kind": "tool",
+"name": "mpirun"
+},
+"missing /sys/module/.../ldlm_enqueue_min": {
+"kind": "feature",
+"name": "ldlm_enqueue_min"
+},
+"missing /sys/module/.../ldlm_enqueue_min in the ost#": {
+"kind": "feature",
+"name": "ldlm_enqueue_min"
+},
+"missing llog_reader": {
+"kind": "tool",
+"name": "llog_reader"
+},
+"missing subtest run-llog.sh": {
+"kind": "tool",
+"name": "run_llog"
+},
+"missing user #": {
+"kind": "other",
+"name": null
+},
+"missing user with uid=# gid=#": {
+"kind": "other",
+"name": null
+},
+"mixed loopback and real device not working": {
+"kind": "config",
+"name": "real_devices"
+},
+"mount w/o flock enabled": {
+"kind": "config",
+"name": "flock"
+},
+"msg and ost# are at the same node": {
+"kind": "shape",
+"name": null
+},
+"multiple clients -- skipping": {
+"kind": "shape",
+"name": null
+},
+"must have acl enabled": {
+"kind": "config",
+"name": "acl"
+},
+"must have acl, skipping": {
+"kind": "config",
+"name": "acl"
+},
+"must have disp_stripe": {
+"kind": "feature",
+"name": "disp_stripe"
+},
+"must have setfacl tool": {
+"kind": "tool",
+"name": "acl"
+},
+"must have user_xattr": {
+"kind": "config",
+"name": "user_xattr"
+},
+"must run as gss disabled": {
+"kind": "config",
+"name": "no_gss"
+},
+"must run as local client": {
+"kind": "shape",
+"name": null
+},
+"must run as root": {
+"kind": "other",
+"name": null
+},
+"must run as root, not uid #": {
+"kind": "other",
+"name": null
+},
+"need # # > # for qos_rr_index": {
+"kind": "other",
+"name": null
+},
+"need # bytes grant, have #": {
+"kind": "other",
+"name": null
+},
+"need # bytes on ost#, have $(( avail * # )) only": {
+"kind": "shape",
+"name": null
+},
+"need # clients": {
+"kind": "shape",
+"name": null
+},
+"need # clients at least": {
+"kind": "shape",
+"name": null
+},
+"need #+ clients, have #": {
+"kind": "shape",
+"name": null
+},
+"need #, have # kbytes": {
+"kind": "shape",
+"name": null
+},
+"need #k page_size client": {
+"kind": "config",
+"name": "page_size"
+},
+"need #k page_size mds client": {
+"kind": "config",
+"name": "page_size"
+},
+"need 'lctl llog_print --start' on mgs": {
+"kind": "other",
+"name": null
+},
+"need >= # parity ost": {
+"kind": "shape",
+"name": null
+},
+"need >= # safe data ost": {
+"kind": "shape",
+"name": null
+},
+"need >= # safe data osts": {
+"kind": "shape",
+"name": null
+},
+"need >= # safe data osts (sz=#)": {
+"kind": "shape",
+"name": null
+},
+"need >= # safe data osts for #+#": {
+"kind": "shape",
+"name": null
+},
+"need >= # safe data osts for #-down": {
+"kind": "shape",
+"name": null
+},
+"need a victim in each of the # mirrors": {
+"kind": "shape",
+"name": null
+},
+"need at least # clients": {
+"kind": "shape",
+"name": null
+},
+"need at least # cores in each cpt to exclude one": {
+"kind": "other",
+"name": null
+},
+"need at least # cpu cores": {
+"kind": "other",
+"name": null
+},
+"need at least # local interfaces for multi-rail": {
+"kind": "config",
+"name": "multirail"
+},
+"need at least # remote node": {
+"kind": "shape",
+"name": null
+},
+"need at least #gb free space": {
+"kind": "shape",
+"name": null
+},
+"need at least client version #": {
+"kind": "other",
+"name": null
+},
+"need client and mgs on different nodes": {
+"kind": "shape",
+"name": null
+},
+"need client page size larger than the server's": {
+"kind": "config",
+"name": "page_size"
+},
+"need coreutils < # or kernel >= #": {
+"kind": "other",
+"name": null
+},
+"need dummy encryption support": {
+"kind": "config",
+"name": "dummy_encryption"
+},
+"need dummy encryption support on mds client mount": {
+"kind": "config",
+"name": "dummy_encryption"
+},
+"need enc support, skip fscrypt_admin role": {
+"kind": "feature",
+"name": "encryption"
+},
+"need encryption support": {
+"kind": "feature",
+"name": "encryption"
+},
+"need free space #, have #": {
+"kind": "shape",
+"name": null
+},
+"need free space #m, have #m": {
+"kind": "shape",
+"name": null
+},
+"need ipv# nids": {
+"kind": "config",
+"name": "ipv6"
+},
+"need kernel < # or >= # for filemap_read()": {
+"kind": "other",
+"name": null
+},
+"need kernel >= # for local net namespace": {
+"kind": "other",
+"name": null
+},
+"need kfi nettype": {
+"kind": "config",
+"name": "kfi"
+},
+"need kfi network type": {
+"kind": "config",
+"name": "kfi"
+},
+"need ldiskfs without 'unaligned_dio' support": {
+"kind": "other",
+"name": null
+},
+"need local client mount": {
+"kind": "shape",
+"name": null
+},
+"need local peer credits >= router's peer credits": {
+"kind": "other",
+"name": null
+},
+"need lock_prim_nid=#": {
+"kind": "config",
+"name": "lock_prim_nid"
+},
+"need lustre client version of nfs server (mds# by default) >= #": {
+"kind": "other",
+"name": null
+},
+"need lustre client version of nfs server >= #": {
+"kind": "other",
+"name": null
+},
+"need mdc with 'multi_mod_rpcs' feature": {
+"kind": "feature",
+"name": "multi_mod_rpcs"
+},
+"need mds >= #": {
+"kind": "other",
+"name": null
+},
+"need mds >= # for lmm_oi migrate update": {
+"kind": "other",
+"name": null
+},
+"need mds >= # llog fileset compatibility": {
+"kind": "other",
+"name": null
+},
+"need mds version at least #": {
+"kind": "other",
+"name": null
+},
+"need mds version newer than #": {
+"kind": "other",
+"name": null
+},
+"need mgs >= # for llog change timestamps": {
+"kind": "other",
+"name": null
+},
+"need mgs >= # for multiple filesets": {
+"kind": "feature",
+"name": "multiple_filesets"
+},
+"need non-shared key for this test": {
+"kind": "config",
+"name": "no_ssk"
+},
+"need o#ib nettype": {
+"kind": "config",
+"name": "o2ib"
+},
+"need o#ib network type": {
+"kind": "config",
+"name": "o2ib"
+},
+"need only one client": {
+"kind": "shape",
+"name": null
+},
+"need oss >= # for multiple filesets": {
+"kind": "feature",
+"name": "multiple_filesets"
+},
+"need ost >= # for ldiskfs dense writes": {
+"kind": "feature",
+"name": "dense_writes"
+},
+"need ost version at least #": {
+"kind": "other",
+"name": null
+},
+"need ost# and client on different nodes": {
+"kind": "shape",
+"name": null
+},
+"need perl for leak_finder.pl": {
+"kind": "tool",
+"name": "perl"
+},
+"need remote client": {
+"kind": "shape",
+"name": null
+},
+"need remote ost": {
+"kind": "shape",
+"name": null
+},
+"need request_module to fail": {
+"kind": "other",
+"name": null
+},
+"need retry_count > #, found #": {
+"kind": "config",
+"name": "lnet_retry_count"
+},
+"need servers on remote nodes": {
+"kind": "shape",
+"name": null
+},
+"need shared key feature for this test": {
+"kind": "config",
+"name": "ssk"
+},
+"need skip_mr_route_setup=# found #": {
+"kind": "config",
+"name": "skip_mr_route_setup"
+},
+"need tcp nettype": {
+"kind": "config",
+"name": "tcp"
+},
+"need tcp nettype to fail a single local rail": {
+"kind": "config",
+"name": "tcp"
+},
+"need tcp or o#ib nettype": {
+"kind": "config",
+"name": "tcp_or_o2ib"
+},
+"need to mount ost to test": {
+"kind": "other",
+"name": null
+},
+"need two lnet interfaces": {
+"kind": "config",
+"name": "multirail"
+},
+"need two or more clients, have #": {
+"kind": "shape",
+"name": null
+},
+"need unaligned_dio support.": {
+"kind": "feature",
+"name": "unaligned_dio"
+},
+"need version >= #": {
+"kind": "other",
+"name": null
+},
+"need whamcloud version of e#fsprogs": {
+"kind": "tool",
+"name": "e2fsprogs_lustre"
+},
+"needed .c test files are missing": {
+"kind": "other",
+"name": null
+},
+"needs # osts": {
+"kind": "shape",
+"name": null
+},
+"needs >= # mdts": {
+"kind": "shape",
+"name": null
+},
+"needs >= # osts": {
+"kind": "shape",
+"name": null
+},
+"needs >=# osts": {
+"kind": "shape",
+"name": null
+},
+"needs a second client to safely panic-test": {
+"kind": "shape",
+"name": null
+},
+"needs different host for mdt# mdt#": {
+"kind": "shape",
+"name": null
+},
+"needs kernel > # for ki_flags support": {
+"kind": "other",
+"name": null
+},
+"needs mds# and mds# on separate nodes": {
+"kind": "shape",
+"name": null
+},
+"needs mdt failover setup": {
+"kind": "feature",
+"name": "mdt_failover"
+},
+"needs mount.lustre >= # for option parsing fix": {
+"kind": "other",
+"name": null
+},
+"needs multiple clients": {
+"kind": "shape",
+"name": null
+},
+"needs remote mds": {
+"kind": "shape",
+"name": null
+},
+"needs separate mgs to enable ir": {
+"kind": "config",
+"name": "separate_mgs"
+},
+"needs separate mgs/mdt": {
+"kind": "config",
+"name": "separate_mgs"
+},
+"needs the same host for mdt# mdt#": {
+"kind": "shape",
+"name": null
+},
+"netdisk was removed": {
+"kind": "other",
+"name": null
+},
+"netfree not implemented before #": {
+"kind": "other",
+"name": null
+},
+"nettype # not supported": {
+"kind": "other",
+"name": null
+},
+"no #tb file size limit on wbcfs": {
+"kind": "config",
+"name": "ldiskfs"
+},
+"no #tb file size limit on zfs": {
+"kind": "config",
+"name": "ldiskfs"
+},
+"no at_unhealthy_factor, skipping": {
+"kind": "feature",
+"name": "at_unhealthy_factor"
+},
+"no dense writes supported for #": {
+"kind": "feature",
+"name": "dense_writes"
+},
+"no early lock cancel on server": {
+"kind": "feature",
+"name": "early_lock_cancel"
+},
+"no fast read support": {
+"kind": "feature",
+"name": "fast_read"
+},
+"no file heat support": {
+"kind": "feature",
+"name": "file_heat"
+},
+"no foreign_symlink_upcall_info parameter": {
+"kind": "feature",
+"name": "foreign_symlink"
+},
+"no free space in ost#, skip": {
+"kind": "shape",
+"name": null
+},
+"no getfattr command": {
+"kind": "tool",
+"name": "attr"
+},
+"no grant_param connect flag": {
+"kind": "feature",
+"name": "grant_param"
+},
+"no io accounting in kernel": {
+"kind": "other",
+"name": null
+},
+"no large xattr support": {
+"kind": "config",
+"name": "ldiskfs_ea_inode"
+},
+"no lru resize on server": {
+"kind": "feature",
+"name": "lru_resize"
+},
+"no lustre_debug tracepoints in tracefs": {
+"kind": "feature",
+"name": "lustre_debug_tracepoints"
+},
+"no need to check cksum dump on oss": {
+"kind": "other",
+"name": null
+},
+"no nrs exists": {
+"kind": "feature",
+"name": "nrs"
+},
+"no nrs tbf exists": {
+"kind": "feature",
+"name": "nrs_tbf"
+},
+"no ost can grant #kb, best is #kb": {
+"kind": "other",
+"name": null
+},
+"no ost with enough space is available.": {
+"kind": "shape",
+"name": null
+},
+"no parity osts found": {
+"kind": "shape",
+"name": null
+},
+"no parity-free data ost in comp#": {
+"kind": "shape",
+"name": null
+},
+"no parity-free data ost per mirror": {
+"kind": "shape",
+"name": null
+},
+"no parity-only ost found": {
+"kind": "shape",
+"name": null
+},
+"no qos": {
+"kind": "other",
+"name": null
+},
+"no rsync command": {
+"kind": "tool",
+"name": "rsync"
+},
+"no safe data osts": {
+"kind": "shape",
+"name": null
+},
+"no safe data osts for #+#": {
+"kind": "shape",
+"name": null
+},
+"no safe data osts for #m": {
+"kind": "shape",
+"name": null
+},
+"no safe data osts for mixed pfl": {
+"kind": "shape",
+"name": null
+},
+"no safe data osts for tf#": {
+"kind": "shape",
+"name": null
+},
+"no setup for cgroup": {
+"kind": "config",
+"name": "cgroup"
+},
+"no t# checksum support on osc": {
+"kind": "feature",
+"name": "t10_checksum"
+},
+"not cache-capable obdfilter": {
+"kind": "feature",
+"name": "oss_cache"
+},
+"not enough blocks (#)": {
+"kind": "shape",
+"name": null
+},
+"not enough cached locks created!": {
+"kind": "other",
+"name": null
+},
+"not enough free inodes # #": {
+"kind": "shape",
+"name": null
+},
+"not enough free inodes # required #": {
+"kind": "shape",
+"name": null
+},
+"not enough free inodes (#) on #": {
+"kind": "shape",
+"name": null
+},
+"not enough free space # #": {
+"kind": "shape",
+"name": null
+},
+"not enough inodes or blocks for #": {
+"kind": "shape",
+"name": null
+},
+"not enough safe data osts": {
+"kind": "shape",
+"name": null
+},
+"not enough safe data osts (${#safe_osts[@]})": {
+"kind": "shape",
+"name": null
+},
+"not enough space # kb,": {
+"kind": "shape",
+"name": null
+},
+"not enough space on ost#": {
+"kind": "shape",
+"name": null
+},
+"not functional for fileset set": {
+"kind": "config",
+"name": "no_fileset"
+},
+"not support project quota on local filesystem": {
+"kind": "feature",
+"name": "project_quota"
+},
+"not supported in pfl": {
+"kind": "other",
+"name": null
+},
+"nums=$(# find --skip=$((# - #)) # | wc -l)": {
+"kind": "other",
+"name": null
+},
+"obdecho on osc is no longer supported": {
+"kind": "other",
+"name": null
+},
+"object landed on ost index #[#]}, not measured": {
+"kind": "other",
+"name": null
+},
+"old open file #": {
+"kind": "other",
+"name": null
+},
+"only applicable to ldiskfs-based mdts": {
+"kind": "config",
+"name": "ldiskfs"
+},
+"only check on dom component": {
+"kind": "other",
+"name": null
+},
+"only for ldiskfs or zfs type mgs": {
+"kind": "other",
+"name": null
+},
+"only for single mdt": {
+"kind": "shape",
+"name": null
+},
+"only run this test on single mds": {
+"kind": "shape",
+"name": null
+},
+"ori-#/lu-#: fiemap unimplemented on zfs": {
+"kind": "config",
+"name": "ldiskfs"
+},
+"orig_cksum=$(dd if=# bs=# skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"orphan ost-objects for such ost. others": {
+"kind": "other",
+"name": null
+},
+"oss cache is disabled": {
+"kind": "feature",
+"name": "oss_cache"
+},
+"oss does not have the enable_resource_id_check flag": {
+"kind": "feature",
+"name": "resource_id_check"
+},
+"oss does not have the enable_resource_id_repair flag": {
+"kind": "feature",
+"name": "resource_id_repair"
+},
+"oss write cache is not enabled": {
+"kind": "feature",
+"name": "oss_cache"
+},
+"ost # is in # status": {
+"kind": "other",
+"name": null
+},
+"ost does not support seek_hole": {
+"kind": "feature",
+"name": "seek_hole"
+},
+"ost is too small, skip the test": {
+"kind": "shape",
+"name": null
+},
+"ost size # is larger than $((maxfree / ostcount))": {
+"kind": "shape",
+"name": null
+},
+"ost space are too small: #k": {
+"kind": "shape",
+"name": null
+},
+"ost-object owner changing": {
+"kind": "other",
+"name": null
+},
+"path # is not in 'o/#/d<n>/<n>' format": {
+"kind": "other",
+"name": null
+},
+"per-network sptlrpc rules need a real (non-lo) network": {
+"kind": "config",
+"name": "real_network"
+},
+"port ext#-mballoc-dense.patch to ##": {
+"kind": "feature",
+"name": "dense_writes"
+},
+"project is not supported": {
+"kind": "feature",
+"name": "project_quota"
+},
+"project quota is not supported": {
+"kind": "feature",
+"name": "project_quota"
+},
+"qos imbalance criteria not met": {
+"kind": "other",
+"name": null
+},
+"quota enabled for read-only test": {
+"kind": "other",
+"name": null
+},
+"readonly option not available": {
+"kind": "feature",
+"name": "readonly_mount"
+},
+"remote mds does not support reserved_mb_high": {
+"kind": "feature",
+"name": "reserved_mb"
+},
+"remote ost": {
+"kind": "shape",
+"name": null
+},
+"remove_updatelog is not found on mds#": {
+"kind": "tool",
+"name": "remove_updatelog"
+},
+"require client with >#k pages": {
+"kind": "config",
+"name": "large_page_client"
+},
+"requires zpool with active userobj_accounting": {
+"kind": "config",
+"name": "zfs"
+},
+"reserved for glimpse-ahead": {
+"kind": "other",
+"name": null
+},
+"rm_entry not supported": {
+"kind": "feature",
+"name": "rm_entry"
+},
+"role 'hsm_ops' not supported by server": {
+"kind": "feature",
+"name": "rbac"
+},
+"rpc size # is not a whole mib": {
+"kind": "other",
+"name": null
+},
+"rpc size capped below #mib": {
+"kind": "other",
+"name": null
+},
+"run as root": {
+"kind": "other",
+"name": null
+},
+"runas_id = # -- skipping": {
+"kind": "other",
+"name": null
+},
+"runas_id = uid = #": {
+"kind": "other",
+"name": null
+},
+"runas_id = uid = # -- skipping": {
+"kind": "other",
+"name": null
+},
+"selinux policy module must allow transition from \\": {
+"kind": "config",
+"name": "selinux"
+},
+"server does not have readonly_mount nodemap flag": {
+"kind": "feature",
+"name": "nodemap_readonly_mount"
+},
+"server does not have the deny_mount nodemap flag": {
+"kind": "feature",
+"name": "nodemap_deny_mount"
+},
+"server does not support 'immutable_flags' rbac role": {
+"kind": "feature",
+"name": "rbac"
+},
+"server does not support 'local_admin' rbac role": {
+"kind": "feature",
+"name": "rbac"
+},
+"server does not support batch rpc": {
+"kind": "feature",
+"name": "batch_rpc"
+},
+"server does not support data compression": {
+"kind": "feature",
+"name": "compression"
+},
+"server does not support overstriping": {
+"kind": "feature",
+"name": "overstriping"
+},
+"server does not support pcc-ro": {
+"kind": "feature",
+"name": "pcc_ro"
+},
+"server does not support rbac on default nodemap": {
+"kind": "feature",
+"name": "rbac"
+},
+"server does not support readdir_open": {
+"kind": "feature",
+"name": "readdir_open"
+},
+"server doesn't support jobstats": {
+"kind": "feature",
+"name": "jobstats"
+},
+"server-side large-page bulk not handled; need #kib ost": {
+"kind": "config",
+"name": "page_size"
+},
+"several mdts on one mds with failure_mode=#": {
+"kind": "shape",
+"name": null
+},
+"sgpddsurvey=# or sg_map not found": {
+"kind": "tool",
+"name": "sgpdd_survey"
+},
+"should have ldd tool": {
+"kind": "tool",
+"name": "ldd"
+},
+"skip due to fileset set": {
+"kind": "config",
+"name": "no_fileset"
+},
+"skip in local mode": {
+"kind": "shape",
+"name": null
+},
+"skip project quota not supported": {
+"kind": "feature",
+"name": "project_quota"
+},
+"skip project quota unsupported": {
+"kind": "feature",
+"name": "project_quota"
+},
+"skip test_#a for pfl layout": {
+"kind": "other",
+"name": null
+},
+"skip zfs backend": {
+"kind": "config",
+"name": "ldiskfs"
+},
+"skipped for lustre < #": {
+"kind": "other",
+"name": null
+},
+"skipped for mds that doesn't support metadata overstripe": {
+"kind": "feature",
+"name": "mdt_overstriping"
+},
+"skipping due to old client or server version": {
+"kind": "other",
+"name": null
+},
+"slab metadata for ldlm caches unavailable": {
+"kind": "other",
+"name": null
+},
+"ss not available": {
+"kind": "tool",
+"name": "ss"
+},
+"statahead not needed for dom files": {
+"kind": "other",
+"name": null
+},
+"statx() only test": {
+"kind": "feature",
+"name": "statx"
+},
+"sum_second=$(dd if=# bs=#m skip=# count=# #>/dev/null |": {
+"kind": "other",
+"name": null
+},
+"support only ldiskfs ost": {
+"kind": "config",
+"name": "ldiskfs"
+},
+"sync changes # > # already": {
+"kind": "other",
+"name": null
+},
+"tcp secure port test, not useful for nettype=#": {
+"kind": "config",
+"name": "tcp"
+},
+"temp hostname # cannot be resolved": {
+"kind": "other",
+"name": null
+},
+"test does not support local mode": {
+"kind": "shape",
+"name": null
+},
+"test is not compatible with config_debug_lock_alloc=y": {
+"kind": "config",
+"name": "no_debug_lock_alloc"
+},
+"test must be statx() syscall supported": {
+"kind": "feature",
+"name": "statx"
+},
+"test only valid if integrity is active": {
+"kind": "config",
+"name": "integrity"
+},
+"test requires power management for hard failover": {
+"kind": "config",
+"name": "power_management"
+},
+"test written for tcp": {
+"kind": "config",
+"name": "tcp"
+},
+"testing on up system, the speed may be inaccurate.": {
+"kind": "other",
+"name": null
+},
+"the item blobs below assume a #-bit client": {
+"kind": "config",
+"name": "client_64bit"
+},
+"the updating last_id on-disk": {
+"kind": "other",
+"name": null
+},
+"this version of debugfs doesn't show inode number": {
+"kind": "tool",
+"name": "e2fsprogs_lustre"
+},
+"to handle": {
+"kind": "other",
+"name": null
+},
+"too many iterations": {
+"kind": "other",
+"name": null
+},
+"too many ost_io threads": {
+"kind": "other",
+"name": null
+},
+"too many osts, skipping": {
+"kind": "shape",
+"name": null
+},
+"too much free space in ost#, skip": {
+"kind": "shape",
+"name": null
+},
+"too old lustre for get_param -r (#)": {
+"kind": "other",
+"name": null
+},
+"too small ostsize, useless to run large o_direct test": {
+"kind": "shape",
+"name": null
+},
+"unable to add '#' to /etc/hosts": {
+"kind": "other",
+"name": null
+},
+"unable to configure net ## on ost#": {
+"kind": "other",
+"name": null
+},
+"unsupported nettype #": {
+"kind": "other",
+"name": null
+},
+"unsupported on rhel#": {
+"kind": "other",
+"name": null
+},
+"useless for local single node setup": {
+"kind": "shape",
+"name": null
+},
+"user # does not exist - skipping": {
+"kind": "other",
+"name": null
+},
+"willread ladvise is not supported": {
+"kind": "feature",
+"name": "ladvise"
+},
+"without gss support.": {
+"kind": "feature",
+"name": "gss"
+},
+"without lnetctl support.": {
+"kind": "tool",
+"name": "lnetctl"
+},
+"wrong default stripe_count: # ostcount: #": {
+"kind": "other",
+"name": null
+},
+"xattr cache is not supported": {
+"kind": "feature",
+"name": "xattr_cache"
+},
+"yaml verification not installed": {
+"kind": "tool",
+"name": "python_yaml"
+},
+"zero-range mode is not implemented on osd zfs": {
+"kind": "config",
+"name": "ldiskfs"
+},
+"zfs server without 'unaligned_dio' support": {
+"kind": "feature",
+"name": "unaligned_dio"
+}
+}
