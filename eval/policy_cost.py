@@ -10,6 +10,8 @@ there; it ran the bug when it ran one of the bug's suites.
 
 P1  review-dne* groups on one server distro per build (or per change); also one
     server filesystem per build for the suites both ldiskfs and ZFS parts run
+P1s the doubled review-dne groups (DOUBLED) each fixed to one of the two server
+    distros they run, the older or the newer, every build: all 512 assignments
 P3  review-ldiskfs on one client distro per build (or per change)
 P2  no testing of NO_CODE_CHANGE and TRIVIAL_REBASE* patchsets
 P5  a retest re-runs only the test sets that did not pass
@@ -38,6 +40,10 @@ import harvest  # noqa: E402
 
 INFRA = {"node-provisioning", "lustre-initialization"}
 REBASE = {"TRIVIAL_REBASE", "TRIVIAL_REBASE_WITH_MESSAGE_UPDATE"}
+# The review-dne groups that run two server distros on every build (2026-10).
+DOUBLED = ("review-dne-part-1", "review-dne-part-4", "review-dne-part-6", "review-dne-part-8",
+	   "review-dne-zfs-part-1", "review-dne-zfs-part-2", "review-dne-zfs-part-3", "review-dne-zfs-part-4",
+	   "review-dne-zfs-part-6")
 
 
 def load(db_path, cases_path):
@@ -257,6 +263,76 @@ def fs_rotation(rows, cases, sessions, sets, fails, rotated):
 			r["fs_by_change"] = fs_miss(ch.ss, ch, subs, suites, rotated, r["specific"])
 
 
+def version(d):
+	return tuple(int(x) for x in "".join(c for c in (d or "") if c.isdigit() or c == ".").split(".") if x)
+
+
+def static(rows, cases, sessions, sets, fails):
+	"""P1 as a fixed distro per doubled group.  Adds to P1's rows, per bug: the
+	(group, role) pairs that caught it on some patchset carrying it, role 0 the
+	older distro that group ran in that build and 1 the newer; and the by-build
+	miss of a uniform draw in the doubled groups only (the intermittent figure).
+	None when a session outside the doubled groups caught it."""
+	by_change = defaultdict(list)
+	for c in cases:
+		by_change[c["change"]].extend((c, b) for b in c["bugs"])
+	index = {(r["change"], r["patchset"], tuple(r["units"])): r for r in rows}
+	for change, cbs in by_change.items():
+		ch = Change(sessions.get(change, []), sets, fails)
+		for cl in clusters(cbs):
+			first = min(cl, key=lambda cb: cb[0]["patchset"])
+			units = sorted({f"{u[0]} {u[1]}" for _, b in cl for u in b["units"]})[:4]
+			r = index.get((change, first[0]["patchset"], tuple(units)))
+			if r is None:
+				continue
+			subs = {(u[0], u[1]) for _, b in cl for u in b["units"]}
+			suites = {u[0] for _, b in cl for u in b["units"]}
+			catchers, miss, outside = set(), 1.0, False
+			for ps in {c["patchset"] for c, _ in cl}:
+				ss = [s for s in ch.ss if s["patchset"] == ps]
+				group_d, ran, got = defaultdict(set), defaultdict(set), defaultdict(set)
+				for s in ss:
+					hit = ch.caught(s, subs)
+					if s["test_group"] not in DOUBLED:
+						outside |= hit
+						continue
+					group_d[s["test_group"]].add(s["server_distro"])
+					if ch.ran(s, suites) or hit:
+						ran[s["test_group"]].add(s["server_distro"])
+					if hit:
+						got[s["test_group"]].add(s["server_distro"])
+				for g, ds in got.items():
+					ordered = sorted(group_d[g], key=version)
+					for d in ds:
+						if d == ordered[0]:
+							catchers.add((g, 0))
+						if d == ordered[-1]:
+							catchers.add((g, 1))
+				miss *= prod(1 - len(got[g]) / len(ran[g]) for g in ran)
+			r["static"] = None if outside or not catchers and miss >= 1 else {
+				"catchers": sorted([g, k] for g, k in catchers), "by_build": miss}
+
+
+def static_cost(rows, status, assign):
+	"""Expected bugs hidden by one assignment ({group: 0 or 1}): distro-specific
+	bugs when no kept (group, role) caught them; the rest at the uniform-draw
+	figure; and the bound treating every bug as distro specific."""
+	out = {"hidden": 0.0, "merged": 0.0, "specific": 0.0, "intermittent": 0.0, "bound": 0.0, "bound_merged": 0.0}
+	for r in rows:
+		x = r.get("static")
+		if not x:
+			continue
+		lost = not any(assign[g] == k for g, k in x["catchers"])
+		m = float(lost) if r["specific"] else x["by_build"]
+		merged = status.get(str(r["change"]), status.get(r["change"])) == "MERGED"
+		out["hidden"] += m
+		out["specific" if r["specific"] else "intermittent"] += m
+		out["merged"] += m * merged
+		out["bound"] += lost
+		out["bound_merged"] += lost * merged
+	return out
+
+
 def rebases(cases, sessions, sets, fails, kind, series, start, end):
 	"""P2: bugs first seen on a patchset whose code (or own diff) did not change,
 	where the previous patchset ran the bug's suites and they passed."""
@@ -371,6 +447,7 @@ def main() -> None:
 	p3 = rotation(cases, sessions, sets, fails, args.start, args.end,
 		      lambda g: g == "review-ldiskfs", "client_distro")
 	fs_rotation(p1, cases, sessions, sets, fails, lambda g: (g or "").startswith("review-dne"))
+	static(p1, cases, sessions, sets, fails)
 	p2 = rebases(cases, sessions, sets, fails, kind, series, args.start, args.end)
 	p5 = retests(cases, sessions, sets, fails, args.start, args.end)
 	bugs = 0
@@ -379,7 +456,7 @@ def main() -> None:
 		days = [s["day"] for s in ss if s["day"]]
 		if days and args.start <= min(days) <= args.end:
 			bugs += len(c["bugs"])
-	need = {r["change"] for rows in (p1, p3) for r in rows if r["exposed"]} | {r["change"] for r in p2 + p5}
+	need = {r["change"] for rows in (p1, p3) for r in rows if r["exposed"] or r.get("static")} | {r["change"] for r in p2 + p5}
 	status = merged(need)
 	Path(args.out).write_text(json.dumps({"start": args.start, "end": args.end, "bugs": bugs,
 					      "faulty_patchsets": sum(1 for c in cases), "p1": p1, "p3": p3,
