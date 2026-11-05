@@ -12,6 +12,8 @@ P1  review-dne* groups on one server distro per build (or per change); also one
     server filesystem per build for the suites both ldiskfs and ZFS parts run
 P1s the doubled review-dne groups (DOUBLED) each fixed to one of the two server
     distros they run, the older or the newer, every build: all 512 assignments
+P1t every review-dne group (TWIN_GROUPS) on one fixed distro (twin): all of them
+    cut to one run (twin), or only the nine doubled ones (twin_nine)
 P3  review-ldiskfs on one client distro per build (or per change)
 P2  no testing of NO_CODE_CHANGE and TRIVIAL_REBASE* patchsets
 P5  a retest re-runs only the test sets that did not pass
@@ -313,16 +315,72 @@ def static(rows, cases, sessions, sets, fails):
 				"catchers": sorted([g, k] for g, k in catchers), "by_build": miss}
 
 
-def static_cost(rows, status, assign):
+# The review-dne groups a twin split fixes to one server distro each (2026-11:
+# Autotest runs all of them on two).
+TWIN_GROUPS = tuple(f"review-dne-part-{n}" for n in range(1, 9)) + \
+	tuple(f"review-dne-zfs-part-{n}" for n in range(1, 8)) + \
+	("review-dne-ipv6", "review-dne-selinux-ssk-part-1", "review-dne-selinux-ssk-part-2")
+
+
+def twin(rows, cases, sessions, sets, fails, groups=TWIN_GROUPS, rotate=TWIN_GROUPS, key="twin"):
+	"""P1 as one fixed server distro for each of groups.  Role 0 is the older of
+	the distros a group ran in a build and 1 the newer; in a build where the group
+	ran one distro, 1 when that distro is RHEL 10 or later, else 0.  A group in
+	rotate is cut to one run; one outside it keeps its single run, so an
+	intermittent bug it caught is not hidden.  None when a group outside groups
+	caught the bug."""
+	by_change = defaultdict(list)
+	for c in cases:
+		by_change[c["change"]].extend((c, b) for b in c["bugs"])
+	index = {(r["change"], r["patchset"], tuple(r["units"])): r for r in rows}
+	for change, cbs in by_change.items():
+		ch = Change(sessions.get(change, []), sets, fails)
+		for cl in clusters(cbs):
+			first = min(cl, key=lambda cb: cb[0]["patchset"])
+			units = sorted({f"{u[0]} {u[1]}" for _, b in cl for u in b["units"]})[:4]
+			r = index.get((change, first[0]["patchset"], tuple(units)))
+			if r is None:
+				continue
+			subs = {(u[0], u[1]) for _, b in cl for u in b["units"]}
+			suites = {u[0] for _, b in cl for u in b["units"]}
+			catchers, miss, outside = set(), 1.0, False
+			for ps in {c["patchset"] for c, _ in cl}:
+				ss = [s for s in ch.ss if s["patchset"] == ps]
+				group_d, ran, got = defaultdict(set), defaultdict(set), defaultdict(set)
+				for s in ss:
+					hit = ch.caught(s, subs)
+					if s["test_group"] not in groups:
+						outside |= hit
+						continue
+					group_d[s["test_group"]].add(s["server_distro"])
+					if ch.ran(s, suites) or hit:
+						ran[s["test_group"]].add(s["server_distro"])
+					if hit:
+						got[s["test_group"]].add(s["server_distro"])
+				for g, ds in got.items():
+					ordered = sorted(group_d[g], key=version)
+					for d in ds:
+						if len(ordered) == 1:
+							catchers.add((g, int(version(d)[:1] >= (10,))))
+						elif d == ordered[0]:
+							catchers.add((g, 0))
+						elif d == ordered[-1]:
+							catchers.add((g, 1))
+				miss *= prod((1 - len(got[g]) / len(ran[g])) if g in rotate else float(not got[g]) for g in ran)
+			r[key] = None if outside or not catchers and miss >= 1 else {
+				"catchers": sorted([g, k] for g, k in catchers), "by_build": miss}
+
+
+def static_cost(rows, status, assign, key="static"):
 	"""Expected bugs hidden by one assignment ({group: 0 or 1}): distro-specific
 	bugs when no kept (group, role) caught them; the rest at the uniform-draw
 	figure; and the bound treating every bug as distro specific."""
 	out = {"hidden": 0.0, "merged": 0.0, "specific": 0.0, "intermittent": 0.0, "bound": 0.0, "bound_merged": 0.0}
 	for r in rows:
-		x = r.get("static")
+		x = r.get(key)
 		if not x:
 			continue
-		lost = not any(assign[g] == k for g, k in x["catchers"])
+		lost = not any(assign.get(g) == k for g, k in x["catchers"])
 		m = float(lost) if r["specific"] else x["by_build"]
 		merged = status.get(str(r["change"]), status.get(r["change"])) == "MERGED"
 		out["hidden"] += m
@@ -448,6 +506,8 @@ def main() -> None:
 		      lambda g: g == "review-ldiskfs", "client_distro")
 	fs_rotation(p1, cases, sessions, sets, fails, lambda g: (g or "").startswith("review-dne"))
 	static(p1, cases, sessions, sets, fails)
+	twin(p1, cases, sessions, sets, fails)
+	twin(p1, cases, sessions, sets, fails, rotate=DOUBLED, key="twin_nine")
 	p2 = rebases(cases, sessions, sets, fails, kind, series, args.start, args.end)
 	p5 = retests(cases, sessions, sets, fails, args.start, args.end)
 	bugs = 0
@@ -456,7 +516,7 @@ def main() -> None:
 		days = [s["day"] for s in ss if s["day"]]
 		if days and args.start <= min(days) <= args.end:
 			bugs += len(c["bugs"])
-	need = {r["change"] for rows in (p1, p3) for r in rows if r["exposed"] or r.get("static")} | {r["change"] for r in p2 + p5}
+	need = {r["change"] for rows in (p1, p3) for r in rows if r["exposed"] or r.get("static") or r.get("twin")} | {r["change"] for r in p2 + p5}
 	status = merged(need)
 	Path(args.out).write_text(json.dumps({"start": args.start, "end": args.end, "bugs": bugs,
 					      "faulty_patchsets": sum(1 for c in cases), "p1": p1, "p3": p3,
