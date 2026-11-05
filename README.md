@@ -46,6 +46,25 @@ on the change's last faulty patchset.  A patch that needs no testing gets
 Risk is the `faulty` target's score from `signals/`, with a tier (low, medium,
 high: below the median, to the 85th percentile, above) and its reasons.
 
+## The subtest stack
+
+**[SUBTEST_STACK.md](SUBTEST_STACK.md)** ([sortable page](docs/subtest-stack.html))
+ranks every subtest in every configuration the same greedy way as the test-set
+order: the bugs not yet caught each catches per second of its own run time, on
+the eval's bugs, with Rainshadow's per-subtest timings.  It also lists the
+subtests that cost the most CI time and never caught a bug nothing else caught,
+and measures the order on later months than it was ranked on.
+
+```bash
+./harvest.py fetch --days 30 && ./harvest.py sessions   # a month's new faults and what ran: about 20 s
+eval/subtests.py --fetch                                # Rainshadow's timings, the bugs, the stack: about 17 s
+```
+
+The bugs are built from `data/failures.db` by `eval/cases.py`'s own code each
+time, without reading the patches' C functions (most of `eval/cases.py`'s
+minute), so a stale `data/cases.jsonl` does not matter.  `eval/subtests.py`
+without `--fetch` reuses the timings in `data/subtest-timings.json`.
+
 ## Patch signals
 
 `signals/` measures patches for any question we ask of them: will it have a bug

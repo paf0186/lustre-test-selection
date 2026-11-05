@@ -151,6 +151,8 @@ The patch-blind base ranked greedily: each step adds the test set that catches t
 
 *runs today*: the share of full review builds (those running review-dne-part-1) in the last 30 days that ran it; a test set needs 50% to be a candidate.  *adds*: the share of the history's bugs this step catches that earlier steps did not.  *cost so far* is on the random sample; *bugs so far* on the history it was ranked on, so it flatters the order (the chart above is held out).
 
+The same greedy ranking one level down, every subtest in every configuration for its own run time: [SUBTEST_STACK.md](SUBTEST_STACK.md), from `eval/subtests.py`.
+
 ## Efficacy of each test set
 
 Every test set as review builds run it today, least efficient first: bugs caught per 1,000 session hours, over the 267 faulty changes and 8,197 review builds since 2026-03-20.  *at most* is the 95% upper bound on that rate: a low bound means a test set is poor for its time, not just unlucky.  *bugs* counts bugs it failed on; *only it* is the share of all changes' bugs no other test set caught.  Rows whose configuration is a group (`review-ldiskfs`, `*-subtest-change`) are the always-run sessions.  *runs today* is the share of full review builds (those running review-dne-part-1) of the last 30 days; review-ldiskfs-dne and its aarch64 twin run on other builds, so they show 0%.  The page version sorts by any column.

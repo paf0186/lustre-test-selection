@@ -29,6 +29,10 @@ from predictors.simple import Simple, edited_tests_only  # noqa: E402
 from score import metrics  # noqa: E402
 
 TIERS = ((0.85, "high"), (0.5, "medium"), (0.0, "low"))
+SUBTEST_LINK_MD = ("The same greedy ranking one level down, every subtest in every configuration for its own run "
+		   "time: [SUBTEST_STACK.md](SUBTEST_STACK.md), from `eval/subtests.py`.")
+SUBTEST_LINK_HTML = ('The same ranking one level down, every subtest in every configuration: '
+		     '<a href="subtest-stack.html">the subtest stack</a>.')
 SHOW = 30                                       # rows of the order to list past the cut
 
 
@@ -393,6 +397,7 @@ def md(d) -> str:
 	  "that ran it; a test set needs 50% to be a candidate.  *adds*: the share of the history's bugs this step catches that earlier steps did not.  *cost so far* "
 	  "is on the random sample; *bugs so far* on the history it was ranked on, so it flatters the order "
 	  "(the chart above is held out).\n")
+	w(SUBTEST_LINK_MD + "\n")
 
 	ef = d["efficacy"]
 	w("## Efficacy of each test set\n")
@@ -447,18 +452,12 @@ def md(d) -> str:
 	return "\n".join(o)
 
 
-def page(d, chart: str, body_md: str) -> str:
-	"""The HTML page: the same content, laid out to read."""
-	meta, n, cv = d["meta"], d["n"], d["cv"]
-	sx, sy = d["op"]
-	esc = html.escape
-	o = []
-	w = o.append
-	w('<title>How Test Selection Works</title>')
-	w('<meta name="claude:viewport-fit-sides" content="cover">')
-	w('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&'
-	  'family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,600&display=swap">')
-	w("""<style>
+# -- the page's look, shared with eval/subtests.py ----------------------------
+
+FONTS = ('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&'
+	 'family=IBM+Plex+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,600&display=swap">')
+
+STYLE = """<style>
 /* Layout: one reading column, wide tables scroll in place; a lab notebook for a CI matrix. */
 :root{--paper:#fbfbf8;--ink:#1d2430;--mute:#5d6675;--rule:#dfe2e6;--panel:#f1f3f2;--accent:#0b6e8a;
 --blind:#8a93a3;--oracle:#b5651d;--goal:#2e7d32;--cut:#c0392b;
@@ -504,7 +503,63 @@ table.sortable th.asc::after{content:" \\25B2";font-size:.7em}
 table.sortable th.desc::after{content:" \\25BC";font-size:.7em}
 .filters{font-size:.88rem;margin:6px 0 10px}
 #ef td:nth-child(3),#ef td:nth-child(4){white-space:nowrap}
-</style>""")
+</style>"""
+
+SORT_SCRIPT = """<script>
+(function () {
+  var t = document.getElementById("__TABLE__"), box = document.getElementById("__BOX__");
+  if (!t) return;
+  var ths = t.tHead.rows[0].cells;
+  function val(row, i, num) {
+    var c = row.cells[i];
+    return num ? parseFloat(c.getAttribute("data-v")) : c.textContent.toLowerCase();
+  }
+  for (var i = 0; i < ths.length; i++) (function (i) {
+    var th = ths[i];
+    th.tabIndex = 0;
+    function sort() {
+      var asc = !(th.classList.contains("sorted") && th.classList.contains("asc"));
+      for (var j = 0; j < ths.length; j++) ths[j].classList.remove("sorted", "asc", "desc");
+      th.classList.add("sorted", asc ? "asc" : "desc");
+      var num = th.getAttribute("data-k") === "n", body = t.tBodies[0];
+      var rows = Array.prototype.slice.call(body.rows);
+      rows.sort(function (a, b) {
+        var x = val(a, i, num), y = val(b, i, num);
+        return (x < y ? -1 : x > y ? 1 : 0) * (asc ? 1 : -1);
+      });
+      rows.forEach(function (r) { body.appendChild(r); });
+    }
+    th.addEventListener("click", sort);
+    th.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); sort(); } });
+  })(i);
+  function filter() {
+    Array.prototype.forEach.call(t.tBodies[0].rows, function (r) {
+      r.hidden = box.checked && r.getAttribute("data-m") !== "1";
+    });
+  }
+  box.addEventListener("change", filter);
+  filter();
+})();
+</script>"""
+
+
+def sort_script(table: str, box: str) -> str:
+	"""Sorting by any column of a table, and the checkbox that filters its rows
+	(rows with data-m="1" stay)."""
+	return SORT_SCRIPT.replace("__TABLE__", table).replace("__BOX__", box)
+
+
+def page(d, chart: str, body_md: str) -> str:
+	"""The HTML page: the same content, laid out to read."""
+	meta, n, cv = d["meta"], d["n"], d["cv"]
+	sx, sy = d["op"]
+	esc = html.escape
+	o = []
+	w = o.append
+	w('<title>How Test Selection Works</title>')
+	w('<meta name="claude:viewport-fit-sides" content="cover">')
+	w(FONTS)
+	w(STYLE)
 	w("<main>")
 	w('<header class="prose"><h1>How test selection works</h1>')
 	w(f'<p class="lede">What <code>testsel.py</code> asks CI to run for a Lustre patchset, and why. Generated from '
@@ -594,7 +649,7 @@ table.sortable th.desc::after{content:" \\25BC";font-size:.7em}
 	  "last 30 days (<i>runs today</i>); a group Autotest runs only now and then, such as review-dne-part-9, is out. "
 	  f"<b>The red line is the budget: the first {n} run on every patch.</b> <i>Adds</i> is the share of the history's "
 	  "bugs a step catches that earlier steps did not; <i>bugs so far</i> is on the history it was ranked on, so it "
-	  "flatters the order. The chart above is held out.</p>")
+	  "flatters the order. The chart above is held out. " + SUBTEST_LINK_HTML + "</p>")
 	w('<div class="scroll"><table><tr><th>#</th><th>test set</th><th>configuration</th><th>minutes</th><th>runs today</th><th>adds</th>'
 	  "<th>cost so far</th><th>bugs so far</th></tr>")
 	top = max(r["gain"] or 0 for r in d["rows"]) or 1
@@ -639,42 +694,7 @@ table.sortable th.desc::after{content:" \\25BC";font-size:.7em}
 		  f'<td class="num" data-v="{r["share_bugs"]}">{r["share_bugs"]:.1%}</td>'
 		  f'<td class="num" data-v="{r["share_only"]}">{r["share_only"]:.1%}</td></tr>')
 	w("</tbody></table></div></section>")
-	w("""<script>
-(function () {
-  var t = document.getElementById("ef"), box = document.getElementById("ef-matrix");
-  if (!t) return;
-  var ths = t.tHead.rows[0].cells;
-  function val(row, i, num) {
-    var c = row.cells[i];
-    return num ? parseFloat(c.getAttribute("data-v")) : c.textContent.toLowerCase();
-  }
-  for (var i = 0; i < ths.length; i++) (function (i) {
-    var th = ths[i];
-    th.tabIndex = 0;
-    function sort() {
-      var asc = !(th.classList.contains("sorted") && th.classList.contains("asc"));
-      for (var j = 0; j < ths.length; j++) ths[j].classList.remove("sorted", "asc", "desc");
-      th.classList.add("sorted", asc ? "asc" : "desc");
-      var num = th.getAttribute("data-k") === "n", body = t.tBodies[0];
-      var rows = Array.prototype.slice.call(body.rows);
-      rows.sort(function (a, b) {
-        var x = val(a, i, num), y = val(b, i, num);
-        return (x < y ? -1 : x > y ? 1 : 0) * (asc ? 1 : -1);
-      });
-      rows.forEach(function (r) { body.appendChild(r); });
-    }
-    th.addEventListener("click", sort);
-    th.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); sort(); } });
-  })(i);
-  function filter() {
-    Array.prototype.forEach.call(t.tBodies[0].rows, function (r) {
-      r.hidden = box.checked && r.getAttribute("data-m") !== "1";
-    });
-  }
-  box.addEventListener("change", filter);
-  filter();
-})();
-</script>""")
+	w(sort_script("ef", "ef-matrix"))
 	w('<section><h2>Examples</h2><p class="small">Held-out patchsets, one of each kind the rules treat differently.</p>'
 	  '<div class="ex">')
 	for e in d["examples"]:

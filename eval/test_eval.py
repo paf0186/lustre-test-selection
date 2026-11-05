@@ -110,3 +110,27 @@ def test_a_must_rule_runs_its_suite_unless_the_patch_needs_no_testing():
 	assert "sanity-hsm" in picks["ldiskfs-dne"] and why
 	assert not must({"files": ["Documentation/man8/lfs.8"]})[0]
 	assert needs_no_testing({"files": ["lustre/llite/file.c"], "gerrit_kind": "NO_CODE_CHANGE"})
+
+
+def test_subtest_stack_whites_out_what_earlier_picks_caught():
+	from subtests import by_class, held_out, stack
+	costs = {"suite_class_s": {}, "suite_s": {}, "suite_subtests": {}}
+	k1, k2, k3 = ("sanity", "test_1", "ldiskfs-dne"), ("sanity", "test_2", "ldiskfs-dne"), ("sanityn", "test_3", "zfs-dne")
+	timing = {k1: [10, 100], k2: [10, 50], k3: [10, 2000]}      # 10 s, 5 s and 200 s a run
+	bugs = [{"change": 1, "day": "2026-01-01", "ev": {k1: 1.0, k2: 1.0}, "suite_only": False},
+		{"change": 1, "day": "2026-01-01", "ev": {k3: 1.0}, "suite_only": False},
+		{"change": 2, "day": "2026-01-01", "ev": {k1: 1.0}, "suite_only": False},
+		{"change": 3, "day": "2026-01-01", "ev": {}, "suite_only": True}]
+	st = stack(bugs, timing, {}, costs, "2025-01-01")
+	rows = {(r["suite"], r["subtest"], r["cls"]): r for r in st["rows"]}
+	# test_1 adds change 1's half and all of change 2: 1.5 for 10 s beats test_2's 0.5 for 5 s.
+	assert [(r["suite"], r["subtest"]) for r in st["rows"]] == [("sanity", "test_1"), ("sanityn", "test_3"),
+								     ("sanity", "test_2")]
+	assert rows[k1]["adds"] == 1.5 and rows[k2]["adds"] == 0 and rows[k2]["caught"] == 0.5
+	assert rows[k3]["only"] == 0.5 and rows[k1]["only"] == 1.0
+	assert st["total"] == 3 and st["ceiling"] == 2 / 3 and st["suite_only"] == 1 / 3
+	assert held_out(st["rows"], bugs, "2025-01-01")[-1][1] == 2 / 3
+	split = by_class([["review-ldiskfs", "sanity", "test_1", 10, 100], ["custom", "sanity", "test_1", 5, 50],
+			  ["review-dne-subtest-change", "sanity", "test_1", 40, 40]],
+			 {"review-ldiskfs": {"ldiskfs": 0.75, "ldiskfs-sles": 0.25}})
+	assert dict(split) == {("sanity", "test_1", "ldiskfs"): [7.5, 75.0], ("sanity", "test_1", "ldiskfs-sles"): [2.5, 25.0]}
